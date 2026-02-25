@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend code
 COPY services /app/services
-COPY main.py /app/main.py 2>/dev/null || true
+COPY requirements.txt /app/
 
 # Copy built frontend from stage 1
 COPY --from=frontend-builder /app/services/web/dist /app/services/web/dist

@@ -156,3 +156,33 @@ def register_all_templates():
                    params={"brief": "{strategy_brief}"},
                    dependencies=["Generate Strategic Brief"])
     )
+
+    # ─────────── Master Workflows (Multi-Domain) ───────────
+
+    WorkflowExecutor.register_template(
+        WorkflowTemplate(
+            name="grand_opening",
+            display_name="Strategic Business Launch",
+            description="End-to-end launch sequence: Market Research → Business Plan → Brand Identity → Social Launch.",
+            category="master",
+        )
+        .add_step("Market & Competitor Analysis", "ResearchAgent", "competitive_research",
+                   params={"focus": "new_business_launch"})
+        .add_step("Generate Strategic Business Plan", "BusinessIntelligenceAgent", "generate_roadmap",
+                   params={"market_data": "{market_data}"},
+                   dependencies=["Market & Competitor Analysis"])
+        .add_step("Create Brand Hero Content", "ContentAgent", "create_brand_identity",
+                   params={"business_plan": "{business_plan}"},
+                   dependencies=["Generate Strategic Business Plan"])
+        .add_step("Setup Lead Acquisition Funnel", "CustomerIntelligenceAgent", "setup_funnel",
+                   params={"brand_assets": "{brand_assets}"},
+                   dependencies=["Create Brand Hero Content"])
+        .add_step("Global Launch Review", "EvaluatorLeague", "final_compliance_check",
+                   params={"launch_package": "{full_package}"},
+                   risk_level=RiskLevel.CRITICAL,
+                   dependencies=["Setup Lead Acquisition Funnel"])
+        .add_step("Execute Go-to-Market Distribution", "SocialBridge", "distribute_launch",
+                   params={"package": "{approved_package}"},
+                   risk_level=RiskLevel.HIGH,
+                   dependencies=["Global Launch Review"])
+    )
