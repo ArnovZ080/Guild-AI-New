@@ -1,0 +1,18 @@
+fastapi>=0.104.1
+openai>=1.0.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+pydantic-settings
+openai
+aiohttp>=2.0.0
+python-dotenv>=1.0.0
+sqlalchemy>=2.0.23
+alembic>=1.13.1
+asyncpg>=0.29.0
+celery>=5.3.4
+redis>=5.0.1
+# Dev
+pytest>=7.4.3
+black>=23.11.0
+flake8>=6.1.0
+mypy>=1.7.1
