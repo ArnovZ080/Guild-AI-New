@@ -4,7 +4,7 @@ from services.core.logging import logger
 from services.core.config import settings
 from services.core.security import SecurityMiddleware, SecurityHeadersMiddleware
 
-from services.api.routes import agents, identity, integrations, oauth
+from services.api.routes import agents, identity, integrations, oauth, waitlist, subscription
 from services.core.integrations.registry import register_all_connectors
 
 app = FastAPI(
@@ -26,6 +26,8 @@ app.include_router(agents.router)
 app.include_router(identity.router)
 app.include_router(integrations.router)
 app.include_router(oauth.router)
+app.include_router(waitlist.router)
+app.include_router(subscription.router)
 
 # Configure CORS
 app.add_middleware(
