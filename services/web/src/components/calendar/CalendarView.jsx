@@ -116,22 +116,22 @@ const CalendarView = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-                        <CalendarIcon className="text-indigo-600" size={32} /> Strategic Calendar
+                        <CalendarIcon className="text-[#1a6fff]" size={32} strokeWidth={1.5} /> Strategic Calendar
                     </h1>
-                    <p className="text-slate-500 font-medium">Visualizing the 90-day Roadmap & Autonomous Routines</p>
+                    <p className="text-zinc-500 font-medium">Visualizing the 90-day Roadmap & Autonomous Routines</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => setShowPAChat(!showPAChat)}
-                        className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-sm ${showPAChat ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                        className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-sm ${showPAChat ? 'bg-[#1a6fff] text-white shadow-lg shadow-cobalt/20' : 'bg-white/5 border border-white/5 text-zinc-500 hover:bg-white/8'}`}
                     >
-                        <Bot size={18} />
+                        <Bot size={18} strokeWidth={1.5} />
                         <span>Orchestrator Sync</span>
                     </button>
-                    <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1.5 border border-slate-200">
-                        <button onClick={prevPeriod} className="p-1.5 hover:bg-white rounded-lg shadow-sm transition-all text-slate-500"><ChevronLeft size={18} /></button>
-                        <span className="px-4 text-sm font-black text-slate-700 w-40 text-center uppercase tracking-widest">{format(currentDate, 'MMMM yyyy')}</span>
-                        <button onClick={nextPeriod} className="p-1.5 hover:bg-white rounded-lg shadow-sm transition-all text-slate-500"><ChevronRight size={18} /></button>
+                    <div className="flex items-center gap-1 bg-white/5 rounded-xl p-1.5 border border-slate-200">
+                        <button onClick={prevPeriod} className="p-1.5 hover:bg-white rounded-lg shadow-sm transition-all text-zinc-500"><ChevronLeft size={18} strokeWidth={1.5} /></button>
+                        <span className="px-4 text-sm font-black text-zinc-400 w-40 text-center uppercase tracking-widest">{format(currentDate, 'MMMM yyyy')}</span>
+                        <button onClick={nextPeriod} className="p-1.5 hover:bg-white rounded-lg shadow-sm transition-all text-zinc-500"><ChevronRight size={18} strokeWidth={1.5} /></button>
                     </div>
                 </div>
             </div>
@@ -142,7 +142,7 @@ const CalendarView = () => {
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 min-h-[700px]">
                         <div className="grid grid-cols-7 gap-px rounded-xl overflow-hidden border border-slate-200 bg-slate-200">
                             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                                <div key={day} className="bg-slate-50/80 backdrop-blur-sm p-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                <div key={day} className="bg-white/[0.03]/80 backdrop-blur-sm p-4 text-center text-[10px] font-black text-zinc-600 uppercase tracking-widest">
                                     {day}
                                 </div>
                             ))}
@@ -152,8 +152,8 @@ const CalendarView = () => {
                                 const dayAnchors = strategicAnchors.filter(a => isSameDay(a.date, day));
 
                                 return (
-                                    <div key={i} className={`bg-white min-h-[120px] p-3 transition-all hover:bg-slate-50/50 relative group ${!isCurrentMonth ? 'opacity-30 grayscale-[0.5]' : ''}`}>
-                                        <div className={`text-sm font-black mb-3 ${isToday ? 'bg-indigo-600 text-white w-7 h-7 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-200' : 'text-slate-400'}`}>
+                                    <div key={i} className={`bg-white min-h-[120px] p-3 transition-all hover:bg-white/[0.03]/50 relative group ${!isCurrentMonth ? 'opacity-30 grayscale-[0.5]' : ''}`}>
+                                        <div className={`text-sm font-black mb-3 ${isToday ? 'bg-[#1a6fff] text-white w-7 h-7 rounded-lg flex items-center justify-center shadow-lg shadow-cobalt/20' : 'text-zinc-600'}`}>
                                             {format(day, 'd')}
                                         </div>
 
@@ -162,11 +162,11 @@ const CalendarView = () => {
                                                 <div
                                                     key={anchor.id}
                                                     className={`p-1.5 rounded-lg text-[10px] font-bold border flex items-center gap-1 shadow-sm transition-transform cursor-pointer hover:scale-105 ${anchor.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                                                            anchor.status === 'in_progress' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
-                                                                'bg-slate-50 text-slate-600 border-slate-200'
+                                                        anchor.status === 'in_progress' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
+                                                            'bg-white/[0.03] text-zinc-500 border-slate-200'
                                                         }`}
                                                 >
-                                                    <Anchor size={10} className={anchor.status === 'in_progress' ? 'animate-pulse' : ''} />
+                                                    <Anchor size={10} strokeWidth={1.5} className={anchor.status === 'in_progress' ? 'animate-pulse' : ''} />
                                                     <span className="truncate">{anchor.title}</span>
                                                 </div>
                                             ))}
@@ -194,30 +194,30 @@ const CalendarView = () => {
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 className="bg-white rounded-2xl shadow-2xl border border-indigo-100 overflow-hidden flex flex-col h-[500px]"
                             >
-                                <div className="bg-indigo-600 p-5 text-white flex items-center justify-between">
+                                <div className="bg-[#1a6fff] p-5 text-white flex items-center justify-between">
                                     <h3 className="font-black text-xs uppercase tracking-widest flex items-center gap-2">
-                                        <Bot size={18} /> Orchestrator Sync
+                                        <Bot size={18} strokeWidth={1.5} /> Orchestrator Sync
                                     </h3>
-                                    <button onClick={() => setShowPAChat(false)} className="hover:rotate-90 transition-transform"><X size={18} /></button>
+                                    <button onClick={() => setShowPAChat(false)} className="hover:rotate-90 transition-transform"><X size={18} strokeWidth={1.5} /></button>
                                 </div>
-                                <div className="flex-1 p-5 overflow-y-auto space-y-4 bg-slate-50/50">
+                                <div className="flex-1 p-5 overflow-y-auto space-y-4 bg-white/[0.03]/50">
                                     {paMessages.map(msg => (
                                         <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed font-medium shadow-sm ${msg.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-700'}`}>
+                                            <div className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed font-medium shadow-sm ${msg.role === 'user' ? 'bg-[#1a6fff] text-white' : 'glass-panel text-zinc-400'}`}>
                                                 {msg.content}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                                <form onSubmit={handlePAMessage} className="p-4 bg-white border-t border-slate-100 flex gap-2">
+                                <form onSubmit={handlePAMessage} className="p-4 glass-panel-t border-slate-100 flex gap-2">
                                     <input
                                         type="text"
                                         value={paInput}
                                         onChange={e => setPaInput(e.target.value)}
                                         placeholder="Strategic command..."
-                                        className="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50"
+                                        className="flex-1 border border-slate-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/[0.03]"
                                     />
-                                    <button type="submit" className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all"><Send size={16} /></button>
+                                    <button type="submit" className="bg-[#1a6fff] text-white p-3 rounded-xl hover:bg-[#4d8fff] shadow-lg shadow-cobalt/10 transition-all"><Send size={16} strokeWidth={1.5} /></button>
                                 </form>
                             </motion.div>
                         )}
@@ -225,35 +225,35 @@ const CalendarView = () => {
 
                     {/* Autonomous Routines Panel */}
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <h3 className="font-black text-xs text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                            <Zap size={14} className="text-amber-500" /> Autonomous Routines
+                        <h3 className="font-black text-xs text-zinc-600 uppercase tracking-widest mb-6 flex items-center gap-2">
+                            <Zap size={14} className="text-amber-500" strokeWidth={1.5} /> Autonomous Routines
                         </h3>
                         <div className="space-y-4">
                             {autonomousRoutines.map(routine => (
-                                <div key={routine.id} className="p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:border-indigo-200 transition-all cursor-pointer group">
+                                <div key={routine.id} className="p-4 rounded-xl bg-white/[0.03]/50 border border-slate-100 hover:border-indigo-200 transition-all cursor-pointer group">
                                     <div className="flex justify-between items-start mb-2">
                                         <div className={`p-1.5 rounded-lg bg-white shadow-sm ${routine.color}`}>
-                                            <routine.icon size={14} />
+                                            <routine.icon size={14} strokeWidth={1.5} />
                                         </div>
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                                        <span className="text-[10px] font-black text-zinc-600 uppercase tracking-tighter">
                                             {routine.time || routine.day || routine.trigger}
                                         </span>
                                     </div>
-                                    <h4 className="font-bold text-xs text-slate-800 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{routine.title}</h4>
+                                    <h4 className="font-bold text-xs text-slate-800 group-hover:text-[#1a6fff] transition-colors uppercase tracking-tight">{routine.title}</h4>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     {/* Strategic Health Map */}
-                    <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl overflow-hidden relative">
+                    <div className="glass-panel text-zinc-100 p-6 rounded-2xl shadow-xl overflow-hidden relative">
                         <div className="absolute top-0 right-0 p-4 opacity-10">
-                            <Target size={64} />
+                            <Target size={64} strokeWidth={1.5} />
                         </div>
                         <h3 className="font-bold text-sm mb-4">Strategic Health</h3>
                         <div className="space-y-4">
                             <div className="flex justify-between items-center text-xs">
-                                <span className="text-slate-400 font-bold uppercase tracking-widest">Q1 Roadmap</span>
+                                <span className="text-zinc-600 font-bold uppercase tracking-widest">Q1 Roadmap</span>
                                 <span className="font-black text-emerald-400">72%</span>
                             </div>
                             <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -263,7 +263,7 @@ const CalendarView = () => {
                                     className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
                                 />
                             </div>
-                            <p className="text-[10px] text-slate-500 italic">"Autonomous workforce is operating within ±2% efficiency drift."</p>
+                            <p className="text-[10px] text-zinc-500 italic">"Autonomous workforce is operating within ±2% efficiency drift."</p>
                         </div>
                     </div>
                 </div>

@@ -46,12 +46,12 @@ const AdaptiveInsights = () => {
                 {/* Header */}
                 <header className="mb-10">
                     <div className="flex items-center gap-3 mb-2">
-                        <Brain className="text-violet-400 w-8 h-8" />
+                        <Brain className="text-violet-400 w-8 h-8" strokeWidth={1.5} />
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
                             Adaptive Intelligence
                         </h1>
                     </div>
-                    <p className="text-slate-400">Your AI is learning. Here's what it has discovered about you and your business.</p>
+                    <p className="text-zinc-600">Your AI is learning. Here's what it has discovered about you and your business.</p>
                 </header>
 
                 {/* Tabs */}
@@ -62,10 +62,10 @@ const AdaptiveInsights = () => {
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-5 py-3 rounded-t-lg text-sm font-medium transition-all
                 ${activeTab === tab.id
-                                    ? 'bg-slate-900 text-white border-b-2 border-violet-500'
-                                    : 'text-slate-500 hover:text-slate-300'}`}
+                                    ? 'glass-panel text-zinc-100 border-b-2 border-violet-500'
+                                    : 'text-zinc-500 hover:text-zinc-600'}`}
                         >
-                            <tab.icon size={16} />
+                            <tab.icon size={16} strokeWidth={1.5} />
                             {tab.label}
                         </button>
                     ))}
@@ -89,7 +89,7 @@ const AdaptiveInsights = () => {
                                             <span className="text-2xl">{style.icon}</span>
                                             <div>
                                                 <h3 className="text-lg font-semibold text-white">{pref.rule}</h3>
-                                                <p className="text-sm text-slate-400 mt-1">
+                                                <p className="text-sm text-zinc-600 mt-1">
                                                     <span className="capitalize">{pref.category}</span> • Observed {pref.signal_count}x • {pref.confidence}
                                                 </p>
                                             </div>
@@ -97,11 +97,11 @@ const AdaptiveInsights = () => {
                                         <div className="flex gap-2">
                                             {pref.confidence !== 'confirmed' && (
                                                 <button className="p-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 transition-colors" title="Confirm">
-                                                    <Check size={18} />
+                                                    <Check size={18} strokeWidth={1.5} />
                                                 </button>
                                             )}
                                             <button className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors" title="Dismiss">
-                                                <X size={18} />
+                                                <X size={18} strokeWidth={1.5} />
                                             </button>
                                         </div>
                                     </motion.div>
@@ -124,15 +124,15 @@ const AdaptiveInsights = () => {
                             >
                                 <div className="flex items-start gap-4">
                                     <div className="p-3 rounded-xl bg-violet-500/10">
-                                        <Lightbulb className="text-violet-400" />
+                                        <Lightbulb className="text-violet-400" strokeWidth={1.5} />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="text-lg font-semibold">{pattern.insight}</h3>
                                         <div className="mt-3 p-3 rounded-lg bg-slate-950 border border-slate-800 flex items-center gap-2">
-                                            <Zap size={14} className="text-amber-400" />
+                                            <Zap size={14} className="text-amber-400" strokeWidth={1.5} />
                                             <span className="text-sm text-amber-300">{pattern.recommendation}</span>
                                         </div>
-                                        <div className="mt-3 flex gap-4 text-xs text-slate-500">
+                                        <div className="mt-3 flex gap-4 text-xs text-zinc-500">
                                             <span>Confidence: {Math.round(pattern.confidence_score * 100)}%</span>
                                             <span>•</span>
                                             <span>Based on {pattern.sample_size} data points</span>
@@ -158,19 +158,19 @@ const AdaptiveInsights = () => {
                     <div className="grid grid-cols-4 gap-4">
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center">
                             <p className="text-4xl font-bold text-white">{performance.total_actions}</p>
-                            <p className="text-sm text-slate-400 mt-2">Total Actions</p>
+                            <p className="text-sm text-zinc-600 mt-2">Total Actions</p>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center">
                             <p className="text-4xl font-bold text-emerald-400">{performance.avg_score?.toFixed(1)}/5</p>
-                            <p className="text-sm text-slate-400 mt-2">Avg Score</p>
+                            <p className="text-sm text-zinc-600 mt-2">Avg Score</p>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center">
                             <p className="text-4xl font-bold text-violet-400">{Math.round((performance.excellent_rate || 0) * 100)}%</p>
-                            <p className="text-sm text-slate-400 mt-2">Excellence Rate</p>
+                            <p className="text-sm text-zinc-600 mt-2">Excellence Rate</p>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center">
                             <p className="text-4xl font-bold text-red-400">{Math.round((performance.failure_rate || 0) * 100)}%</p>
-                            <p className="text-sm text-slate-400 mt-2">Failure Rate</p>
+                            <p className="text-sm text-zinc-600 mt-2">Failure Rate</p>
                         </motion.div>
                     </div>
                 )}

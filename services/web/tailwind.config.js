@@ -17,7 +17,36 @@ module.exports = {
             },
         },
         extend: {
+            fontFamily: {
+                sans: ['Inter', 'sans-serif'],
+                heading: ['"Space Grotesk"', 'sans-serif'],
+            },
             colors: {
+                // Primary Accent — Cobalt Blue
+                cobalt: {
+                    DEFAULT: '#1a6fff',
+                    light: '#4d8fff',
+                    dark: '#0f4fcc',
+                    glow: 'rgba(26, 111, 255, 0.15)',
+                },
+
+                // Dark Surfaces
+                surface: {
+                    base: '#03050a',
+                    raised: '#070b14',
+                    card: '#0d1628',
+                    overlay: '#111b2e',
+                    border: 'rgba(255, 255, 255, 0.08)',
+                },
+
+                // Functional Colors (muted for dark mode)
+                status: {
+                    success: '#22c55e',
+                    warning: '#f59e0b',
+                    critical: '#ef4444',
+                },
+
+                // Shadcn/UI semantic tokens
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",
@@ -66,10 +95,25 @@ module.exports = {
                     from: { height: "var(--radix-accordion-content-height)" },
                     to: { height: "0" },
                 },
+                'shimmer': {
+                    '100%': { transform: 'translateX(100%)' },
+                },
+                'glow': {
+                    '0%, 100%': { opacity: 0.7 },
+                    '50%': { opacity: 1 },
+                },
+                'pulse-slow': {
+                    '0%, 100%': { opacity: 0.03, transform: 'scale(1)' },
+                    '50%': { opacity: 0.06, transform: 'scale(1.05)' },
+                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+                'pulse-gentle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'shimmer': 'shimmer 2s infinite',
+                'glow': 'glow 2s ease-in-out infinite alternate',
+                'pulse-slow': 'pulse-slow 15s ease-in-out infinite alternate',
             },
         },
     },

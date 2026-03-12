@@ -51,12 +51,12 @@ const ExecutiveReview = () => {
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                             Executive Review Hub
                         </h1>
-                        <p className="text-slate-400 mt-1">Authorize sensitive AI actions and financial transactions.</p>
+                        <p className="text-zinc-600 mt-1">Authorize sensitive AI actions and financial transactions.</p>
                     </div>
                     <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center gap-4">
-                        <Shield className="text-blue-400 w-5 h-5" />
+                        <Shield className="text-blue-400 w-5 h-5" strokeWidth={1.5} />
                         <div>
-                            <label className="text-xs text-slate-500 uppercase tracking-wider block mb-1">Safety Threshold</label>
+                            <label className="text-xs text-zinc-500 uppercase tracking-wider block mb-1">Safety Threshold</label>
                             <div className="flex items-center gap-2">
                                 <span className="text-xl font-mono text-white">${threshold}</span>
                                 <button
@@ -83,9 +83,9 @@ const ExecutiveReview = () => {
                                     animate={{ opacity: 1 }}
                                     className="text-center p-20 bg-slate-900/50 rounded-2xl border border-dashed border-slate-800"
                                 >
-                                    <Lock className="mx-auto text-slate-700 w-12 h-12 mb-4" />
-                                    <h3 className="text-xl font-medium text-slate-400">All Clear</h3>
-                                    <p className="text-slate-500">No pending actions require your authorization.</p>
+                                    <Lock className="mx-auto text-zinc-400 w-12 h-12 mb-4" strokeWidth={1.5} />
+                                    <h3 className="text-xl font-medium text-zinc-600">All Clear</h3>
+                                    <p className="text-zinc-500">No pending actions require your authorization.</p>
                                 </motion.div>
                             ) : (
                                 requests.map((req) => (
@@ -99,13 +99,13 @@ const ExecutiveReview = () => {
                                     >
                                         <div className="p-6 flex items-start gap-6">
                                             <div className={`p-4 rounded-xl ${req.action_type === 'financial' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
-                                                {req.action_type === 'financial' ? <CreditCard /> : <Send />}
+                                                {req.action_type === 'financial' ? <CreditCard strokeWidth={1.5} /> : <Send strokeWidth={1.5} />}
                                             </div>
 
                                             <div className="flex-1">
                                                 <div className="flex justify-between items-start">
                                                     <div>
-                                                        <span className="text-xs font-mono text-slate-500 uppercase tracking-tighter mb-1 block">
+                                                        <span className="text-xs font-mono text-zinc-500 uppercase tracking-tighter mb-1 block">
                                                             {req.agent_id} • {new Date(req.created_at).toLocaleTimeString()}
                                                         </span>
                                                         <h3 className="text-lg font-semibold">{req.description}</h3>
@@ -117,22 +117,22 @@ const ExecutiveReview = () => {
                                                     </div>
                                                 </div>
 
-                                                <div className="mt-4 p-3 bg-slate-950/50 rounded-lg text-sm font-mono text-slate-400 overflow-x-auto">
+                                                <div className="mt-4 p-3 bg-slate-950/50 rounded-lg text-sm font-mono text-zinc-600 overflow-x-auto">
                                                     <pre>{JSON.stringify(req.params, null, 2)}</pre>
                                                 </div>
 
                                                 <div className="mt-6 flex justify-end gap-3">
                                                     <button
                                                         onClick={() => handleDeny(req.id)}
-                                                        className="flex items-center gap-2 px-6 py-2 rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-300 hover:text-red-400 transition-all border border-transparent hover:border-red-500/30"
+                                                        className="flex items-center gap-2 px-6 py-2 rounded-lg bg-slate-800 hover:bg-red-500/20 text-zinc-600 hover:text-red-400 transition-all border border-transparent hover:border-red-500/30"
                                                     >
-                                                        <X size={18} /> Deny
+                                                        <X size={18} strokeWidth={1.5} /> Deny
                                                     </button>
                                                     <button
                                                         onClick={() => handleAuthorize(req.id)}
-                                                        className="flex items-center gap-2 px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-lg hover:shadow-blue-500/20"
+                                                        className="flex items-center gap-2 px-6 py-2 rounded-lg bg-blue-600 hover:bg-[#1a6fff] text-white transition-all shadow-lg hover:shadow-blue-500/20"
                                                     >
-                                                        <Check size={18} /> Authorize Action
+                                                        <Check size={18} strokeWidth={1.5} /> Authorize Action
                                                     </button>
                                                 </div>
                                             </div>

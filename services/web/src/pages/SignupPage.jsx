@@ -26,9 +26,9 @@ function SignupPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-white/[0.03] flex items-center justify-center p-4">
             <div className="max-w-4xl w-full grid md:grid-cols-2 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
-                <div className="p-12 bg-slate-900 text-white flex flex-col justify-between">
+                <div className="p-12 glass-panel text-zinc-100 flex flex-col justify-between">
                     <div>
                         <div className="flex items-center gap-2 mb-12">
                             <div className="w-10 h-10 bg-sky-500 rounded-lg flex items-center justify-center font-bold text-xl">E</div>
@@ -37,36 +37,36 @@ function SignupPage() {
                         <h2 className="text-4xl font-extrabold mb-6 leading-tight">Start Building Your AI Workforce.</h2>
                         <div className="space-y-6">
                             <div className="flex items-start gap-4">
-                                <div className="bg-sky-500/20 p-2 rounded-lg"><Sparkles className="text-sky-400" /></div>
+                                <div className="bg-sky-500/20 p-2 rounded-lg"><Sparkles className="text-sky-400" strokeWidth={1.5} /></div>
                                 <div>
                                     <p className="font-bold">115+ Agents Included</p>
-                                    <p className="text-slate-400 text-sm">Full access to the entire executive suite.</p>
+                                    <p className="text-zinc-600 text-sm">Full access to the entire executive suite.</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="bg-emerald-500/20 p-2 rounded-lg"><ShieldCheck className="text-emerald-400" /></div>
+                                <div className="bg-emerald-500/20 p-2 rounded-lg"><ShieldCheck className="text-emerald-400" strokeWidth={1.5} /></div>
                                 <div>
                                     <p className="font-bold">Judge Layer Protection</p>
-                                    <p className="text-slate-400 text-sm">Professional quality guaranteed natively.</p>
+                                    <p className="text-zinc-600 text-sm">Professional quality guaranteed natively.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="pt-12 border-t border-slate-800 mt-12">
-                        <p className="text-slate-400 italic">"The only platform that doesn't just give you tools, but a team that works for you."</p>
+                        <p className="text-zinc-600 italic">"The only platform that doesn't just give you tools, but a team that works for you."</p>
                     </div>
                 </div>
 
                 <div className="p-12">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold mb-2">Create Account</h1>
-                        <p className="text-slate-500">You've selected the <span className="text-sky-600 font-bold uppercase">{selectedPlan}</span> plan.</p>
+                        <p className="text-zinc-500">You've selected the <span className="text-sky-600 font-bold uppercase">{selectedPlan}</span> plan.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="text-sm font-bold text-slate-700 block mb-1">Full Name</label>
+                            <label className="text-sm font-bold text-zinc-400 block mb-1">Full Name</label>
                             <Input
                                 className="h-12 rounded-xl"
                                 placeholder="John Doe"
@@ -75,7 +75,7 @@ function SignupPage() {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-bold text-slate-700 block mb-1">Business Email</label>
+                            <label className="text-sm font-bold text-zinc-400 block mb-1">Business Email</label>
                             <Input
                                 type="email"
                                 className="h-12 rounded-xl"
@@ -85,7 +85,7 @@ function SignupPage() {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-bold text-slate-700 block mb-1">Company Name</label>
+                            <label className="text-sm font-bold text-zinc-400 block mb-1">Company Name</label>
                             <Input
                                 className="h-12 rounded-xl"
                                 placeholder="Acme Corp"
@@ -94,7 +94,7 @@ function SignupPage() {
                             />
                         </div>
                         <div>
-                            <label className="text-sm font-bold text-slate-700 block mb-1">Password</label>
+                            <label className="text-sm font-bold text-zinc-400 block mb-1">Password</label>
                             <Input
                                 type="password"
                                 className="h-12 rounded-xl"
@@ -105,11 +105,11 @@ function SignupPage() {
                         </div>
 
                         <Button className="w-full h-12 bg-slate-900 rounded-xl font-bold mt-4">
-                            Create My Account <ArrowRight className="ml-2 w-4 h-4" />
+                            Create My Account <ArrowRight className="ml-2 w-4 h-4" strokeWidth={1.5} />
                         </Button>
                     </form>
 
-                    <p className="text-center text-sm text-slate-500 mt-8">
+                    <p className="text-center text-sm text-zinc-500 mt-8">
                         Already have an account? <Link to="/login" className="text-sky-600 font-bold">Login</Link>
                     </p>
                 </div>

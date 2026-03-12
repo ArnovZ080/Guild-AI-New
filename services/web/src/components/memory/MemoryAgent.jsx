@@ -47,17 +47,17 @@ const MemoryAgent = () => {
             <div className="mb-8 flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-                        <Brain className="w-8 h-8 text-indigo-600" />
+                        <Brain className="w-8 h-8 text-[#1a6fff]" strokeWidth={1.5} />
                         Organizational Memory
                     </h1>
                     <p className="text-gray-600">The collective intelligence and context of your AI workforce.</p>
                 </div>
                 <div className="flex gap-2">
-                    <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 flex items-center gap-2">
-                        <Upload size={18} /> Import
+                    <button className="glass-panel border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 flex items-center gap-2">
+                        <Upload size={18} strokeWidth={1.5} /> Import
                     </button>
-                    <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 flex items-center gap-2">
-                        <Plus size={18} /> Add Memory
+                    <button className="bg-[#1a6fff] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#4d8fff] flex items-center gap-2">
+                        <Plus size={18} strokeWidth={1.5} /> Add Memory
                     </button>
                 </div>
             </div>
@@ -66,15 +66,15 @@ const MemoryAgent = () => {
                 {/* Stats Column */}
                 <div className="space-y-4">
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <div className="text-sm font-bold text-gray-500 uppercase mb-2">Total Memories</div>
+                        <div className="text-sm font-bold text-zinc-500 uppercase mb-2">Total Memories</div>
                         <div className="text-3xl font-bold text-indigo-900">{memories.length}</div>
                     </div>
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <div className="text-sm font-bold text-gray-500 uppercase mb-2">Graph Connections</div>
+                        <div className="text-sm font-bold text-zinc-500 uppercase mb-2">Graph Connections</div>
                         <div className="text-3xl font-bold text-purple-900">42</div>
                     </div>
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        <div className="text-sm font-bold text-gray-500 uppercase mb-2">Knowledge Gaps</div>
+                        <div className="text-sm font-bold text-zinc-500 uppercase mb-2">Knowledge Gaps</div>
                         <div className="text-3xl font-bold text-amber-600">3</div>
                         <p className="text-xs text-amber-600 mt-1">Detected in "Competitor Analysis"</p>
                     </div>
@@ -85,7 +85,7 @@ const MemoryAgent = () => {
                     {/* Search Bar */}
                     <div className="flex gap-4">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500 w-4 h-4" strokeWidth={1.5} />
                             <input
                                 type="text"
                                 placeholder="Search memories..."
@@ -125,23 +125,23 @@ const MemoryAgent = () => {
                                                 }`}>
                                                 {m.type}
                                             </span>
-                                            <span className="text-xs text-gray-400 flex items-center gap-1">
-                                                <Clock size={12} /> {new Date(m.timestamp).toLocaleDateString()}
+                                            <span className="text-xs text-zinc-500 flex items-center gap-1">
+                                                <Clock size={12} strokeWidth={1.5} /> {new Date(m.timestamp).toLocaleDateString()}
                                             </span>
                                         </div>
                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="p-1 hover:bg-gray-100 rounded text-gray-500"><Edit size={16} /></button>
+                                            <button className="p-1 hover:bg-gray-100 rounded text-zinc-500"><Edit size={16} strokeWidth={1.5} /></button>
                                         </div>
                                     </div>
                                     <p className="text-gray-800 text-lg font-medium leading-relaxed mb-3">
                                         "{m.content}"
                                     </p>
                                     <div className="flex items-center justify-between text-sm">
-                                        <div className="flex items-center gap-2 text-gray-500">
-                                            <Database size={14} /> Source: <span className="font-semibold text-gray-700">{m.source}</span>
+                                        <div className="flex items-center gap-2 text-zinc-500">
+                                            <Database size={14} strokeWidth={1.5} /> Source: <span className="font-semibold text-gray-700">{m.source}</span>
                                         </div>
                                         <div className="flex items-center gap-1 text-emerald-600 font-bold">
-                                            <CheckCircle size={14} /> {(m.confidence * 100).toFixed(0)}% Confidence
+                                            <CheckCircle size={14} strokeWidth={1.5} /> {(m.confidence * 100).toFixed(0)}% Confidence
                                         </div>
                                     </div>
                                 </motion.div>

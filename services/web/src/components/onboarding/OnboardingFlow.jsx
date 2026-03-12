@@ -94,7 +94,7 @@ const OnboardingFlow = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-slate-50 p-8">
+        <div className="flex flex-col h-screen bg-white/[0.03] p-8">
             <div className="max-w-5xl mx-auto w-full flex flex-col h-full bg-white rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden">
 
                 {/* Stepper Header */}
@@ -102,16 +102,16 @@ const OnboardingFlow = () => {
                     <div className="flex justify-between items-center mb-10">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-indigo-500 rounded-2xl shadow-lg shadow-indigo-500/30">
-                                <Sparkles size={28} />
+                                <Sparkles size={28} strokeWidth={1.5} />
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight">Business Induction</h1>
-                                <p className="text-slate-400 text-sm">Phase 4: Persistent Context Alignment</p>
+                                <p className="text-zinc-600 text-sm">Phase 4: Persistent Context Alignment</p>
                             </div>
                         </div>
                         <div className="text-right">
                             <span className="text-3xl font-black text-indigo-400">0{currentStep + 1}</span>
-                            <span className="text-slate-500 text-sm ml-2">/ 04</span>
+                            <span className="text-zinc-500 text-sm ml-2">/ 04</span>
                         </div>
                     </div>
 
@@ -120,8 +120,8 @@ const OnboardingFlow = () => {
                             <div key={step.id} className={`flex-1 group cursor-pointer ${idx > currentStep ? 'opacity-30' : ''}`}>
                                 <div className={`h-1 rounded-full mb-3 transition-all ${idx <= currentStep ? 'bg-indigo-500' : 'bg-slate-700'}`} />
                                 <div className="flex items-center gap-3">
-                                    <step.icon size={16} className={idx === currentStep ? 'text-indigo-400' : 'text-slate-500'} />
-                                    <span className={`text-[10px] font-black uppercase tracking-widest ${idx === currentStep ? 'text-white' : 'text-slate-500'}`}>
+                                    <step.icon size={16} className={idx === currentStep ? 'text-indigo-400' : 'text-zinc-500'} />
+                                    <span className={`text-[10px] font-black uppercase tracking-widest ${idx === currentStep ? 'text-white' : 'text-zinc-500'}`}>
                                         {step.title}
                                     </span>
                                 </div>
@@ -131,7 +131,7 @@ const OnboardingFlow = () => {
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-12 bg-slate-50/50">
+                <div className="flex-1 overflow-y-auto p-12 bg-white/[0.03]/50">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={STEPS[currentStep].id}
@@ -142,28 +142,28 @@ const OnboardingFlow = () => {
                         >
                             <div className="mb-10 text-center">
                                 <h2 className="text-3xl font-bold text-slate-900 mb-3">{STEPS[currentStep].description}</h2>
-                                <p className="text-slate-500">Provide these details to train your Orchestrator on your specific business DNA.</p>
+                                <p className="text-zinc-500">Provide these details to train your Orchestrator on your specific business DNA.</p>
                             </div>
 
                             {/* Step Components */}
                             {currentStep === 0 && (
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Company Legal Name</label>
+                                        <label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Company Legal Name</label>
                                         <input
                                             type="text"
                                             value={identity.business_name}
                                             onChange={(e) => setIdentity({ ...identity, business_name: e.target.value })}
-                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                                             placeholder="e.g. Acme Innovations"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Business Niche & Mission</label>
+                                        <label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Business Niche & Mission</label>
                                         <textarea
                                             value={identity.niche}
                                             onChange={(e) => setIdentity({ ...identity, niche: e.target.value })}
-                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all h-32"
+                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all h-32"
                                             placeholder="What exactly do you do and what is your unique value proposition?"
                                         />
                                     </div>
@@ -174,31 +174,31 @@ const OnboardingFlow = () => {
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Brand Voice</label>
+                                            <label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Brand Voice</label>
                                             <input
                                                 type="text"
                                                 value={identity.brand.voice}
                                                 onChange={(e) => setIdentity({ ...identity, brand: { ...identity.brand, voice: e.target.value } })}
-                                                className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                                className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                                                 placeholder="e.g. Authoritative"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Content Tone</label>
+                                            <label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Content Tone</label>
                                             <input
                                                 type="text"
                                                 value={identity.brand.tone}
                                                 onChange={(e) => setIdentity({ ...identity, brand: { ...identity.brand, tone: e.target.value } })}
-                                                className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                                className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                                                 placeholder="e.g. Humorous"
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Vocabulary (Keywords)</label>
+                                        <label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Vocabulary (Keywords)</label>
                                         <input
                                             type="text"
-                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                                             placeholder="Comma separated terms your brand loves..."
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Enter') {
@@ -210,7 +210,7 @@ const OnboardingFlow = () => {
                                         />
                                         <div className="flex flex-wrap gap-2 mt-2">
                                             {identity.brand.vocabulary.map((v, i) => (
-                                                <span key={i} className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold border border-indigo-100">{v}</span>
+                                                <span key={i} className="px-3 py-1 bg-indigo-50 text-[#1a6fff] rounded-lg text-xs font-bold border border-indigo-100">{v}</span>
                                             ))}
                                         </div>
                                     </div>
@@ -220,11 +220,11 @@ const OnboardingFlow = () => {
                             {currentStep === 2 && (
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ideal Client Profile</label>
+                                        <label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-1">Ideal Client Profile</label>
                                         <textarea
                                             value={identity.icp.ideal_client_description}
                                             onChange={(e) => setIdentity({ ...identity, icp: { ...identity.icp, ideal_client_description: e.target.value } })}
-                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none h-48"
+                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none h-48"
                                             placeholder="Describe your perfect customer in detail. Who are they? What do they value?"
                                         />
                                     </div>
@@ -240,11 +240,11 @@ const OnboardingFlow = () => {
                                             onChange={handleFileUpload}
                                             className="absolute inset-0 opacity-0 cursor-pointer"
                                         />
-                                        <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all">
-                                            <Upload className="text-slate-400 group-hover:text-indigo-500" />
+                                        <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all">
+                                            <Upload className="text-zinc-600 group-hover:text-indigo-500" strokeWidth={1.5} />
                                         </div>
                                         <h3 className="text-xl font-bold text-slate-900 mb-2">Upload Business Intelligence</h3>
-                                        <p className="text-slate-500">Brand guidelines, product catalogs, or internal strategy docs.</p>
+                                        <p className="text-zinc-500">Brand guidelines, product catalogs, or internal strategy docs.</p>
                                     </div>
 
                                     {files.length > 0 && (
@@ -252,10 +252,10 @@ const OnboardingFlow = () => {
                                             {files.map((f, i) => (
                                                 <div key={i} className="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
                                                     <div className="flex items-center gap-3">
-                                                        <Database size={18} className="text-indigo-400" />
-                                                        <span className="text-sm font-bold text-slate-700">{f.name}</span>
+                                                        <Database size={18} className="text-indigo-400" strokeWidth={1.5} />
+                                                        <span className="text-sm font-bold text-zinc-400">{f.name}</span>
                                                     </div>
-                                                    <CheckCircle size={18} className="text-emerald-500" />
+                                                    <CheckCircle size={18} className="text-emerald-500" strokeWidth={1.5} />
                                                 </div>
                                             ))}
                                         </div>
@@ -272,16 +272,16 @@ const OnboardingFlow = () => {
                     <button
                         onClick={handleBack}
                         disabled={currentStep === 0}
-                        className="px-8 py-4 text-slate-400 font-black uppercase tracking-widest text-[10px] hover:text-slate-900 disabled:opacity-30 transition-all"
+                        className="px-8 py-4 text-zinc-600 font-black uppercase tracking-widest text-[10px] hover:text-slate-900 disabled:opacity-30 transition-all"
                     >
                         Back
                     </button>
                     <button
                         onClick={handleNext}
-                        className="px-12 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all flex items-center gap-3 group"
+                        className="px-12 py-4 bg-[#1a6fff] text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-indigo-600/30 hover:bg-[#4d8fff] transition-all flex items-center gap-3 group"
                     >
                         {currentStep === STEPS.length - 1 ? (isSaving ? 'Finalizing DNA...' : 'Finish Induction') : 'Continue Journey'}
-                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-all" />
+                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-all" strokeWidth={1.5} />
                     </button>
                 </div>
 

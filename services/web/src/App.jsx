@@ -27,55 +27,58 @@ function AppContent() {
   const isPublicPage = publicPaths.includes(location.pathname);
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen" style={{ backgroundColor: '#090a0f' }}>
+      {/* Liquid ambient background — always behind everything */}
+      <div className="ambient-bg" />
+
       {/* Sidebar Navigation - Hidden on Public Pages */}
       {!isPublicPage && (
-        <aside className="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-10">
-          <div className="p-6 border-b border-slate-800">
-            <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="font-bold text-white">E</span>
+        <aside className="w-64 glass-panel text-zinc-400 flex flex-col fixed h-full z-10 border-r border-white/5">
+          <div className="p-6 border-b border-white/5">
+            <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 font-heading">
+              <div className="w-8 h-8 gradient-cobalt rounded-lg flex items-center justify-center shadow-lg shadow-cobalt/20">
+                <span className="font-bold text-white text-sm">G</span>
               </div>
-              Executive
+              <span className="text-gradient-cobalt">Guild AI</span>
             </h2>
           </div>
 
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            <Link to="/" className="flex items-center gap-3 px-4 py-3 bg-indigo-600 rounded-xl text-white font-medium shadow-lg shadow-indigo-900/20 hover:bg-indigo-700 transition-colors">
-              <LayoutDashboard size={20} /> Dashboard
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            <Link to="/" className="flex items-center gap-3 px-4 py-2.5 bg-cobalt/15 rounded-lg text-zinc-100 font-medium border border-cobalt/20 transition-all duration-200">
+              <LayoutDashboard size={18} strokeWidth={1.5} /> Dashboard
             </Link>
-            <Link to="/chat" className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white font-medium transition-colors">
-              <MessageSquare size={20} /> Executive Chat
+            <Link to="/chat" className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-zinc-300 font-medium transition-all duration-200">
+              <MessageSquare size={18} strokeWidth={1.5} /> Executive Chat
             </Link>
-            <Link to="/calendar" className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white font-medium transition-colors">
-              <Calendar size={20} /> Strategic Calendar
+            <Link to="/calendar" className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-zinc-300 font-medium transition-all duration-200">
+              <Calendar size={18} strokeWidth={1.5} /> Strategic Calendar
             </Link>
-            <Link to="/content" className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white font-medium transition-colors">
-              <Sparkles size={20} /> Content Hub
+            <Link to="/content" className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-zinc-300 font-medium transition-all duration-200">
+              <Sparkles size={18} strokeWidth={1.5} /> Content Hub
             </Link>
-            <Link to="/workflows" className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white font-medium transition-colors">
-              <Sliders size={20} /> Workflow Builder
+            <Link to="/workflows" className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-zinc-300 font-medium transition-all duration-200">
+              <Sliders size={18} strokeWidth={1.5} /> Workflow Builder
             </Link>
-            <div className="pt-4 mt-4 border-t border-slate-800">
-              <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Platform</p>
-              <Link to="/memory" className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white font-medium transition-colors">
-                <Brain size={20} /> Memory
+            <div className="pt-4 mt-4 border-t border-white/5">
+              <p className="px-4 text-[10px] font-medium text-zinc-700 uppercase tracking-wider mb-2">Platform</p>
+              <Link to="/memory" className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-zinc-300 font-medium transition-all duration-200">
+                <Brain size={18} strokeWidth={1.5} /> Memory
               </Link>
-              <Link to="/connectors" className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white font-medium transition-colors">
-                <LinkIcon size={20} /> Connectors
+              <Link to="/connectors" className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-zinc-300 font-medium transition-all duration-200">
+                <LinkIcon size={18} strokeWidth={1.5} /> Connectors
               </Link>
-              <Link to="/onboarding" className="flex items-center gap-3 px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white font-medium transition-colors">
-                <Sparkles size={20} /> Onboarding
+              <Link to="/onboarding" className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-zinc-300 font-medium transition-all duration-200">
+                <Sparkles size={18} strokeWidth={1.5} /> Onboarding
               </Link>
             </div>
           </nav>
 
-          <div className="p-4 border-t border-slate-800">
+          <div className="p-4 border-t border-white/5">
             <div className="flex items-center gap-3 px-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border border-white/20" />
+              <div className="w-8 h-8 rounded-full gradient-cobalt border border-white/5" />
               <div>
-                <p className="text-sm font-bold">Arno van Zyl</p>
-                <p className="text-xs text-slate-400">CEO</p>
+                <p className="text-sm font-medium text-zinc-300">Arno van Zyl</p>
+                <p className="text-xs text-zinc-600">CEO</p>
               </div>
             </div>
           </div>
@@ -104,7 +107,7 @@ function AppContent() {
           <Route path="/memory" element={<MemoryAgent />} />
           <Route path="/connectors" element={<ConnectorManager />} />
           <Route path="/onboarding" element={<div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div>} />
-          <Route path="/settings" element={<div className="p-8 text-slate-500">Settings Coming Soon</div>} />
+          <Route path="/settings" element={<div className="p-8 text-zinc-500">Settings Coming Soon</div>} />
         </Routes>
       </main>
     </div>

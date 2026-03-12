@@ -65,31 +65,31 @@ const WorkflowBuilder = () => {
     };
 
     return (
-        <div className="h-full flex flex-col bg-slate-50 relative">
-            <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between shadow-sm z-10 relative">
+        <div className="h-full flex flex-col bg-white/[0.03] relative">
+            <div className="glass-panel-b border-gray-200 p-4 flex items-center justify-between shadow-sm z-10 relative">
                 <div>
                     <h1 className="text-xl font-bold text-gray-900">Workflow Builder</h1>
-                    <p className="text-xs text-gray-500">Design autonomous agent processes</p>
+                    <p className="text-xs text-zinc-500">Design autonomous agent processes</p>
                 </div>
                 <div className="flex gap-2">
                     <button
                         onClick={addNode}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-50 text-gray-700 font-medium"
+                        className="flex items-center gap-2 px-3 py-1.5 glass-panel border-gray-300 rounded-lg text-sm hover:bg-gray-50 text-gray-700 font-medium"
                     >
-                        <Plus size={16} /> Add Node
+                        <Plus size={16} strokeWidth={1.5} /> Add Node
                     </button>
-                    <button className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 font-medium shadow-sm">
-                        <Save size={16} /> Save Workflow
+                    <button className="flex items-center gap-2 px-3 py-1.5 bg-[#1a6fff] text-white rounded-lg text-sm hover:bg-[#4d8fff] font-medium shadow-sm">
+                        <Save size={16} strokeWidth={1.5} /> Save Workflow
                     </button>
                     <button className="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 font-medium shadow-sm">
-                        <Play size={16} /> Run
+                        <Play size={16} strokeWidth={1.5} /> Run
                     </button>
                 </div>
             </div>
 
             <div className="flex-1 relative flex">
                 {/* Canvas */}
-                <div className="flex-1 h-[calc(100vh-140px)] bg-slate-50">
+                <div className="flex-1 h-[calc(100vh-140px)] bg-white/[0.03]">
                     <ReactFlow
                         nodes={nodes}
                         edges={edges}
@@ -110,16 +110,16 @@ const WorkflowBuilder = () => {
                         initial={{ x: 300, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: 300, opacity: 0 }}
-                        className="w-80 bg-white border-l border-gray-200 p-4 shadow-xl z-20 absolute right-0 top-0 bottom-0 overflow-y-auto"
+                        className="w-80 glass-panel-l border-gray-200 p-4 shadow-xl z-20 absolute right-0 top-0 bottom-0 overflow-y-auto"
                     >
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-bold text-gray-900">Properties</h3>
-                            <button onClick={() => setSelectedNode(null)} className="text-gray-400 hover:text-gray-600"><Trash2 size={16} /></button>
+                            <button onClick={() => setSelectedNode(null)} className="text-zinc-500 hover:text-gray-600"><Trash2 size={16} strokeWidth={1.5} /></button>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 uppercase mb-1">Label</label>
+                                <label className="block text-xs font-medium text-zinc-500 uppercase mb-1">Label</label>
                                 <input
                                     type="text"
                                     value={selectedNode.data.label}
@@ -137,7 +137,7 @@ const WorkflowBuilder = () => {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-gray-500 uppercase mb-1">Type</label>
+                                <label className="block text-xs font-medium text-zinc-500 uppercase mb-1">Type</label>
                                 <select className="w-full border border-gray-300 rounded px-2 py-1 text-sm bg-white">
                                     <option>Agent Task</option>
                                     <option>API Trigger</option>

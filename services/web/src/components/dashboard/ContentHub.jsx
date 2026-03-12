@@ -12,13 +12,13 @@ import {
     BarChart3,
     Zap,
     MoreHorizontal,
-    ArrowUpRight
+    ArrowUpRight,
+    Activity
 } from 'lucide-react';
 
 const ContentHub = () => {
     const [activeTab, setActiveTab] = useState('authority');
 
-    // Mock Data for Content Approval
     const [pendingApprovals, setPendingApprovals] = useState([
         {
             id: 'cont_1',
@@ -43,9 +43,9 @@ const ContentHub = () => {
     ]);
 
     const stats = [
-        { label: "Content Reach", value: "1.2M", trend: "+12.5%", icon: Eye, color: "text-blue-600" },
-        { label: "Engagement Rate", value: "4.8%", trend: "+0.3%", icon: Zap, color: "text-emerald-600" },
-        { label: "Conversion ROI", value: "18.2%", trend: "+2.1%", icon: TrendingUp, color: "text-indigo-600" }
+        { label: "Content Reach", value: "1.2M", trend: "+12.5%", icon: Eye, color: "text-cobalt-light" },
+        { label: "Engagement Rate", value: "4.8%", trend: "+0.3%", icon: Zap, color: "text-emerald-400" },
+        { label: "Conversion ROI", value: "18.2%", trend: "+2.1%", icon: TrendingUp, color: "text-cyan-400" }
     ];
 
     const handleApprove = (id) => {
@@ -61,110 +61,110 @@ const ContentHub = () => {
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Content Intelligence Hub</h1>
-                    <p className="text-slate-500 font-medium">Authorizing and optimizing autonomous content operations</p>
+                    <h1 className="text-3xl font-bold text-zinc-100 tracking-tight font-heading">Content Intelligence Hub</h1>
+                    <p className="text-zinc-500 font-medium">Authorizing and optimizing autonomous content operations</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2">
-                        <Calendar size={16} /> Schedule
+                    <button className="px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-sm font-medium text-zinc-500 hover:bg-white/10 hover:text-zinc-300 transition-all flex items-center gap-2">
+                        <Calendar size={16} strokeWidth={1.5} /> Schedule
                     </button>
-                    <button className="px-4 py-2 bg-indigo-600 rounded-xl text-sm font-bold text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-colors flex items-center gap-2">
-                        <Sparkles size={16} /> Generate Strategy
+                    <button className="px-4 py-2 bg-cobalt rounded-xl text-sm font-medium text-white hover:bg-cobalt-light shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition-all flex items-center gap-2">
+                        <Sparkles size={16} strokeWidth={1.5} /> Generate Strategy
                     </button>
                 </div>
             </header>
 
             {/* Tactical Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {stats.map((stat, i) => (
                     <motion.div
                         key={i}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"
+                        className="glass-panel p-5 rounded-xl"
                     >
-                        <div className="flex justify-between items-start mb-4">
-                            <div className={`p-2 rounded-lg bg-slate-50 ${stat.color}`}>
-                                <stat.icon size={20} />
+                        <div className="flex justify-between items-start mb-3">
+                            <div className={`p-2 rounded-lg bg-white/5 ${stat.color}`}>
+                                <stat.icon size={18} strokeWidth={1.5} />
                             </div>
-                            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full uppercase tracking-wider">
+                            <span className="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
                                 {stat.trend}
                             </span>
                         </div>
-                        <h3 className="text-3xl font-black text-slate-900 leading-none mb-2">{stat.value}</h3>
-                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                        <h3 className="text-2xl font-bold text-white leading-none mb-1 font-heading">{stat.value}</h3>
+                        <p className="text-[10px] font-medium text-zinc-600 uppercase tracking-widest">{stat.label}</p>
                     </motion.div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Authority Board */}
-                <section className="lg:col-span-2 space-y-6">
+                <section className="lg:col-span-2 space-y-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold flex items-center gap-2">
-                            <ShieldCheck className="text-indigo-600" size={24} /> Authority Board
+                        <h2 className="text-lg font-semibold flex items-center gap-2 font-heading">
+                            <ShieldCheck className="text-cobalt-light" size={22} strokeWidth={1.5} /> Authority Board
                         </h2>
-                        <div className="flex bg-slate-100 p-1 rounded-xl">
+                        <div className="flex bg-white/5 p-1 rounded-lg border border-white/5">
                             <button
                                 onClick={() => setActiveTab('authority')}
-                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'authority' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500'}`}
+                                className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === 'authority' ? 'bg-cobalt/15 text-cobalt-light border border-cobalt/20' : 'text-zinc-500 hover:text-zinc-500'}`}
                             >
                                 Pending Review
                             </button>
                             <button
                                 onClick={() => setActiveTab('scheduled')}
-                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'scheduled' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-500'}`}
+                                className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === 'scheduled' ? 'bg-cobalt/15 text-cobalt-light border border-cobalt/20' : 'text-zinc-500 hover:text-zinc-500'}`}
                             >
                                 Scheduled
                             </button>
                         </div>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {pendingApprovals.filter(a => a.status === 'pending').map((item) => (
                             <motion.div
                                 key={item.id}
                                 layout
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:border-indigo-200 transition-all group"
+                                className="glass-panel rounded-xl overflow-hidden guild-card-hover group"
                             >
                                 <div className="p-6">
-                                    <div className="flex justify-between items-start mb-4">
+                                    <div className="flex justify-between items-start mb-3">
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded uppercase tracking-wider border border-indigo-100">
+                                                <span className="px-2 py-0.5 bg-cobalt/10 text-cobalt-light text-[10px] font-medium rounded-full border border-cobalt/20">
                                                     {item.channel}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">• {item.strategy}</span>
+                                                <span className="text-[10px] font-medium text-zinc-700 uppercase tracking-wider">• {item.strategy}</span>
                                             </div>
-                                            <h4 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{item.title}</h4>
+                                            <h4 className="text-base font-medium text-zinc-300 group-hover:text-cobalt-light transition-colors">{item.title}</h4>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-xs font-black text-emerald-600">{item.roi}</p>
-                                            <p className="text-[10px] text-slate-400 font-bold uppercase">Confidence</p>
+                                            <p className="text-xs font-medium text-emerald-400">{item.roi}</p>
+                                            <p className="text-[10px] text-zinc-700 font-medium uppercase">Confidence</p>
                                         </div>
                                     </div>
-                                    <p className="text-sm text-slate-600 leading-relaxed mb-6 italic border-l-2 border-slate-100 pl-4">
+                                    <p className="text-sm text-zinc-500 leading-relaxed mb-5 italic border-l-2 border-white/5 pl-4">
                                         "{item.details}"
                                     </p>
-                                    <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                                        <button className="text-slate-500 hover:text-indigo-600 text-xs font-bold flex items-center gap-2 transition-colors">
-                                            <Eye size={14} /> Preview Draft
+                                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                                        <button className="text-zinc-600 hover:text-cobalt-light text-xs font-medium flex items-center gap-2 transition-colors">
+                                            <Eye size={14} strokeWidth={1.5} /> Preview Draft
                                         </button>
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => handleReject(item.id)}
-                                                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                className="p-2 text-zinc-700 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
                                             >
-                                                <XCircle size={20} />
+                                                <XCircle size={18} strokeWidth={1.5} />
                                             </button>
                                             <button
                                                 onClick={() => handleApprove(item.id)}
-                                                className="px-6 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-indigo-100"
+                                                className="px-5 py-2 bg-cobalt text-white rounded-lg text-xs font-medium hover:bg-cobalt-light transition-all flex items-center gap-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]"
                                             >
-                                                <ShieldCheck size={16} /> Authorize Execution
+                                                <ShieldCheck size={14} strokeWidth={1.5} /> Authorize
                                             </button>
                                         </div>
                                     </div>
@@ -175,28 +175,28 @@ const ContentHub = () => {
                 </section>
 
                 {/* Performance Analytics Sidebar */}
-                <aside className="space-y-6">
-                    <section className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl">
-                        <h2 className="text-lg font-bold flex items-center gap-2 mb-6">
-                            <BarChart3 className="text-indigo-400" size={20} /> Channel Health
+                <aside className="space-y-4">
+                    <section className="glass-panel p-6 rounded-xl">
+                        <h2 className="text-base font-semibold flex items-center gap-2 mb-5 font-heading">
+                            <BarChart3 className="text-cobalt-light" size={18} strokeWidth={1.5} /> Channel Health
                         </h2>
                         <div className="space-y-4">
                             {[
-                                { name: "Instagram", score: 88, color: "bg-gradient-to-r from-purple-500 to-pink-500" },
-                                { name: "YouTube", score: 72, color: "bg-red-500" },
-                                { name: "Email", score: 94, color: "bg-emerald-500" }
+                                { name: "Instagram", score: 88, color: "bg-cobalt" },
+                                { name: "YouTube", score: 72, color: "bg-red-500/60" },
+                                { name: "Email", score: 94, color: "bg-emerald-500/60" }
                             ].map((channel, i) => (
                                 <div key={i} className="space-y-2">
-                                    <div className="flex justify-between text-xs font-bold">
-                                        <span className="text-slate-400 uppercase tracking-widest">{channel.name}</span>
-                                        <span>{channel.score}%</span>
+                                    <div className="flex justify-between text-xs font-medium">
+                                        <span className="text-zinc-600 uppercase tracking-wider">{channel.name}</span>
+                                        <span className="text-zinc-500">{channel.score}%</span>
                                     </div>
-                                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                                         <motion.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${channel.score}%` }}
                                             transition={{ delay: 0.5 + i * 0.1, duration: 1 }}
-                                            className={`h-full ${channel.color}`}
+                                            className={`h-full ${channel.color} rounded-full`}
                                         />
                                     </div>
                                 </div>
@@ -204,19 +204,19 @@ const ContentHub = () => {
                         </div>
                     </section>
 
-                    <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative">
+                    <section className="glass-panel p-6 rounded-xl overflow-hidden relative">
                         <div className="absolute top-0 right-0 p-4">
-                            <ArrowUpRight size={24} className="text-emerald-500 opacity-20" />
+                            <ArrowUpRight size={22} strokeWidth={1.5} className="text-white/5" />
                         </div>
-                        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <TrendingUp className="text-indigo-600" size={20} /> Best Performers
+                        <h2 className="text-base font-semibold mb-4 flex items-center gap-2 font-heading">
+                            <TrendingUp className="text-cobalt-light" size={18} strokeWidth={1.5} /> Best Performers
                         </h2>
-                        <div className="space-y-4">
-                            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                                <h5 className="text-xs font-black text-slate-800 uppercase mb-1">Top Reel</h5>
-                                <p className="text-sm text-slate-600 font-medium">"5 Sourdough Mistakes"</p>
-                                <div className="mt-2 text-[10px] font-bold text-emerald-600 flex items-center gap-1">
-                                    <Activity size={10} /> Viral Velocity: High
+                        <div className="space-y-3">
+                            <div className="p-4 rounded-lg bg-white/[0.03] border border-white/5">
+                                <h5 className="text-xs font-medium text-zinc-500 uppercase mb-1">Top Reel</h5>
+                                <p className="text-sm text-white/70 font-medium">"5 Sourdough Mistakes"</p>
+                                <div className="mt-2 text-[10px] font-medium text-emerald-400 flex items-center gap-1">
+                                    <Activity size={10} strokeWidth={1.5} /> Viral Velocity: High
                                 </div>
                             </div>
                         </div>

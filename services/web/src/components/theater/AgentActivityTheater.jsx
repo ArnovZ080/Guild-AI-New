@@ -216,7 +216,7 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
     return (
         <div ref={containerRef} className="relative w-full h-96 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-inner">
             {selectedWorkflowName && (
-                <div className="absolute top-4 left-4 z-20 px-3 py-1 text-[10px] font-black rounded-lg bg-indigo-600 text-white shadow-lg uppercase tracking-widest">{selectedWorkflowName}</div>
+                <div className="absolute top-4 left-4 z-20 px-3 py-1 text-[10px] font-black rounded-lg bg-[#1a6fff] text-white shadow-lg uppercase tracking-widest">{selectedWorkflowName}</div>
             )}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-50 via-white to-slate-100 opacity-60" />
 
@@ -289,7 +289,7 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
                                     <strong>Goal:</strong> {agent.activityLog[0].why}
                                 </div>
                             )}
-                            <div className="text-[10px] text-gray-500">{Math.round(agent.progress * 100)}% complete</div>
+                            <div className="text-[10px] text-zinc-500">{Math.round(agent.progress * 100)}% complete</div>
                         </motion.div>
                     </motion.div>
                 );
@@ -337,13 +337,13 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
 
             <div className="absolute bottom-4 right-4 flex space-x-2 z-20">
                 <button className="px-3 py-1 bg-white rounded-lg shadow text-xs font-medium hover:bg-gray-50">Pause</button>
-                <button onClick={() => setShowWorkflowDetails(true)} className="px-3 py-1 bg-blue-500 text-white rounded-lg shadow text-xs font-medium hover:bg-blue-600">Details</button>
+                <button onClick={() => setShowWorkflowDetails(true)} className="px-3 py-1 bg-[#1a6fff] text-white rounded-lg shadow text-xs font-medium hover:bg-[#4d8fff]">Details</button>
             </div>
 
             {selected && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl p-6 relative max-h-[85vh] overflow-y-auto">
-                        <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600" onClick={() => setSelected(null)}>×</button>
+                        <button className="absolute top-3 right-3 text-zinc-500 hover:text-gray-600" onClick={() => setSelected(null)}>×</button>
                         {(() => {
                             const a = agents.find(x => x.id === selected);
                             if (!a) return null;
@@ -352,7 +352,7 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
                                     <div className="flex items-start justify-between">
                                         <div>
                                             <h3 className="text-xl font-semibold text-gray-900">{a.name}</h3>
-                                            <p className="text-sm text-gray-500 capitalize">{a.type} • {a.status}</p>
+                                            <p className="text-sm text-zinc-500 capitalize">{a.type} • {a.status}</p>
                                         </div>
                                         <button
                                             onClick={() => {
@@ -399,7 +399,7 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
                                                     <details className="relative">
                                                         <summary className="px-3 py-1.5 text-sm rounded-md border cursor-pointer select-none">Quick Tasks</summary>
                                                         <div className="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg border p-3 z-10">
-                                                            <div className="text-xs text-gray-500 mb-2">Select tasks for {a.name}</div>
+                                                            <div className="text-xs text-zinc-500 mb-2">Select tasks for {a.name}</div>
                                                             <div className="space-y-2 text-sm">
                                                                 <label className="flex items-center gap-2"><input type="checkbox" /> Generate brief</label>
                                                                 <label className="flex items-center gap-2"><input type="checkbox" /> Draft email</label>
@@ -410,12 +410,12 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
                                                             </div>
                                                             <div className="mt-3 flex justify-end gap-2">
                                                                 <button className="px-3 py-1 text-sm border rounded-md" onClick={(e) => { e.preventDefault(); e.currentTarget.closest('details')?.removeAttribute('open'); }}>Cancel</button>
-                                                                <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md" onClick={(e) => { e.preventDefault(); alert('Tasks assigned'); e.currentTarget.closest('details')?.removeAttribute('open'); }}>Assign</button>
+                                                                <button className="px-3 py-1 text-sm bg-[#1a6fff] text-white rounded-md" onClick={(e) => { e.preventDefault(); alert('Tasks assigned'); e.currentTarget.closest('details')?.removeAttribute('open'); }}>Assign</button>
                                                             </div>
                                                         </div>
                                                     </details>
                                                 </div>
-                                                <button className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white">Open Chat</button>
+                                                <button className="px-3 py-1.5 text-sm rounded-md bg-[#1a6fff] text-white">Open Chat</button>
                                             </div>
                                         </div>
                                         {/* Right column: Live activity feed */}
@@ -437,17 +437,17 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
                                                                     </div>
                                                                 )}
                                                                 {item.how && (
-                                                                    <div className="bg-slate-50/50 p-2 rounded border border-slate-100/50">
-                                                                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Technical How</div>
+                                                                    <div className="bg-white/[0.03]/50 p-2 rounded border border-slate-100/50">
+                                                                        <div className="text-[9px] font-bold text-zinc-600 uppercase tracking-tighter">Technical How</div>
                                                                         <div className="text-[11px] text-slate-900">{item.how}</div>
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <div className="text-[9px] text-gray-400 mt-2">{new Date(item.ts).toLocaleTimeString()}</div>
+                                                            <div className="text-[9px] text-zinc-500 mt-2">{new Date(item.ts).toLocaleTimeString()}</div>
                                                         </li>
                                                     ))}
                                                     {(a.activityLog || []).length === 0 && (
-                                                        <li className="p-2 text-gray-500 text-sm">No activity yet</li>
+                                                        <li className="p-2 text-zinc-500 text-sm">No activity yet</li>
                                                     )}
                                                 </ul>
                                             </div>
@@ -463,19 +463,19 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
             {showWorkflowDetails && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 relative">
-                        <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600" onClick={() => setShowWorkflowDetails(false)}>×</button>
+                        <button className="absolute top-3 right-3 text-zinc-500 hover:text-gray-600" onClick={() => setShowWorkflowDetails(false)}>×</button>
                         <div className="space-y-4">
                             <div className="flex items-start justify-between">
                                 <div>
                                     <h3 className="text-xl font-semibold text-gray-900">Workflow Overview</h3>
-                                    <p className="text-sm text-gray-500">Live orchestration of agents and handoffs</p>
+                                    <p className="text-sm text-zinc-500">Live orchestration of agents and handoffs</p>
                                 </div>
                                 {(() => {
                                     const { baseCredits, estimatedCost } = estimateWorkflowCost(); return (
                                         <div className="text-right">
-                                            <div className="text-xs text-gray-500">Estimated Credits</div>
+                                            <div className="text-xs text-zinc-500">Estimated Credits</div>
                                             <div className="text-lg font-semibold text-blue-600">{baseCredits}</div>
-                                            <div className="text-xs text-gray-500 mt-1">Est. Cost</div>
+                                            <div className="text-xs text-zinc-500 mt-1">Est. Cost</div>
                                             <div className="text-lg font-semibold text-green-600">${estimatedCost.toFixed(2)}</div>
                                         </div>
                                     );
@@ -499,7 +499,7 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
                                         {agents.map(a => (
                                             <li key={`status-${a.id}`} className="flex items-center justify-between">
                                                 <span>{a.name}</span>
-                                                <span className="text-gray-500 capitalize">{a.status}</span>
+                                                <span className="text-zinc-500 capitalize">{a.status}</span>
                                             </li>
                                         ))}
                                     </ul>

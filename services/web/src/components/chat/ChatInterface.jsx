@@ -89,21 +89,21 @@ const ChatInterface = () => {
             <div className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-5 flex items-center justify-between sticky top-0 z-10">
                 <div className="max-w-5xl mx-auto w-full flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                            <Bot className="w-6 h-6 text-white" />
+                        <div className="w-10 h-10 bg-[#1a6fff] rounded-xl flex items-center justify-center shadow-lg shadow-cobalt/20">
+                            <Bot className="w-6 h-6 text-white" strokeWidth={1.5} />
                         </div>
                         <div>
                             <h1 className="text-xl font-bold text-slate-900 tracking-tight">Executive Orchestrator</h1>
                             <div className="flex items-center gap-2">
                                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">System Voice Active</p>
+                                <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">System Voice Active</p>
                             </div>
                         </div>
                     </div>
                     <div className="flex gap-4">
                         <div className="text-right hidden md:block">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase">Strategic Focus</p>
-                            <p className="text-xs font-bold text-indigo-600">Q1 Growth: Artisanal Scaling</p>
+                            <p className="text-[10px] font-bold text-zinc-600 uppercase">Strategic Focus</p>
+                            <p className="text-xs font-bold text-[#1a6fff]">Q1 Growth: Artisanal Scaling</p>
                         </div>
                     </div>
                 </div>
@@ -122,36 +122,36 @@ const ChatInterface = () => {
                             >
                                 <div className={`flex gap-4 max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                                     {/* Avatar */}
-                                    <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${message.role === 'user' ? 'bg-slate-800' : 'bg-white border border-slate-200'
+                                    <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${message.role === 'user' ? 'bg-slate-800' : 'glass-panel'
                                         }`}>
-                                        {message.role === 'user' ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-indigo-600" />}
+                                        {message.role === 'user' ? <User className="w-5 h-5 text-white" strokeWidth={1.5} /> : <Bot className="w-5 h-5 text-[#1a6fff]" strokeWidth={1.5} />}
                                     </div>
 
                                     {/* Message Bundle */}
                                     <div className="space-y-3">
                                         <div className={`px-6 py-4 rounded-2xl shadow-sm border ${message.role === 'user'
-                                                ? 'bg-indigo-600 text-white border-indigo-500'
-                                                : message.isError
-                                                    ? 'bg-red-50 text-red-900 border-red-200'
-                                                    : 'bg-white text-slate-800 border-slate-200'
+                                            ? 'bg-[#1a6fff] text-white border-indigo-500'
+                                            : message.isError
+                                                ? 'bg-red-50 text-red-900 border-red-200'
+                                                : 'bg-white text-slate-800 border-slate-200'
                                             }`}>
                                             <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
-                                            <div className={`text-[10px] mt-3 font-bold uppercase tracking-wider opacity-50 ${message.role === 'user' ? 'text-white' : 'text-slate-400'}`}>
+                                            <div className={`text-[10px] mt-3 font-bold uppercase tracking-wider opacity-50 ${message.role === 'user' ? 'text-white' : 'text-zinc-600'}`}>
                                                 {formatTime(message.timestamp)}
                                             </div>
                                         </div>
 
                                         {/* Thought reflection block */}
                                         {message.thoughts && message.role === 'assistant' && (
-                                            <div className="bg-slate-50/80 border border-slate-200 rounded-xl overflow-hidden transition-all">
+                                            <div className="bg-white/[0.03]/80 border border-slate-200 rounded-xl overflow-hidden transition-all">
                                                 <button
                                                     onClick={() => toggleThoughts(message.id)}
-                                                    className="w-full px-4 py-2 flex items-center justify-between hover:bg-slate-100/50 transition-colors"
+                                                    className="w-full px-4 py-2 flex items-center justify-between hover:bg-white/5/50 transition-colors"
                                                 >
-                                                    <span className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-2">
-                                                        <Brain size={12} className="text-indigo-500" /> Orchestrator Logic
+                                                    <span className="text-[10px] font-bold text-zinc-500 uppercase flex items-center gap-2">
+                                                        <Brain size={12} className="text-indigo-500" strokeWidth={1.5} /> Orchestrator Logic
                                                     </span>
-                                                    {showThoughts[message.id] ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                                                    {showThoughts[message.id] ? <ChevronUp size={12} strokeWidth={1.5} /> : <ChevronDown size={12} strokeWidth={1.5} />}
                                                 </button>
                                                 <AnimatePresence>
                                                     {showThoughts[message.id] && (
@@ -161,7 +161,7 @@ const ChatInterface = () => {
                                                             exit={{ height: 0, opacity: 0 }}
                                                             className="px-4 py-3 border-t border-slate-200"
                                                         >
-                                                            <div className="text-[11px] font-mono text-slate-500 leading-relaxed max-h-40 overflow-y-auto italic">
+                                                            <div className="text-[11px] font-mono text-zinc-500 leading-relaxed max-h-40 overflow-y-auto italic">
                                                                 {message.thoughts}
                                                             </div>
                                                         </motion.div>
@@ -172,15 +172,15 @@ const ChatInterface = () => {
 
                                         {/* Action Widgets (Mock for Phase 3) */}
                                         {message.type === 'authorization' && (
-                                            <div className="bg-indigo-900 p-5 rounded-2xl text-white space-y-4">
+                                            <div className="bg-zinc-900/60 p-5 rounded-2xl text-white space-y-4">
                                                 <div className="flex items-center gap-2">
-                                                    <ShieldAlert size={18} className="text-emerald-400" />
+                                                    <ShieldAlert size={18} className="text-emerald-400" strokeWidth={1.5} />
                                                     <span className="text-xs font-bold uppercase">Authorization Required</span>
                                                 </div>
-                                                <p className="text-sm text-slate-300">Agent `SEOAgency` requires approval to execute a high-budget keyword strategy.</p>
+                                                <p className="text-sm text-zinc-600">Agent `SEOAgency` requires approval to execute a high-budget keyword strategy.</p>
                                                 <div className="flex gap-2">
                                                     <button className="flex-1 py-2 bg-emerald-500 text-white rounded-lg text-xs font-bold">Authorize</button>
-                                                    <button className="flex-1 py-2 bg-slate-700 text-slate-300 rounded-lg text-xs font-bold">Details</button>
+                                                    <button className="flex-1 py-2 bg-slate-700 text-zinc-600 rounded-lg text-xs font-bold">Details</button>
                                                 </div>
                                             </div>
                                         )}
@@ -194,11 +194,11 @@ const ChatInterface = () => {
                     {isLoading && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
                             <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                                    <Loader2 className="w-5 h-5 animate-spin text-indigo-600" />
+                                <div className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center shadow-sm">
+                                    <Loader2 className="w-5 h-5 animate-spin text-[#1a6fff]" strokeWidth={1.5} />
                                 </div>
-                                <div className="bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3">
-                                    <Activity size={14} className="text-indigo-400" /> Synchronizing Workforce...
+                                <div className="glass-panel px-6 py-4 rounded-2xl shadow-sm text-xs font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-3">
+                                    <Activity size={14} className="text-indigo-400" strokeWidth={1.5} /> Synchronizing Workforce...
                                 </div>
                             </div>
                         </motion.div>
@@ -226,14 +226,14 @@ const ChatInterface = () => {
                             <button
                                 onClick={() => handleSendMessage()}
                                 disabled={isLoading || !inputValue.trim()}
-                                className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:grayscale transition-all duration-200 shadow-lg shadow-indigo-200 flex items-center gap-2"
+                                className="px-6 py-3 bg-[#1a6fff] text-white rounded-xl hover:bg-[#4d8fff] disabled:opacity-50 disabled:grayscale transition-all duration-200 shadow-lg shadow-cobalt/20 flex items-center gap-2"
                             >
-                                <Send className="w-4 h-4" />
+                                <Send className="w-4 h-4" strokeWidth={1.5} />
                                 <span className="font-bold text-xs uppercase tracking-wider">Execute</span>
                             </button>
                         </div>
                     </div>
-                    <p className="text-[10px] text-center text-slate-400 font-bold uppercase tracking-widest mt-4">
+                    <p className="text-[10px] text-center text-zinc-600 font-bold uppercase tracking-widest mt-4">
                         Powered by Antigravity Strategic Engine v2.4
                     </p>
                 </div>

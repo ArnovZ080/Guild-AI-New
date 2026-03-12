@@ -61,13 +61,13 @@ const AgentActivityFeed = ({ userId, isCompact = false, maxEvents = 20 }) => {
     }, [events, filter, searchTerm]);
 
     const getEventIcon = (eventType) => {
-        if (eventType.includes('workflow')) return <Zap className="w-4 h-4" />;
-        if (eventType.includes('step')) return <Activity className="w-4 h-4" />;
-        if (eventType.includes('completed')) return <CheckCircle className="w-4 h-4" />;
-        if (eventType.includes('failed')) return <AlertTriangle className="w-4 h-4" />;
-        if (eventType.includes('approval')) return <Eye className="w-4 h-4" />;
-        if (eventType.includes('data')) return <Database className="w-4 h-4" />;
-        return <Bot className="w-4 h-4" />;
+        if (eventType.includes('workflow')) return <Zap className="w-4 h-4" strokeWidth={1.5} />;
+        if (eventType.includes('step')) return <Activity className="w-4 h-4" strokeWidth={1.5} />;
+        if (eventType.includes('completed')) return <CheckCircle className="w-4 h-4" strokeWidth={1.5} />;
+        if (eventType.includes('failed')) return <AlertTriangle className="w-4 h-4" strokeWidth={1.5} />;
+        if (eventType.includes('approval')) return <Eye className="w-4 h-4" strokeWidth={1.5} />;
+        if (eventType.includes('data')) return <Database className="w-4 h-4" strokeWidth={1.5} />;
+        return <Bot className="w-4 h-4" strokeWidth={1.5} />;
     };
 
     const getEventColor = (eventType) => {
@@ -99,9 +99,9 @@ const AgentActivityFeed = ({ userId, isCompact = false, maxEvents = 20 }) => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsExpanded(true)}
-                    className="flex items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700"
+                    className="flex items-center space-x-2 px-4 py-3 bg-[#1a6fff] text-white rounded-full shadow-lg hover:bg-[#4d8fff]"
                 >
-                    <Activity className="w-5 h-5" />
+                    <Activity className="w-5 h-5" strokeWidth={1.5} />
                     <span className="font-medium">Agent Activity</span>
                     {events.length > 0 && (
                         <span className="px-2 py-0.5 bg-white text-blue-600 rounded-full text-xs font-bold">
@@ -122,7 +122,7 @@ const AgentActivityFeed = ({ userId, isCompact = false, maxEvents = 20 }) => {
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <div className="flex items-center space-x-3">
                     <div className="p-2 bg-blue-100 rounded-lg">
-                        <Activity className="w-5 h-5 text-blue-600" />
+                        <Activity className="w-5 h-5 text-blue-600" strokeWidth={1.5} />
                     </div>
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900">Agent Activity Feed</h3>
@@ -131,14 +131,14 @@ const AgentActivityFeed = ({ userId, isCompact = false, maxEvents = 20 }) => {
                 </div>
                 <div className="flex items-center space-x-2">
                     <button onClick={() => setIsLive(!isLive)} className={`p-2 rounded-lg transition-colors ${isLive ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'}`}>
-                        {isLive ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+                        {isLive ? <Bell className="w-4 h-4" strokeWidth={1.5} /> : <BellOff className="w-4 h-4" strokeWidth={1.5} />}
                     </button>
                     <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <Download className="w-4 h-4 text-gray-600" />
+                        <Download className="w-4 h-4 text-gray-600" strokeWidth={1.5} />
                     </button>
                     {isCompact && (
                         <button onClick={() => setIsExpanded(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                            <Minimize2 className="w-4 h-4 text-gray-600" />
+                            <Minimize2 className="w-4 h-4 text-gray-600" strokeWidth={1.5} />
                         </button>
                     )}
                 </div>
@@ -146,7 +146,7 @@ const AgentActivityFeed = ({ userId, isCompact = false, maxEvents = 20 }) => {
 
             <div className="p-4 border-b border-gray-200 space-y-3">
                 <div className="flex items-center space-x-3">
-                    <Filter className="w-4 h-4 text-gray-500" />
+                    <Filter className="w-4 h-4 text-zinc-500" strokeWidth={1.5} />
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
@@ -172,10 +172,10 @@ const AgentActivityFeed = ({ userId, isCompact = false, maxEvents = 20 }) => {
             <div className={`overflow-y-auto ${isCompact ? 'max-h-96' : 'max-h-[600px]'} p-4`}>
                 {isLoading ? (
                     <div className="flex items-center justify-center py-12">
-                        <RefreshCw className="w-6 h-6 text-blue-600 animate-spin" />
+                        <RefreshCw className="w-6 h-6 text-blue-600 animate-spin" strokeWidth={1.5} />
                     </div>
                 ) : filteredEvents.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">No activity yet</div>
+                    <div className="text-center py-12 text-zinc-500">No activity yet</div>
                 ) : (
                     <div className="space-y-3">
                         <AnimatePresence>
@@ -200,7 +200,7 @@ const AgentActivityFeed = ({ userId, isCompact = false, maxEvents = 20 }) => {
                                                 <p className="text-xs text-gray-600 mt-1">{event.workflow_name || 'System'}</p>
                                             </div>
                                         </div>
-                                        <span className="text-xs text-gray-500">{formatTimestamp(event.timestamp)}</span>
+                                        <span className="text-xs text-zinc-500">{formatTimestamp(event.timestamp)}</span>
                                     </div>
                                     {selectedEvent?.id === event.id && (
                                         <motion.div

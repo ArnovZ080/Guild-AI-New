@@ -21,14 +21,14 @@ const ConnectorManager = () => {
     // Mock available connectors (simplified list)
     const availableConnectors = [
         { id: 'asana', name: 'Asana', category: 'project_management', status: 'active', capabilities: ['tasks', 'projects'], description: 'Coordinate tasks and projects', icon: Calendar, color: 'bg-purple-500', documentation_url: 'https://developers.asana.com' },
-        { id: 'stripe', name: 'Stripe', category: 'payments', status: 'active', capabilities: ['payments', 'customers'], description: 'Payment processing infrastructure', icon: DollarSign, color: 'bg-indigo-600', documentation_url: 'https://stripe.com/docs' },
+        { id: 'stripe', name: 'Stripe', category: 'payments', status: 'active', capabilities: ['payments', 'customers'], description: 'Payment processing infrastructure', icon: DollarSign, color: 'bg-[#1a6fff]', documentation_url: 'https://stripe.com/docs' },
         { id: 'hubspot', name: 'HubSpot', category: 'crm', status: 'active', capabilities: ['contacts', 'companies'], description: 'CRM and marketing automation', icon: Database, color: 'bg-orange-500', documentation_url: 'https://developers.hubspot.com' },
         { id: 'gmail', name: 'Gmail', category: 'communication', status: 'active', capabilities: ['send_email', 'labels'], description: 'Send emails and manage inbox', icon: Users, color: 'bg-red-500', documentation_url: 'https://developers.google.com/gmail' },
         { id: 'slack', name: 'Slack', category: 'communication', status: 'active', capabilities: ['messages', 'channels'], description: 'Team communication', icon: Users, color: 'bg-purple-500', documentation_url: 'https://api.slack.com' }
     ];
 
     const connectedServices = [
-        { id: 'stripe', name: 'Stripe', category: 'payments', connected_at: new Date().toISOString(), status: 'active', icon: DollarSign, color: 'bg-indigo-600' }
+        { id: 'stripe', name: 'Stripe', category: 'payments', connected_at: new Date().toISOString(), status: 'active', icon: DollarSign, color: 'bg-[#1a6fff]' }
     ];
 
     const categories = [
@@ -82,7 +82,7 @@ const ConnectorManager = () => {
                 <>
                     <div className="flex gap-4 mb-6">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500 w-4 h-4" strokeWidth={1.5} />
                             <input
                                 type="text"
                                 placeholder="Search..."
@@ -92,7 +92,7 @@ const ConnectorManager = () => {
                             />
                         </div>
                         <div className="relative">
-                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500 w-4 h-4" strokeWidth={1.5} />
                             <select
                                 className="pl-10 pr-8 py-2 border rounded-lg appearance-none bg-white"
                                 value={filterCategory}
@@ -108,14 +108,14 @@ const ConnectorManager = () => {
                             return (
                                 <motion.div key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white rounded-lg shadow p-6 border hover:shadow-lg transition-shadow">
                                     <div className="flex justify-between mb-4">
-                                        <div className={`p-3 rounded-lg ${c.color}`}><Icon className="w-6 h-6 text-white" /></div>
-                                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full h-fit flex items-center gap-1"><CheckCircle size={10} /> Active</span>
+                                        <div className={`p-3 rounded-lg ${c.color}`}><Icon className="w-6 h-6 text-white" strokeWidth={1.5} /></div>
+                                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full h-fit flex items-center gap-1"><CheckCircle size={10} strokeWidth={1.5} /> Active</span>
                                     </div>
                                     <h3 className="font-bold text-lg">{c.name}</h3>
                                     <p className="text-sm text-gray-600 mb-4">{c.description}</p>
                                     <button
                                         onClick={() => { setSelectedConnector(c); setShowConnectModal(true); }}
-                                        className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                                        className="w-full bg-[#1a6fff] text-white py-2 rounded-lg hover:bg-[#4d8fff] transition-colors"
                                     >
                                         Connect
                                     </button>
@@ -133,10 +133,10 @@ const ConnectorManager = () => {
                         return (
                             <div key={s.id} className="bg-white p-6 rounded-lg shadow border flex justify-between items-center">
                                 <div className="flex items-center gap-4">
-                                    <div className={`p-3 rounded-lg ${s.color}`}><Icon className="w-6 h-6 text-white" /></div>
+                                    <div className={`p-3 rounded-lg ${s.color}`}><Icon className="w-6 h-6 text-white" strokeWidth={1.5} /></div>
                                     <div>
                                         <h3 className="font-bold">{s.name}</h3>
-                                        <p className="text-sm text-gray-500">Connected on {new Date(s.connected_at).toLocaleDateString()}</p>
+                                        <p className="text-sm text-zinc-500">Connected on {new Date(s.connected_at).toLocaleDateString()}</p>
                                     </div>
                                 </div>
                                 <button className="text-red-500 hover:bg-red-50 px-3 py-1 rounded-lg">Disconnect</button>
@@ -148,15 +148,15 @@ const ConnectorManager = () => {
 
             {activeTab === 'create' && (
                 <div className="bg-white rounded-lg shadow p-8 text-center">
-                    <Video className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+                    <Video className="w-12 h-12 text-purple-600 mx-auto mb-4" strokeWidth={1.5} />
                     <h2 className="text-2xl font-bold mb-2">Create Custom Connection</h2>
                     <p className="text-gray-600 mb-6">Record your screen to teach an agent how to use any website or tool.</p>
                     <button
                         onClick={startScreenRecording}
                         disabled={isRecording}
-                        className={`px-6 py-3 rounded-lg font-bold text-white flex items-center gap-2 mx-auto ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-purple-600 hover:bg-purple-700'}`}
+                        className={`px-6 py-3 rounded-lg font-bold text-white flex items-center gap-2 mx-auto ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-[#1a6fff] hover:bg-[#4d8fff]'}`}
                     >
-                        {isRecording ? <><Monitor /> Recording...</> : <><Video /> Start Recording</>}
+                        {isRecording ? <><Monitor strokeWidth={1.5} /> Recording...</> : <><Video strokeWidth={1.5} /> Start Recording</>}
                     </button>
                 </div>
             )}

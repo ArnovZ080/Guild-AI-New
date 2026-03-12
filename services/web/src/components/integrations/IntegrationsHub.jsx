@@ -67,15 +67,15 @@ const IntegrationsHub = () => {
                     <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
                         Integration Hub
                     </h1>
-                    <p className="text-gray-400 max-w-2xl">
+                    <p className="text-zinc-500 max-w-2xl">
                         Give your AI workforce "hands" by connecting your favorite external tools.
                         All connections are encrypted and under your direct control.
                     </p>
                 </div>
                 <div className="flex gap-4">
-                    <div className="flex items-center bg-[#161618] border border-white/5 rounded-lg px-3 py-2">
-                        <Shield className="w-4 h-4 text-emerald-400 mr-2" />
-                        <span className="text-xs font-medium uppercase tracking-wider text-gray-400">Military-Grade Encryption</span>
+                    <div className="flex items-center bg-zinc-950/40 border border-white/5 rounded-lg px-3 py-2">
+                        <Shield className="w-4 h-4 text-emerald-400 mr-2" strokeWidth={1.5} />
+                        <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">Military-Grade Encryption</span>
                     </div>
                 </div>
             </div>
@@ -83,13 +83,13 @@ const IntegrationsHub = () => {
             {/* Toolbar */}
             <div className="flex flex-col md:flex-row gap-4 mb-8">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4" strokeWidth={1.5} />
                     <input
                         type="text"
                         placeholder="Search connectors..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-[#161618] border border-white/5 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-white/20 transition-all"
+                        className="w-full bg-zinc-950/40 border border-white/5 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-white/5 transition-all"
                     />
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
@@ -98,11 +98,11 @@ const IntegrationsHub = () => {
                             key={cat.id}
                             onClick={() => setActiveTab(cat.id)}
                             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${activeTab === cat.id
-                                    ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.1)]'
-                                    : 'bg-[#161618] text-gray-400 border border-white/5 hover:border-white/10'
+                                ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.1)]'
+                                : 'bg-zinc-950/40 text-zinc-500 border border-white/5 hover:border-white/5'
                                 }`}
                         >
-                            {cat.icon && <cat.icon className="w-4 h-4" />}
+                            {cat.icon && <cat.icon className="w-4 h-4" strokeWidth={1.5} />}
                             {cat.name}
                         </button>
                     ))}
@@ -120,37 +120,37 @@ const IntegrationsHub = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             whileHover={{ y: -4 }}
-                            className="bg-[#161618] border border-white/5 rounded-2xl p-6 flex flex-col group cursor-pointer hover:border-white/10 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
+                            className="bg-zinc-950/40 border border-white/5 rounded-2xl p-6 flex flex-col group cursor-pointer hover:border-white/5 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
                             onClick={() => handleOpenModal(item)}
                         >
                             <div className="flex justify-between items-start mb-4">
                                 <div className={`w-12 h-12 rounded-xl ${item.color || 'bg-gray-800'} flex items-center justify-center p-2.5`}>
-                                    {item.icon ? <item.icon className="text-white" /> : <Database className="text-white" />}
+                                    {item.icon ? <item.icon className="text-white" strokeWidth={1.5} /> : <Database className="text-white" strokeWidth={1.5} />}
                                 </div>
                                 {item.is_connected ? (
                                     <div className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
-                                        <CheckCircle className="w-3 h-3" />
+                                        <CheckCircle className="w-3 h-3" strokeWidth={1.5} />
                                         Connected
                                     </div>
                                 ) : (
-                                    <div className="bg-white/5 text-gray-500 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-white/5 group-hover:bg-white group-hover:text-black transition-colors">
+                                    <div className="bg-white/5 text-zinc-500 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-white/5 group-hover:bg-white group-hover:text-black transition-colors">
                                         Disconnected
                                     </div>
                                 )}
                             </div>
 
                             <h3 className="text-lg font-bold text-white mb-2">{item.name}</h3>
-                            <p className="text-gray-400 text-sm line-clamp-2 mb-6 flex-grow">
+                            <p className="text-zinc-500 text-sm line-clamp-2 mb-6 flex-grow">
                                 {item.description}
                             </p>
 
-                            <div className="flex items-center justify-between pt-4 border-t border-white/5 italic text-gray-500 text-[11px]">
+                            <div className="flex items-center justify-between pt-4 border-t border-white/5 italic text-zinc-500 text-[11px]">
                                 <div className="flex gap-2">
                                     {item.capabilities?.slice(0, 3).map(cap => (
                                         <span key={cap}>• {cap}</span>
                                     ))}
                                 </div>
-                                <Zap className={`w-3 h-3 ${item.is_connected ? 'text-amber-400' : 'text-gray-700'}`} />
+                                <Zap className={`w-3 h-3 ${item.is_connected ? 'text-amber-400' : 'text-gray-700'}`} strokeWidth={1.5} />
                             </div>
                         </motion.div>
                     ))}
