@@ -48,8 +48,8 @@ const ExecutiveReview = () => {
             <div className="max-w-4xl mx-auto">
                 <header className="flex justify-between items-center mb-10">
                     <div>
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                            Executive Review Hub
+                        <h1 className="text-3xl font-bold text-white">
+                            Quarterly Strategy Review Hub
                         </h1>
                         <p className="text-zinc-600 mt-1">Authorize sensitive AI actions and financial transactions.</p>
                     </div>

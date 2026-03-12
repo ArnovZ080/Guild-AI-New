@@ -29,7 +29,7 @@ function AppContent() {
   return (
     <div className="flex h-screen" style={{ backgroundColor: '#090a0f' }}>
       {/* Liquid ambient background — always behind everything */}
-      <div className="ambient-bg" />
+      {/* Liquid ambient background now lives in App root */}
 
       {/* Sidebar Navigation - Hidden on Public Pages */}
       {!isPublicPage && (
@@ -116,9 +116,12 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <>
+      <div className="ambient-bg" aria-hidden="true" />
+      <Router>
+        <AppContent />
+      </Router>
+    </>
   );
 }
 

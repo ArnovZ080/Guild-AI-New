@@ -194,11 +194,11 @@ const ChatInterface = () => {
                     {isLoading && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
                             <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-xl glass-panel flex items-center justify-center shadow-sm">
-                                    <Loader2 className="w-5 h-5 animate-spin text-[#1a6fff]" strokeWidth={1.5} />
+                                <div className="w-10 h-10 rounded-xl glass-panel ai-active-glow flex items-center justify-center shadow-sm">
+                                    <Brain className="w-5 h-5 text-[#1a6fff]" strokeWidth={1.5} />
                                 </div>
                                 <div className="glass-panel px-6 py-4 rounded-2xl shadow-sm text-xs font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-3">
-                                    <Activity size={14} className="text-indigo-400" strokeWidth={1.5} /> Synchronizing Workforce...
+                                    <Activity size={14} className="text-indigo-400 animate-pulse" strokeWidth={1.5} /> Synchronizing Workforce...
                                 </div>
                             </div>
                         </motion.div>
@@ -209,10 +209,10 @@ const ChatInterface = () => {
             </div>
 
             {/* Elegant Input Area */}
-            <div className="p-8 bg-gradient-to-t from-white via-white/90 to-transparent">
+            <div className="p-8 bg-transparent">
                 <div className="max-w-4xl mx-auto">
                     <div className="relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
                         <div className="relative flex gap-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-xl">
                             <textarea
                                 value={inputValue}

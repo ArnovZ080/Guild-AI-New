@@ -47,8 +47,8 @@ const AdaptiveInsights = () => {
                 <header className="mb-10">
                     <div className="flex items-center gap-3 mb-2">
                         <Brain className="text-violet-400 w-8 h-8" strokeWidth={1.5} />
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                            Adaptive Intelligence
+                        <h1 className="text-3xl font-bold text-white">
+                            Engine Intelligence
                         </h1>
                     </div>
                     <p className="text-zinc-600">Your AI is learning. Here's what it has discovered about you and your business.</p>
@@ -142,7 +142,7 @@ const AdaptiveInsights = () => {
                                     <div className="w-16">
                                         <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                                             <div
-                                                className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full transition-all"
+                                                className="h-full bg-blue-500 rounded-full transition-all"
                                                 style={{ width: `${pattern.confidence_score * 100}%` }}
                                             />
                                         </div>

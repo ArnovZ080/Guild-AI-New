@@ -218,7 +218,7 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
             {selectedWorkflowName && (
                 <div className="absolute top-4 left-4 z-20 px-3 py-1 text-[10px] font-black rounded-lg bg-[#1a6fff] text-white shadow-lg uppercase tracking-widest">{selectedWorkflowName}</div>
             )}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-50 via-white to-slate-100 opacity-60" />
+            <div className="absolute inset-0 bg-transparent" />
 
             <div className="absolute inset-6">
                 <div className="absolute left-0 top-0 w-1/3 h-1/2 bg-indigo-50/30 rounded-3xl border border-indigo-100/50 border-dashed">
@@ -255,11 +255,7 @@ export const AgentActivityTheater = ({ selectedWorkflowName, selectedWorkflow })
                             />
                             <span className="text-lg">{getAgentIcon(agent.type)}</span>
                             {agent.status === 'working' && (
-                                <motion.div
-                                    className="absolute inset-0 rounded-full border-2 border-white"
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                                />
+                                <div className="absolute inset-0 rounded-full ai-active-glow" />
                             )}
                             {agent.progress > 0 && (
                                 <svg className="absolute inset-0 w-full h-full -rotate-90">

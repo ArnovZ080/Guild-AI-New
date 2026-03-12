@@ -182,7 +182,7 @@ const IntegrationModal = ({ integration, onClose, onSuccess }) => {
                                         disabled={loading}
                                         className="bg-white text-black px-10 py-3 rounded-xl font-bold flex items-center gap-2 mx-auto hover:scale-105 transition-all"
                                     >
-                                        {loading ? <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} /> : <ExternalLink className="w-4 h-4" strokeWidth={1.5} />}
+                                        {loading ? <div className="w-4 h-4 rounded-full ai-active-glow border-2 border-current border-t-transparent" /> : <ExternalLink className="w-4 h-4" strokeWidth={1.5} />}
                                         Authorize {integration.name}
                                     </button>
                                 </div>
@@ -293,7 +293,7 @@ const IntegrationModal = ({ integration, onClose, onSuccess }) => {
                         className={`px-8 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${loading ? 'bg-white/10 text-zinc-500' : 'bg-white text-black hover:scale-105 active:scale-95'
                             }`}
                     >
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} /> :
+                        {loading ? <div className="w-4 h-4 rounded-full ai-active-glow border-2 border-current border-t-transparent" /> :
                             integration.auth_type === 'oauth' ? 'Start Authorization' : 'Connect Service'}
                     </button>
                 </div>

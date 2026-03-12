@@ -64,7 +64,7 @@ const IntegrationsHub = () => {
             {/* Header */}
             <div className="flex justify-between items-end mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
+                    <h1 className="text-3xl font-bold mb-2 text-white">
                         Integration Hub
                     </h1>
                     <p className="text-zinc-500 max-w-2xl">

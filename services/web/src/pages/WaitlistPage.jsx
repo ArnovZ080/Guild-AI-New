@@ -39,7 +39,7 @@ function WaitlistPage() {
                     <Card className="rounded-3xl border-slate-800 bg-slate-950 text-white shadow-2xl">
                         <CardHeader className="text-center pt-12">
                             <div className="flex justify-center mb-6">
-                                <div className="w-16 h-16 bg-gradient-to-tr from-sky-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                                <div className="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
                                     <Sparkles className="text-white w-10 h-10" strokeWidth={1.5} />
                                 </div>
                             </div>
@@ -59,7 +59,7 @@ function WaitlistPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
-                                <Button className="w-full h-14 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 font-bold text-lg hover:scale-105 transition-transform">
+                                <Button className="w-full h-14 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-lg hover:scale-105 transition-transform text-white">
                                     Get Early Access <Send className="ml-2 w-5 h-5" strokeWidth={1.5} />
                                 </Button>
                             </form>
