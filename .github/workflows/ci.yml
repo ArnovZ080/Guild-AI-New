@@ -1,0 +1,73 @@
+name: Guild AI CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: guild_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt && pip install pytest pytest-asyncio aiosqlite httpx
+
+      - name: Run unit tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:password@localhost:5432/guild_test
+          REDIS_URL: redis://localhost:6379/0
+        run: python -m pytest services/core/tests/ -v --tb=short
+
+      - name: Run Alembic migrations
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:password@localhost:5432/guild_test
+        run: alembic upgrade head
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t guild-ai-api:${{ github.sha }} .
+
+      - name: Tag as latest
+        run: docker tag guild-ai-api:${{ github.sha }} guild-ai-api:latest

@@ -94,25 +94,35 @@ class GoogleAdsIntegration(BaseIntegration):
             raise
 
     async def validate_connection(self) -> bool:
-        if not self.credentials.customer_id:
+        if not self.credentials.customer_id or not self.credentials.access_token:
             return False
-        # In a real app we'd hit an endpoint.
-        # For migration/mock we check basic field presence.
-        return bool(self.credentials.access_token)
+        try:
+            await self._make_request(f"customers/{self.credentials.customer_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Google Ads validation failed: {e}")
+            return False
 
     async def create_campaign(self, name: str, budget: float, objective: CampaignObjective) -> CampaignData:
         customer_id = self.credentials.customer_id
         if not customer_id:
             raise ValueError("Customer ID required")
-            
+
         endpoint = f"customers/{customer_id}/campaigns:mutate"
-        # Mocking the implementation details for brevity/migration
-        # Real impl would build the complex nested JSON for Google Ads
-        
-        # MOCK CALL
-        logger.info(f"Creating Google Ads campaign: {name}")
+        payload = {
+            "operations": [{
+                "create": {
+                    "name": name,
+                    "advertisingChannelType": "SEARCH",
+                    "status": "PAUSED",
+                }
+            }]
+        }
+        data = await self._make_request(endpoint, method='POST', data=payload)
+        results = data.get("results", [{}])
+        campaign_id = results[0].get("resourceName", "").split("/")[-1] if results else ""
         return CampaignData(
-            id="ga_camp_123",
+            id=campaign_id or f"ga_{name[:8]}",
             name=name,
             objective=objective,
             status="PAUSED",
@@ -134,17 +144,56 @@ class TikTokAdsIntegration(BaseIntegration):
         return ["create_campaign", "get_campaigns"]
 
     async def validate_connection(self) -> bool:
-        return bool(self.credentials.access_token and self.credentials.advertiser_id)
+        if not self.credentials.access_token or not self.credentials.advertiser_id:
+            return False
+        try:
+            if not self.session or self.session.closed:
+                self.session = aiohttp.ClientSession()
+            headers = {
+                "Access-Token": self.credentials.access_token,
+                "Content-Type": "application/json",
+            }
+            async with self.session.get(
+                f"{self.base_url}/advertiser/info/",
+                params={"advertiser_ids": f'["{self.credentials.advertiser_id}"]'},
+                headers=headers,
+            ) as resp:
+                resp.raise_for_status()
+                return True
+        except Exception as e:
+            logger.error(f"TikTok Ads validation failed: {e}")
+            return False
 
     async def create_campaign(self, name: str, budget: float, objective: CampaignObjective) -> CampaignData:
         advertiser_id = self.credentials.advertiser_id
         if not advertiser_id:
             raise ValueError("Advertiser ID required")
-            
-        # MOCK CALL
-        logger.info(f"Creating TikTok campaign: {name}")
+
+        if not self.session or self.session.closed:
+            self.session = aiohttp.ClientSession()
+
+        headers = {
+            "Access-Token": self.credentials.access_token,
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "advertiser_id": advertiser_id,
+            "campaign_name": name,
+            "objective_type": objective.value,
+            "budget": budget,
+            "budget_mode": "BUDGET_MODE_TOTAL",
+        }
+        async with self.session.post(
+            f"{self.base_url}/campaign/create/",
+            json=payload,
+            headers=headers,
+        ) as resp:
+            resp.raise_for_status()
+            data = await resp.json()
+            campaign_id = str(data.get("data", {}).get("campaign_id", ""))
+
         return CampaignData(
-            id="tt_camp_456",
+            id=campaign_id or f"tt_{name[:8]}",
             name=name,
             objective=objective,
             status="ENABLE",

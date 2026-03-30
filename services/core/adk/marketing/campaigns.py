@@ -5,6 +5,7 @@ A/B testing, and cross-channel analytics.
 """
 import json
 import logging
+from services.core.utils.json_extractor import extract_json_from_llm_response
 from typing import Dict, Any, List, Optional
 from services.core.llm import default_llm
 from services.core.agents.base import BaseAgent, AgentConfig
@@ -12,16 +13,8 @@ from services.core.agents.registry import AgentRegistry, AgentCapability
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """You are a Marketing Campaign Manager for a small business.
-You combine expertise in campaign orchestration, marketing automation, A/B testing, and analytics.
+# Deprecated in favor of build_system_prompt
 
-Your capabilities:
-1. ORCHESTRATE: Design and manage multi-channel marketing campaigns
-2. AUTOMATE: Build email sequences, drip campaigns, and trigger-based workflows
-3. TEST: Design and analyze A/B tests for messages, subject lines, and landing pages
-4. ANALYZE: Cross-channel attribution, ROI tracking, and performance optimization
-
-Be data-driven, specific with metrics, and focused on ROI. Always respond as JSON."""
 
 
 class CampaignAgent(BaseAgent):
@@ -44,6 +37,7 @@ class CampaignAgent(BaseAgent):
     async def process(self, input_data: Any, context: Optional[Dict] = None) -> Any:
         command = input_data.get("command")
         kwargs = input_data.get("kwargs", {})
+        kwargs["context"] = context
         if command == "design_campaign":
             return await self.design_campaign(**kwargs)
         elif command == "build_automation":
@@ -57,11 +51,11 @@ class CampaignAgent(BaseAgent):
         else:
             raise ValueError(f"Unknown command for CampaignAgent: {command}")
 
-    @classmethod
-    async def design_campaign(cls, objective: str, audience: Dict[str, Any],
+    async def design_campaign(self, objective: str, audience: Dict[str, Any],
                                channels: Optional[List[str]] = None,
                                budget: Optional[float] = None,
-                               duration_days: int = 30) -> Dict[str, Any]:
+                               duration_days: int = 30,
+                               context: Optional[Dict] = None) -> Dict[str, Any]:
         """Design a complete marketing campaign."""
         prompt = f"""Design a marketing campaign:
 Objective: {objective}
@@ -74,18 +68,23 @@ Return JSON with: campaign_name, theme, channels (list with channel, role, budge
 timeline (list with week, activities, milestones), 
 messaging_framework (value_prop, key_messages, cta),
 content_needed (list), success_metrics, 
-launch_checklist (list), risk_mitigation."""
+launch_checklist (list), risk_mitigation.
+
+First, think step by step to build a cohesive campaign strategy."""
+        
+        base_prompt = "You are a Marketing Campaign Manager for a small business. You combine expertise in campaign orchestration, marketing automation, A/B testing, and analytics."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
 
         response = await default_llm.chat_completion([
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ])
-        return cls._parse_json(response)
+        return self._parse_json(response)
 
-    @classmethod
-    async def build_automation(cls, trigger: str, objective: str,
+    async def build_automation(self, trigger: str, objective: str,
                                 audience_segment: str,
-                                steps: int = 5) -> Dict[str, Any]:
+                                steps: int = 5,
+                                context: Optional[Dict] = None) -> Dict[str, Any]:
         """Build a marketing automation sequence (email drip, nurture, etc.)."""
         prompt = f"""Create a {steps}-step marketing automation sequence:
 Trigger event: {trigger}
@@ -96,17 +95,22 @@ Return JSON with: sequence_name, trigger_event,
 steps (list with day, channel, subject, content_summary, cta, 
 personalization_tokens, exit_conditions),
 branching_rules (list), conversion_goal, 
-estimated_conversion_rate, optimization_notes."""
+estimated_conversion_rate, optimization_notes.
+
+Think step by step about the user journey before defining the steps."""
+
+        base_prompt = "You are an expert Automation Specialist building high-converting email and SMS sequences."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
 
         response = await default_llm.chat_completion([
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ])
-        return cls._parse_json(response)
+        return self._parse_json(response)
 
-    @classmethod
-    async def design_ab_test(cls, element: str, hypothesis: str,
-                              current_version: Optional[str] = None) -> Dict[str, Any]:
+    async def design_ab_test(self, element: str, hypothesis: str,
+                              current_version: Optional[str] = None,
+                              context: Optional[Dict] = None) -> Dict[str, Any]:
         """Design an A/B test for a marketing element."""
         prompt = f"""Design an A/B test:
 Element to test: {element}
@@ -117,16 +121,20 @@ Return JSON with: test_name, hypothesis, control_description,
 variants (list with name, change, rationale),
 primary_metric, secondary_metrics (list), 
 sample_size_needed, duration_days, 
-significance_threshold, implementation_notes."""
+significance_threshold, implementation_notes.
+
+Think step by step ensuring statistical rigor."""
+
+        base_prompt = "You are a Conversion Rate Optimization (CRO) expert."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
 
         response = await default_llm.chat_completion([
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ])
-        return cls._parse_json(response)
+        return self._parse_json(response)
 
-    @classmethod
-    async def analyze_campaign(cls, campaign_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze_campaign(self, campaign_data: Dict[str, Any], context: Optional[Dict] = None) -> Dict[str, Any]:
         """Analyze campaign performance across channels."""
         prompt = f"""Analyze this campaign's performance:
 {json.dumps(campaign_data, indent=2)}
@@ -134,17 +142,22 @@ significance_threshold, implementation_notes."""
 Return JSON with: overall_roi, channel_performance (dict per channel with metrics),
 top_performing_content, underperforming_elements,
 audience_insights, optimization_recommendations (list with action, expected_impact),
-next_campaign_suggestions."""
+next_campaign_suggestions.
+
+Think step by step through the cross-channel attribution before answering."""
+
+        base_prompt = "You are a Marketing Data Analyst expert in deciphering campaign ROI."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
 
         response = await default_llm.chat_completion([
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ])
-        return cls._parse_json(response)
+        return self._parse_json(response)
 
-    @classmethod
-    async def optimize_campaign(cls, campaign: Dict[str, Any],
-                                 performance: Dict[str, Any]) -> Dict[str, Any]:
+    async def optimize_campaign(self, campaign: Dict[str, Any],
+                                 performance: Dict[str, Any],
+                                 context: Optional[Dict] = None) -> Dict[str, Any]:
         """Generate real-time optimization recommendations for a running campaign."""
         prompt = f"""Optimize this running campaign based on performance data:
 Campaign: {json.dumps(campaign)}
@@ -153,24 +166,36 @@ Performance so far: {json.dumps(performance)}
 Return JSON with: immediate_actions (list with action, channel, rationale),
 budget_reallocation (dict), messaging_adjustments (list),
 audience_refinements, content_swaps (list), 
-expected_improvement, risk_assessment."""
+expected_improvement, risk_assessment.
+
+Think step by step on what tweaks will generate the highest immediate impact."""
+
+        base_prompt = "You are a Campaign Optimizer known for rescuing underperforming ads instantly."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
 
         response = await default_llm.chat_completion([
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt}
         ])
-        return cls._parse_json(response)
+        return self._parse_json(response)
 
-    @classmethod
-    def _parse_json(cls, response: str) -> Dict[str, Any]:
-        try:
-            if "```json" in response:
-                return json.loads(response.split("```json")[1].split("```")[0].strip())
-            elif "{" in response:
-                return json.loads(response[response.index("{"):response.rindex("}") + 1])
-        except Exception:
-            pass
-        return {"raw_response": response}
+    def _get_fallback_response(self) -> Dict[str, Any]:
+        return {
+            "error": "Failed to complete campaign request",
+            "campaign_name": "Fallback Campaign",
+            "channels": [],
+            "timeline": [],
+            "messaging_framework": {},
+            "content_needed": [],
+            "sequence_name": "Fallback Sequence",
+            "steps": [],
+            "test_name": "Fallback Test",
+            "variants": [],
+            "optimization_recommendations": []
+        }
+
+    def _parse_json(self, response: str) -> Dict[str, Any]:
+        return extract_json_from_llm_response(response, fallback=self._get_fallback_response())
 
 # Register Agent
 AgentRegistry.register(AgentCapability(

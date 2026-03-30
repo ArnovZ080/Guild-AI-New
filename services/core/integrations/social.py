@@ -47,21 +47,17 @@ class TwitterIntegration(BaseIntegration):
             raise
 
     async def validate_connection(self) -> bool:
+        if not self.credentials.access_token:
+            return False
         try:
-            # Simple check: get current user
-            # Note: This endpoint might differ based on API version, keeping it simple
-            if not self.credentials.user_id:
-                # If we don't have user_id yet, maybe we can't fully validate simply
-                # tailored to legacy code which assumed user_id is present
-                pass
-            
-            # Using a lightweight endpoint if possible, or just checking if token is present
-            if not self.credentials.access_token:
-                return False
-                
-            # Ideally we'd call await self.get_profile() but avoiding network calls in init/validation if not needed
-            # For now, let's assume if we have a token it's valid structure-wise
-            return True
+            await self._ensure_session()
+            url = f"{self.base_url}/users/me"
+            headers = {
+                'Authorization': f'Bearer {self.credentials.access_token}',
+                'Content-Type': 'application/json'
+            }
+            async with self.session.request('GET', url, headers=headers) as response:
+                return response.status == 200
         except Exception:
             return False
 

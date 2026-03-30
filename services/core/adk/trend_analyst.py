@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from services.core.agents.base import BaseAgent
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 
 # --- Data Models ---
 
@@ -80,7 +81,7 @@ class TrendAnalystAgent(BaseAgent):
 
     async def _generate_trend_strategy(self, focus_domains: List[str], data_sources: Dict, objectives: Dict) -> Dict:
         """Generates comprehensive trend strategy using LLM."""
-        sys_prompt = "You are the Trend Analyst Agent, an expert in detecting emerging market and cultural trends."
+        sys_prompt = self.build_system_prompt("You are the Trend Analyst Agent, an expert in detecting emerging market and cultural trends.", {})
         user_prompt = f"""
         **Focus Domains:** {json.dumps(focus_domains)}
         **Data Sources:** {json.dumps(data_sources)}
@@ -94,7 +95,8 @@ class TrendAnalystAgent(BaseAgent):
         For 'signals', include source, signal description, and strength (0-1).
         For 'themes', include name, summary, and confidence.
         For 'insights', include theme, implications, opportunities, and risks.
-        """
+        
+        Think step by step extracting high-level themes from the provided sources."""
         
         try:
             response = await default_llm.chat_completion([
@@ -162,22 +164,17 @@ class TrendAnalystAgent(BaseAgent):
             ))
         return insights
 
+    def _get_fallback_response(self) -> Dict[str, Any]:
+        return {
+            "error": "Failed to analyze trends",
+            "signals": [],
+            "themes": [],
+            "insights": [],
+            "roadmap": {}
+        }
+
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        """Helper to extract JSON from LLM response."""
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            elif "{" in text:
-                start = text.index("{")
-                end = text.rindex("}") + 1
-                json_str = text[start:end]
-            else:
-                return {}
-            return json.loads(json_str)
-        except Exception:
-            return {}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 # Register Result
 AgentRegistry.register(AgentCapability(

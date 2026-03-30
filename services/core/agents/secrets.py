@@ -15,7 +15,9 @@ class SecretManager:
     For this implementation, it uses a persistent JSON file with mock encryption/obfuscation.
     """
     
-    def __init__(self, data_dir: str = "/Users/arnovanzyl/.gemini/antigravity/scratch/data"):
+    def __init__(self, data_dir: Optional[str] = None):
+        if data_dir is None:
+            data_dir = os.getenv("GUILD_DATA_DIR", "/app/data")
         self.data_dir = Path(data_dir)
         self.secrets_file = self.data_dir / "secrets.json"
         self._secrets: Dict[str, Dict[str, Any]] = {}

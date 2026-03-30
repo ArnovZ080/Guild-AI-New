@@ -1,45 +1,67 @@
 import uuid
 from datetime import datetime
-from typing import Dict, List, Optional
-from services.core.agents.models import AuthorizationRequest
+from typing import Dict, List, Optional, Any
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from services.core.db.models import AgentAuthorization
 from services.core.logging import logger
 
 class AuthorizationQueue:
     """
-    Queue for human-in-the-loop authorization requests.
+    Queue for human-in-the-loop authorization requests using PostgreSQL.
     """
-    def __init__(self):
-        self.requests: Dict[str, AuthorizationRequest] = {}
 
-    def create_request(self, task_id: str, agent_id: str, action_type: str, description: str, params: Dict) -> AuthorizationRequest:
-        req_id = str(uuid.uuid4())
-        request = AuthorizationRequest(
-            id=req_id,
+    @classmethod
+    async def create_request(
+        cls, db: AsyncSession, user_id: str, task_id: str, agent_id: str, action_type: str, description: str, params: Dict[str, Any]
+    ) -> AgentAuthorization:
+        request = AgentAuthorization(
+            user_id=user_id,
             task_id=task_id,
             agent_id=agent_id,
             action_type=action_type,
             description=description,
             params=params,
-            created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            status="pending"
         )
-        self.requests[req_id] = request
-        logger.info(f"Authorization required: {description} (Type: {action_type})")
+        db.add(request)
+        await db.commit()
+        await db.refresh(request)
+        
+        logger.info(f"AuthorizationQueue: Authorization required [{description}] (Type: {action_type}) for user {user_id}")
         return request
 
-    def approve(self, request_id: str) -> bool:
-        if request_id in self.requests:
-            self.requests[request_id].status = "approved"
-            logger.info(f"Authorized: {self.requests[request_id].description}")
+    @classmethod
+    async def approve(cls, db: AsyncSession, request_id: str) -> bool:
+        stmt = select(AgentAuthorization).where(AgentAuthorization.id == request_id)
+        result = await db.execute(stmt)
+        request = result.scalar_one_or_none()
+        
+        if request and request.status == "pending":
+            request.status = "approved"
+            await db.commit()
+            logger.info(f"AuthorizationQueue: Authorized [{request.description}]")
             return True
         return False
 
-    def reject(self, request_id: str):
-         if request_id in self.requests:
-            self.requests[request_id].status = "rejected"
-            logger.info(f"Rejected: {self.requests[request_id].description}")
+    @classmethod
+    async def reject(cls, db: AsyncSession, request_id: str) -> bool:
+        stmt = select(AgentAuthorization).where(AgentAuthorization.id == request_id)
+        result = await db.execute(stmt)
+        request = result.scalar_one_or_none()
+        
+        if request and request.status == "pending":
+            request.status = "rejected"
+            await db.commit()
+            logger.info(f"AuthorizationQueue: Rejected [{request.description}]")
+            return True
+        return False
 
-    def list_pending(self) -> List[AuthorizationRequest]:
-        return [r for r in self.requests.values() if r.status == "pending"]
-
-# Global instance
-auth_queue = AuthorizationQueue()
+    @classmethod
+    async def list_pending(cls, db: AsyncSession, user_id: str) -> List[AgentAuthorization]:
+        stmt = select(AgentAuthorization).where(
+            AgentAuthorization.user_id == user_id,
+            AgentAuthorization.status == "pending"
+        )
+        result = await db.execute(stmt)
+        return list(result.scalars().all())

@@ -46,7 +46,6 @@ const ChatInterface = () => {
         setIsLoading(true);
 
         try {
-            // In Phase 3, we interact with the Orchestrator as the primary voice
             const response = await agentAPI.runAgent('OrchestratorAgent', {
                 objective: messageText
             });
@@ -84,26 +83,26 @@ const ChatInterface = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-[#F8FAFC]">
+        <div className="flex flex-col h-screen">
             {/* Executive Header */}
-            <div className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-5 flex items-center justify-between sticky top-0 z-10">
+            <div className="bg-white/80 dark:bg-[#0C1222]/80 backdrop-blur-xl border-b border-gray-200/60 dark:border-white/[0.06] px-8 py-5 flex items-center justify-between sticky top-0 z-10">
                 <div className="max-w-5xl mx-auto w-full flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#1a6fff] rounded-xl flex items-center justify-center shadow-lg shadow-cobalt/20">
+                        <div className="w-10 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
                             <Bot className="w-6 h-6 text-white" strokeWidth={1.5} />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Executive Orchestrator</h1>
+                            <h1 className="text-xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight font-heading">Executive Orchestrator</h1>
                             <div className="flex items-center gap-2">
                                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest">System Voice Active</p>
+                                <p className="text-xs font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest">System Voice Active</p>
                             </div>
                         </div>
                     </div>
                     <div className="flex gap-4">
                         <div className="text-right hidden md:block">
-                            <p className="text-[10px] font-bold text-zinc-600 uppercase">Strategic Focus</p>
-                            <p className="text-xs font-bold text-[#1a6fff]">Q1 Growth: Artisanal Scaling</p>
+                            <p className="text-[10px] font-medium text-gray-400 dark:text-zinc-600 uppercase">Strategic Focus</p>
+                            <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Q1 Growth: Artisanal Scaling</p>
                         </div>
                     </div>
                 </div>
@@ -122,36 +121,38 @@ const ChatInterface = () => {
                             >
                                 <div className={`flex gap-4 max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                                     {/* Avatar */}
-                                    <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${message.role === 'user' ? 'bg-slate-800' : 'glass-panel'
+                                    <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${message.role === 'user'
+                                            ? 'bg-gray-800 dark:bg-zinc-800'
+                                            : 'bg-white dark:bg-white/[0.06] border border-gray-200/60 dark:border-white/[0.06]'
                                         }`}>
-                                        {message.role === 'user' ? <User className="w-5 h-5 text-white" strokeWidth={1.5} /> : <Bot className="w-5 h-5 text-[#1a6fff]" strokeWidth={1.5} />}
+                                        {message.role === 'user' ? <User className="w-5 h-5 text-white" strokeWidth={1.5} /> : <Bot className="w-5 h-5 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />}
                                     </div>
 
                                     {/* Message Bundle */}
                                     <div className="space-y-3">
                                         <div className={`px-6 py-4 rounded-2xl shadow-sm border ${message.role === 'user'
-                                            ? 'bg-[#1a6fff] text-white border-indigo-500'
+                                            ? 'bg-gradient-to-b from-blue-500 to-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20'
                                             : message.isError
-                                                ? 'bg-red-50 text-red-900 border-red-200'
-                                                : 'bg-white text-slate-800 border-slate-200'
+                                                ? 'bg-red-50 dark:bg-red-500/10 text-red-900 dark:text-red-300 border-red-200 dark:border-red-500/20'
+                                                : 'bg-white dark:bg-white/[0.04] text-gray-800 dark:text-zinc-200 border-gray-200/60 dark:border-white/[0.06]'
                                             }`}>
                                             <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
-                                            <div className={`text-[10px] mt-3 font-bold uppercase tracking-wider opacity-50 ${message.role === 'user' ? 'text-white' : 'text-zinc-600'}`}>
+                                            <div className={`text-[10px] mt-3 font-medium uppercase tracking-wider opacity-50 ${message.role === 'user' ? 'text-white' : 'text-gray-500 dark:text-zinc-600'}`}>
                                                 {formatTime(message.timestamp)}
                                             </div>
                                         </div>
 
                                         {/* Thought reflection block */}
                                         {message.thoughts && message.role === 'assistant' && (
-                                            <div className="bg-white/[0.03]/80 border border-slate-200 rounded-xl overflow-hidden transition-all">
+                                            <div className="bg-gray-50 dark:bg-white/[0.03] border border-gray-200/60 dark:border-white/[0.06] rounded-xl overflow-hidden transition-all">
                                                 <button
                                                     onClick={() => toggleThoughts(message.id)}
-                                                    className="w-full px-4 py-2 flex items-center justify-between hover:bg-white/5/50 transition-colors"
+                                                    className="w-full px-4 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-colors"
                                                 >
-                                                    <span className="text-[10px] font-bold text-zinc-500 uppercase flex items-center gap-2">
-                                                        <Brain size={12} className="text-indigo-500" strokeWidth={1.5} /> Orchestrator Logic
+                                                    <span className="text-[10px] font-medium text-gray-500 dark:text-zinc-500 uppercase flex items-center gap-2">
+                                                        <Brain size={12} className="text-indigo-500 dark:text-indigo-400" strokeWidth={1.5} /> Orchestrator Logic
                                                     </span>
-                                                    {showThoughts[message.id] ? <ChevronUp size={12} strokeWidth={1.5} /> : <ChevronDown size={12} strokeWidth={1.5} />}
+                                                    {showThoughts[message.id] ? <ChevronUp size={12} className="text-gray-400 dark:text-zinc-600" strokeWidth={1.5} /> : <ChevronDown size={12} className="text-gray-400 dark:text-zinc-600" strokeWidth={1.5} />}
                                                 </button>
                                                 <AnimatePresence>
                                                     {showThoughts[message.id] && (
@@ -159,9 +160,9 @@ const ChatInterface = () => {
                                                             initial={{ height: 0, opacity: 0 }}
                                                             animate={{ height: 'auto', opacity: 1 }}
                                                             exit={{ height: 0, opacity: 0 }}
-                                                            className="px-4 py-3 border-t border-slate-200"
+                                                            className="px-4 py-3 border-t border-gray-200/60 dark:border-white/[0.06]"
                                                         >
-                                                            <div className="text-[11px] font-mono text-zinc-500 leading-relaxed max-h-40 overflow-y-auto italic">
+                                                            <div className="text-[11px] font-mono text-gray-500 dark:text-zinc-500 leading-relaxed max-h-40 overflow-y-auto italic">
                                                                 {message.thoughts}
                                                             </div>
                                                         </motion.div>
@@ -170,17 +171,17 @@ const ChatInterface = () => {
                                             </div>
                                         )}
 
-                                        {/* Action Widgets (Mock for Phase 3) */}
+                                        {/* Action Widgets */}
                                         {message.type === 'authorization' && (
-                                            <div className="bg-zinc-900/60 p-5 rounded-2xl text-white space-y-4">
+                                            <div className="bg-gray-900 dark:bg-white/[0.06] p-5 rounded-2xl text-white dark:text-zinc-200 space-y-4 border border-gray-800 dark:border-white/[0.06]">
                                                 <div className="flex items-center gap-2">
                                                     <ShieldAlert size={18} className="text-emerald-400" strokeWidth={1.5} />
                                                     <span className="text-xs font-bold uppercase">Authorization Required</span>
                                                 </div>
-                                                <p className="text-sm text-zinc-600">Agent `SEOAgency` requires approval to execute a high-budget keyword strategy.</p>
+                                                <p className="text-sm text-gray-400 dark:text-zinc-500">Agent `SEOAgency` requires approval to execute a high-budget keyword strategy.</p>
                                                 <div className="flex gap-2">
-                                                    <button className="flex-1 py-2 bg-emerald-500 text-white rounded-lg text-xs font-bold">Authorize</button>
-                                                    <button className="flex-1 py-2 bg-slate-700 text-zinc-600 rounded-lg text-xs font-bold">Details</button>
+                                                    <button className="flex-1 py-2 bg-emerald-500 text-white rounded-lg text-xs font-bold hover:bg-emerald-600 transition-colors">Authorize</button>
+                                                    <button className="flex-1 py-2 bg-gray-700 dark:bg-white/5 text-gray-300 dark:text-zinc-500 rounded-lg text-xs font-bold hover:bg-gray-600 dark:hover:bg-white/10 transition-colors">Details</button>
                                                 </div>
                                             </div>
                                         )}
@@ -194,11 +195,11 @@ const ChatInterface = () => {
                     {isLoading && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
                             <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-xl glass-panel ai-active-glow flex items-center justify-center shadow-sm">
-                                    <Brain className="w-5 h-5 text-[#1a6fff]" strokeWidth={1.5} />
+                                <div className="w-10 h-10 rounded-xl bg-white dark:bg-white/[0.06] border border-gray-200/60 dark:border-white/[0.06] ai-active-glow flex items-center justify-center shadow-sm">
+                                    <Brain className="w-5 h-5 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
                                 </div>
-                                <div className="glass-panel px-6 py-4 rounded-2xl shadow-sm text-xs font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-3">
-                                    <Activity size={14} className="text-indigo-400 animate-pulse" strokeWidth={1.5} /> Synchronizing Workforce...
+                                <div className="bg-white dark:bg-white/[0.04] border border-gray-200/60 dark:border-white/[0.06] px-6 py-4 rounded-2xl shadow-sm text-xs font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-3">
+                                    <Activity size={14} className="text-indigo-500 dark:text-indigo-400 animate-pulse" strokeWidth={1.5} /> Synchronizing Workforce...
                                 </div>
                             </div>
                         </motion.div>
@@ -212,29 +213,29 @@ const ChatInterface = () => {
             <div className="p-8 bg-transparent">
                 <div className="max-w-4xl mx-auto">
                     <div className="relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
-                        <div className="relative flex gap-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-xl">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
+                        <div className="relative flex gap-3 bg-white dark:bg-white/[0.04] p-2 rounded-2xl border border-gray-200/60 dark:border-white/[0.06] shadow-lg dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
                             <textarea
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Command your workforce..."
-                                className="flex-1 px-4 py-4 text-sm font-medium focus:outline-none resize-none bg-transparent"
+                                className="flex-1 px-4 py-4 text-sm font-medium focus:outline-none resize-none bg-transparent text-gray-900 dark:text-zinc-200 placeholder:text-gray-400 dark:placeholder:text-zinc-600"
                                 rows={1}
                                 disabled={isLoading}
                             />
                             <button
                                 onClick={() => handleSendMessage()}
                                 disabled={isLoading || !inputValue.trim()}
-                                className="px-6 py-3 bg-[#1a6fff] text-white rounded-xl hover:bg-[#4d8fff] disabled:opacity-50 disabled:grayscale transition-all duration-200 shadow-lg shadow-cobalt/20 flex items-center gap-2"
+                                className="px-6 py-3 bg-gradient-to-b from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:grayscale transition-all duration-200 shadow-md shadow-blue-500/20 hover:shadow-lg flex items-center gap-2 active:scale-[0.98]"
                             >
                                 <Send className="w-4 h-4" strokeWidth={1.5} />
-                                <span className="font-bold text-xs uppercase tracking-wider">Execute</span>
+                                <span className="font-semibold text-xs uppercase tracking-wider">Execute</span>
                             </button>
                         </div>
                     </div>
-                    <p className="text-[10px] text-center text-zinc-600 font-bold uppercase tracking-widest mt-4">
-                        Powered by Antigravity Strategic Engine v2.4
+                    <p className="text-[10px] text-center text-gray-400 dark:text-zinc-600 font-medium uppercase tracking-widest mt-4">
+                        Powered by Guild Strategic Engine v2.4
                     </p>
                 </div>
             </div>

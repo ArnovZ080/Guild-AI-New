@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from services.core.agents.base import BaseAgent
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 
 # --- Data Models ---
 
@@ -84,7 +85,7 @@ class MarketingStrategistAgent(BaseAgent):
         brand = context.get("brand", {})
         business = context.get("business", {})
         
-        sys_prompt = "You are a Senior Marketing Strategist."
+        sys_prompt = self.build_system_prompt("You are a Senior Marketing Strategist.", context)
         user_prompt = f"""
         **Objective:** {objective}
         **Type:** {campaign_type}
@@ -97,7 +98,8 @@ class MarketingStrategistAgent(BaseAgent):
         
         **Output Format (JSON):**
         Return JSON with keys: 'objectives', 'messaging_framework', 'channel_mix', 'estimated_reach' (integer), 'estimated_conversions' (integer).
-        """
+        
+        Think step by step structuring the optimal strategy."""
         
         try:
             response = await default_llm.chat_completion([
@@ -112,7 +114,7 @@ class MarketingStrategistAgent(BaseAgent):
         """Generate content ideas using LLM."""
         brand = context.get("brand", {})
         
-        sys_prompt = "You are a Creative Content Director."
+        sys_prompt = self.build_system_prompt("You are a Creative Content Director.", context)
         user_prompt = f"""
         **Objective:** {objective}
         **Campaign Type:** {campaign_type}
@@ -124,7 +126,8 @@ class MarketingStrategistAgent(BaseAgent):
         
         **Output Format (JSON):**
         Return JSON with keys: 'social_posts' (list of strings), 'email_subjects' (list of strings), 'ad_headlines' (list of strings).
-        """
+        
+        Think step by step tailoring ideas to the brand voice and phrasing."""
         
         try:
             response = await default_llm.chat_completion([
@@ -173,22 +176,21 @@ class MarketingStrategistAgent(BaseAgent):
         ctype = input_data.get("campaign_type", "multi_channel")
         return self._optimize_budget_allocation(budget, ctype)
 
+    def _get_fallback_response(self) -> Dict[str, Any]:
+        return {
+            "error": "Failed to complete strategy generation",
+            "objectives": "Increase base metrics",
+            "messaging_framework": {"primary": "Value proposition"},
+            "channel_mix": ["Digital", "Direct"],
+            "estimated_reach": 0,
+            "estimated_conversions": 0,
+            "social_posts": [],
+            "email_subjects": [],
+            "ad_headlines": []
+        }
+
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        """Helper to extract JSON from LLM response."""
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            elif "{" in text:
-                start = text.index("{")
-                end = text.rindex("}") + 1
-                json_str = text[start:end]
-            else:
-                return {}
-            return json.loads(json_str)
-        except Exception:
-            return {}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 # Register Result
 AgentRegistry.register(AgentCapability(

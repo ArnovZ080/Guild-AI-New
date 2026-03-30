@@ -4,49 +4,45 @@ import uuid
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from services.core.db.models import AgentTrigger
 from services.core.logging import logger
 from services.core.agents.models import TaskStatus
 
-class TriggerSpec(BaseModel):
-    id: str
-    name: str
-    description: str
-    agent_id: str
-    intent: str
-    frequency: str  # "daily", "weekly", "monthly"
-    last_run: Optional[datetime] = None
-    next_run: datetime
-    metadata: Dict[str, Any] = Field(default_factory=dict)
-    active: bool = True
-
 class TriggerManager:
     """
-    Manages autonomous, recurring triggers for agent tasks.
+    Manages autonomous, recurring triggers for agent tasks using PostgreSQL.
     """
-    def __init__(self):
-        self.triggers: Dict[str, TriggerSpec] = {}
-
-    def create_trigger(self, name: str, description: str, agent_id: str, intent: str, frequency: str) -> TriggerSpec:
-        trigger_id = str(uuid.uuid4())
+    
+    @classmethod
+    async def create_trigger(
+        cls, db: AsyncSession, user_id: str, name: str, description: str, 
+        agent_id: str, intent: str, frequency: str
+    ) -> AgentTrigger:
+        now = datetime.utcnow()
+        next_run = cls._calculate_next_run(now, frequency)
         
-        now = datetime.now()
-        next_run = self._calculate_next_run(now, frequency)
-        
-        trigger = TriggerSpec(
-            id=trigger_id,
+        trigger = AgentTrigger(
+            user_id=user_id,
             name=name,
             description=description,
             agent_id=agent_id,
             intent=intent,
             frequency=frequency,
-            next_run=next_run
+            next_run=next_run,
+            metadata_json={}
         )
         
-        self.triggers[trigger_id] = trigger
-        logger.info(f"Created recurring trigger: {name} ({frequency})")
+        db.add(trigger)
+        await db.commit()
+        await db.refresh(trigger)
+        
+        logger.info(f"TriggerManager: Created recurring trigger [{name}] ({frequency}) for user {user_id}")
         return trigger
 
-    def _calculate_next_run(self, from_time: datetime, frequency: str) -> datetime:
+    @classmethod
+    def _calculate_next_run(cls, from_time: datetime, frequency: str) -> datetime:
         if frequency == "daily":
             return from_time + timedelta(days=1)
         elif frequency == "weekly":
@@ -57,20 +53,26 @@ class TriggerManager:
         else:
             return from_time + timedelta(days=1)
 
-    def get_runnable_triggers(self) -> List[TriggerSpec]:
-        now = datetime.now()
-        runnable = []
-        for trigger in self.triggers.values():
-            if trigger.active and trigger.next_run <= now:
-                runnable.append(trigger)
-        return runnable
+    @classmethod
+    async def get_runnable_triggers(cls, db: AsyncSession, user_id: str) -> List[AgentTrigger]:
+        now = datetime.utcnow()
+        stmt = select(AgentTrigger).where(
+            AgentTrigger.user_id == user_id,
+            AgentTrigger.active == True,
+            AgentTrigger.next_run <= now
+        )
+        result = await db.execute(stmt)
+        return list(result.scalars().all())
 
-    def mark_executed(self, trigger_id: str):
-        if trigger_id in self.triggers:
-            trigger = self.triggers[trigger_id]
-            trigger.last_run = datetime.now()
-            trigger.next_run = self._calculate_next_run(trigger.last_run, trigger.frequency)
-            logger.info(f"Trigger {trigger.name} executed. Next run scheduled for {trigger.next_run}")
+    @classmethod
+    async def mark_executed(cls, db: AsyncSession, trigger_id: str):
+        stmt = select(AgentTrigger).where(AgentTrigger.id == trigger_id)
+        result = await db.execute(stmt)
+        trigger = result.scalar_one_or_none()
+        
+        if trigger:
+            trigger.last_run = datetime.utcnow()
+            trigger.next_run = cls._calculate_next_run(trigger.last_run, trigger.frequency)
+            await db.commit()
+            logger.info(f"TriggerManager: Trigger {trigger.name} executed. Next run scheduled for {trigger.next_run}")
 
-# Global instance
-trigger_manager = TriggerManager()

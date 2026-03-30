@@ -12,7 +12,7 @@ from services.core.llm import default_llm
 from services.core.agents.evaluator import evaluator_league
 from services.core.agents.identity import identity_manager
 from services.core.agents.projects import project_manager
-from services.core.agents.authorization import auth_queue
+from services.core.agents.authorization import AuthorizationQueue
 from services.core.learning.adaptive_service import AdaptiveLearningService
 from services.core.learning.outcome_tracker import OutcomeTracker
 from services.core.customers.predictive_engine import PredictiveEngine
@@ -41,13 +41,15 @@ class OrchestratorAgent(BaseAgent):
             raise ValueError("OrchestratorAgent requires a 'goal'")
 
         # 1. Enforce Persistent Business Context
-        business_context = identity_manager.get_context_prompt()
+        user_id = context.get("user_id", "default_user") if context else "default_user"
+        db = context.get("db") if context else None
+        business_context = await identity_manager.get_context_prompt(db, user_id)
 
         # 2. Discovery: Get available agents
         agents_desc = AgentRegistry.get_description_map()
         
         # 2.5 Inject Adaptive Learning Context
-        adaptive_context = AdaptiveLearningService.get_context_for_orchestrator()
+        adaptive_context = await AdaptiveLearningService.get_context_for_orchestrator(db, user_id)
 
         # 2.6 Inject Proactive Customer Intelligence
         proactive_actions = PredictiveEngine.get_proactive_tasks()
@@ -69,14 +71,14 @@ class OrchestratorAgent(BaseAgent):
 USER OBJECTIVE:
 {goal}
 """
-        event_bus.emit(AgentEvent(
+        await event_bus.emit(AgentEvent(
             agent_id=self.config.name,
             event_type=AgentEventType.THINKING,
             description="Orchestrator is drafting a new delegation plan.",
             how="Using LLM to decompose high-level goal into a dependency-mapped DAG.",
             why="Decomposition ensures complex objectives are addressed by specialized agents in a logical sequence.",
             progress=0.3
-        ))
+        ), db=db)
         plan = await self._generate_plan(context_aware_objective, agents_desc)
         
         # Pre-flight Planning Check
@@ -136,12 +138,17 @@ USER OBJECTIVE:
         goal = input_data.get("goal")
         timeframe = input_data.get("timeframe", 90)
         
-        identity = identity_manager.get_identity()
-        identity_context = {
-            "business_name": identity.business_name,
-            "niche": identity.niche,
-            "brand_voice": identity.brand_voice
-        }
+        user_id = input_data.get("user_id", "default_user")
+        db = input_data.get("db")
+        identity = await identity_manager.get_identity(db, user_id)
+        
+        identity_context = {"business_name": "Unknown", "niche": "Unknown", "brand_voice": "Professional"}
+        if identity:
+            identity_context = {
+                "business_name": identity.business_name,
+                "niche": identity.niche,
+                "brand_voice": identity.brand.voice if hasattr(identity, 'brand') and identity.brand else "Professional"
+            }
         
         sys_prompt = f"""You are a Silicon Valley Chief Strategy Officer. 
 Your goal is to take a high-level business objective and break it into a {timeframe}-day strategic roadmap.
@@ -178,8 +185,10 @@ Return JSON with a "milestones" key containing a list of objects with:
                     target_date=target_date
                 ))
             
-            project = project_manager.create_project(
-                business_id=identity.business_name, 
+            project = await project_manager.create_project(
+                db=db,
+                user_id=user_id,
+                business_id=identity.business_name if identity else "Unknown", 
                 goal=goal, 
                 timeframe_days=timeframe,
                 milestones=milestones
@@ -190,10 +199,11 @@ Return JSON with a "milestones" key containing a list of objects with:
             self.logger.error(f"Failed to generate strategic roadmap: {e}")
             self.logger.debug(f"LLM Response: {response}")
             # Fallback to simple creation
-            return project_manager.create_project(identity.business_name, goal, timeframe)
+            return await project_manager.create_project(db, user_id, identity.business_name if identity else "Unknown", goal, timeframe)
 
-    async def execute_milestone(self, project_id: str, milestone_id: str) -> Dict[str, Any]:
-        project = project_manager.get_project(project_id)
+    async def execute_milestone(self, project_id: str, milestone_id: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+        db = context.get("db") if context else None
+        project = await project_manager.get_project(db, project_id)
         if not project:
             raise ValueError(f"Project {project_id} not found")
         
@@ -221,7 +231,12 @@ Create a detailed JSON delegation plan with an array of tasks. Refer to previous
         plan = await self._generate_plan(milestone.focus, agents_desc)
         
         # 2. Execution
-        results = await self._execute_plan(plan, {"project_id": project_id, "milestone_id": milestone_id})
+        results = await self._execute_plan(plan, {
+            "project_id": project_id, 
+            "milestone_id": milestone_id,
+            "db": db,
+            "user_id": context.get("user_id", "default_user") if context else "default_user"
+        })
         
         # 3. Update status
         milestone.status = TaskStatus.COMPLETED
@@ -235,7 +250,7 @@ Create a detailed JSON delegation plan with an array of tasks. Refer to previous
     async def _generate_plan(self, goal: str, agents_desc: str) -> DelegationPlan:
         sys_prompt = """You are an Expert Delegation Architect. 
 Your goal is to break down complex user intent into a structured "Smart Contract" delegation plan. 
-
+        
 For each task, you must define:
 - id: unique string
 - intent: clear goal for the agent
@@ -297,6 +312,8 @@ Optimize for:
             ])
 
     async def _execute_plan(self, plan: DelegationPlan, initial_context: Dict) -> Dict[str, Any]:
+        db = initial_context.get("db")
+        user_id = initial_context.get("user_id", "default_user")
         results = {}
         pending_tasks = {t.id: t for t in plan.tasks}
         completed_tasks: Set[str] = set()
@@ -336,7 +353,7 @@ Optimize for:
                 continue
 
             self.logger.info(f"Delegating [Smart Contract {task.id}] -> {task.assigned_agent} | Auth: {task.authority_level}")
-            event_bus.emit(AgentEvent(
+            await event_bus.emit(AgentEvent(
                 agent_id=self.config.name,
                 event_type=AgentEventType.HANDOFF,
                 description=f"Handoff: delegating '{task.intent}' to {task.assigned_agent}.",
@@ -344,13 +361,15 @@ Optimize for:
                 why=f"Delegation targets the most suitable agent category for the specific task intent.",
                 data={"task_id": task.id, "target_agent": task.assigned_agent},
                 progress=current_spend / total_budget if total_budget > 0 else 0.5
-            ))
+            ), db=db)
             task.process_log.append(f"Orchestrator validated Smart Contract for {task.id}. Initializing {task.assigned_agent}.")
             
             # 0. Check for Human Authorization requirement
             if task.authority_level == AuthorityLevel.HUMAN:
                 self.logger.info(f"Task {task.id} requires human approval. Creating auth request.")
-                auth_req = auth_queue.create_request(
+                auth_req = await AuthorizationQueue.create_request(
+                    db=db,
+                    user_id=user_id,
                     task_id=task.id,
                     agent_id=task.assigned_agent,
                     action_type="delegation",
@@ -399,7 +418,9 @@ Optimize for:
 
                             # Record outcome for Adaptive Learning
                             outcome_score = "excellent" if review.get("overall_score", 0) >= 90 else "good" if review.get("overall_score", 0) >= 70 else "neutral"
-                            OutcomeTracker.record_outcome(
+                            await OutcomeTracker.record_outcome(
+                                db=initial_context.get("db"),
+                                user_id=initial_context.get("user_id", "default_user"),
                                 task_id=task.id,
                                 agent_id=task.assigned_agent,
                                 action_type=task.intent.split(":")[0] if ":" in task.intent else "general",

@@ -5,6 +5,7 @@ qualification, scoring, and personalized outreach generation.
 """
 import json
 import logging
+from services.core.utils.json_extractor import extract_json_from_llm_response
 from typing import Dict, Any, List, Optional
 from services.core.llm import default_llm
 from services.core.agents.base import BaseAgent, AgentConfig
@@ -12,16 +13,7 @@ from services.core.agents.registry import AgentRegistry, AgentCapability
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """You are a Lead Intelligence Specialist for a small business.
-You combine expertise in lead qualification, scoring, and personalized outreach.
-
-Your capabilities:
-1. QUALIFY: Score leads based on firmographic fit, behavioral signals, and intent data
-2. PERSONALIZE: Create deeply personalized outreach using psychology principles
-3. SEGMENT: Group leads by ICP fit, engagement level, and conversion readiness
-4. ENRICH: Recommend data enrichment strategies for incomplete lead profiles
-
-Be specific, actionable, and data-driven. Always respond as JSON."""
+# Deprecated in favor of build_system_prompt
 
 
 class LeadAgent(BaseAgent):
@@ -42,6 +34,7 @@ class LeadAgent(BaseAgent):
     async def process(self, input_data: Any, context: Optional[Dict] = None) -> Any:
         command = input_data.get("command")
         kwargs = input_data.get("kwargs", {})
+        kwargs["context"] = context
         if command == "qualify":
             return await self.qualify(**kwargs)
         elif command == "score":
@@ -53,25 +46,29 @@ class LeadAgent(BaseAgent):
         else:
             raise ValueError(f"Unknown command for LeadAgent: {command}")
 
-    @classmethod
-    async def qualify(cls, lead: Dict[str, Any],
-                      icp: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    async def qualify(self, lead: Dict[str, Any],
+                      icp: Optional[Dict[str, Any]] = None,
+                      context: Optional[Dict] = None) -> Dict[str, Any]:
         """Qualify a lead against the Ideal Customer Profile."""
         prompt = f"""Qualify this lead against our ICP:
 Lead: {json.dumps(lead)}
 ICP criteria: {json.dumps(icp or {"industry": "any", "company_size": "1-500", "budget": "any"})}
 
 Return JSON with: qualified (bool), score (0-100), fit_analysis, 
-strengths (list), gaps (list), recommended_action, priority (hot/warm/cold)."""
+strengths (list), gaps (list), recommended_action, priority (hot/warm/cold).
+
+Think step by step about firmographic and ICP alignment."""
+
+        base_prompt = "You are a Lead Intelligence Specialist. You score and qualify leads based on intent and fit."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
 
         response = await default_llm.chat_completion([
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": sys_prompt},
             {"role": "user", "content": prompt}
         ])
-        return cls._parse_json(response)
+        return self._parse_json(response)
 
-    @classmethod
-    def score(cls, lead: Dict[str, Any]) -> Dict[str, Any]:
+    def score(self, lead: Dict[str, Any], context: Optional[Dict] = None) -> Dict[str, Any]:
         """Fast heuristic lead scoring (no LLM needed)."""
         score = 0
         factors = []
@@ -120,10 +117,10 @@ strengths (list), gaps (list), recommended_action, priority (hot/warm/cold)."""
             }[priority]
         }
 
-    @classmethod
-    async def personalize(cls, lead: Dict[str, Any], channel: str = "email",
+    async def personalize(self, lead: Dict[str, Any], channel: str = "email",
                           product: Optional[Dict[str, Any]] = None,
-                          sender: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                          sender: Optional[Dict[str, Any]] = None,
+                          context: Optional[Dict] = None) -> Dict[str, Any]:
         """Create a deeply personalized outreach message."""
         prompt = f"""Create a personalized {channel} outreach message.
 
@@ -138,24 +135,29 @@ Use these sales psychology principles:
 - Authority: Establish expertise subtly
 
 Return JSON with: subject (for email), message, personalization_points (list),
-psychology_principles_used (list), follow_up_timing, call_to_action."""
+psychology_principles_used (list), follow_up_timing, call_to_action.
+
+Think step by step about which psychological principles map best to this lead's profile."""
+
+        base_prompt = "You are a Sales Copywriter expert in highly-personalized B2B outreach."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
 
         response = await default_llm.chat_completion([
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": sys_prompt},
             {"role": "user", "content": prompt}
         ])
-        return cls._parse_json(response)
+        return self._parse_json(response)
 
-    @classmethod
-    async def batch_personalize(cls, leads: List[Dict[str, Any]],
+    async def batch_personalize(self, leads: List[Dict[str, Any]],
                                 channel: str = "email",
-                                product: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+                                product: Optional[Dict[str, Any]] = None,
+                                context: Optional[Dict] = None) -> List[Dict[str, Any]]:
         """Personalize outreach for multiple leads."""
         results = []
         for lead in leads:
-            scored = cls.score(lead)
+            scored = self.score(lead, context=context)
             if scored["priority"] != "cold":
-                personalized = await cls.personalize(lead, channel, product)
+                personalized = await self.personalize(lead, channel, product, context=context)
                 results.append({
                     "lead": lead.get("name", lead.get("email", "unknown")),
                     "score": scored,
@@ -163,16 +165,23 @@ psychology_principles_used (list), follow_up_timing, call_to_action."""
                 })
         return results
 
-    @classmethod
-    def _parse_json(cls, response: str) -> Dict[str, Any]:
-        try:
-            if "```json" in response:
-                return json.loads(response.split("```json")[1].split("```")[0].strip())
-            elif "{" in response:
-                return json.loads(response[response.index("{"):response.rindex("}") + 1])
-        except Exception:
-            pass
-        return {"raw_response": response}
+    def _get_fallback_response(self) -> Dict[str, Any]:
+        return {
+            "error": "Failed to complete lead intelligence",
+            "qualified": False,
+            "score": 0,
+            "fit_analysis": "Fallback analysis",
+            "strengths": [],
+            "gaps": [],
+            "recommended_action": "None",
+            "priority": "cold",
+            "subject": "Missing Subject",
+            "message": "Fallback message",
+            "personalization_points": []
+        }
+
+    def _parse_json(self, response: str) -> Dict[str, Any]:
+        return extract_json_from_llm_response(response, fallback=self._get_fallback_response())
 
 # Register Agent
 AgentRegistry.register(AgentCapability(

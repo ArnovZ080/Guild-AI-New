@@ -12,7 +12,7 @@ class EnvironmentValidator:
     
     SENSITIVE_VARS = [
         'POSTGRES_PASSWORD',
-        'OPENAI_API_KEY',
+        'GOOGLE_API_KEY',
         'DATABASE_URL',
         'STRIPE_SECRET_KEY',
         'HUBSPOT_ACCESS_TOKEN'

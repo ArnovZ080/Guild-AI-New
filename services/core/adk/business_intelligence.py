@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from services.core.agents.base import BaseAgent
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 
 # --- Data Models (converted to Pydantic for better serialization) ---
 
@@ -96,7 +97,7 @@ class BusinessIntelligenceAgent(BaseAgent):
             }
             
             # 1. Generate Strategy via LLM
-            bi_strategy = await self._generate_bi_strategy_llm(business_objective, data_sources)
+            bi_strategy = await self._generate_bi_strategy_llm(business_objective, data_sources, context)
             
             # 2. Execute Strategy (Simulated execution logic from legacy)
             execution_result = await self._execute_bi_strategy(business_objective, bi_strategy)
@@ -118,18 +119,27 @@ class BusinessIntelligenceAgent(BaseAgent):
             self.logger.error(f"BI analysis failed: {e}", exc_info=True)
             return {"error": str(e)}
 
-    async def _generate_bi_strategy_llm(self, objective: str, data_sources: Dict) -> Dict:
+    async def _generate_bi_strategy_llm(self, objective: str, data_sources: Dict, context: Optional[Dict] = None) -> Dict:
         """Generates comprehensive strategy using LLM."""
-        sys_prompt = "You are the Business Intelligence Agent, the central coordinator of insights for the Guild ecosystem."
+        base_prompt = "You are the Business Intelligence Agent, the central coordinator of insights for the Guild ecosystem. You excel at synthesizing disparate data points into strategic, high-level business plans using frameworks like SWOT and OKRs."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         **Business Objective:** {objective}
         **Data Sources:** {json.dumps(data_sources)}
         
         **Task:**
-        Transform raw data into digestible, actionable intelligence.
-        
+        Transform raw data into digestible, actionable intelligence. Use a "Think step by step" chain of thought before providing the final JSON.
+
         **Output Format (JSON):**
-        Return a comprehensive JSON object with 'bi_strategy_analysis', 'data_aggregation', 'dashboard_curation', 'prioritization_engine', 'recommendation_system', and 'alert_system' keys.
+        Return a JSON object matching this structure:
+        {
+            "bi_strategy_analysis": "Executive summary of findings",
+            "data_aggregation": {"sources_used": []},
+            "dashboard_curation": {"key_metrics": []},
+            "prioritization_engine": {"priorities": []},
+            "recommendation_system": {"actions": []},
+            "alert_system": {"critical_alerts": []}
+        }
         """
         
         try:
@@ -234,22 +244,19 @@ class BusinessIntelligenceAgent(BaseAgent):
             )
         }
         
+    @classmethod
+    def _get_fallback_response(cls) -> Dict[str, Any]:
+        return {
+            "bi_strategy_analysis": "Default fallback strategy due to analysis failure.",
+            "data_aggregation": {},
+            "dashboard_curation": {},
+            "prioritization_engine": {},
+            "recommendation_system": {},
+            "alert_system": {}
+        }
+
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        """Helper to extract JSON from LLM response."""
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            elif "{" in text:
-                start = text.index("{")
-                end = text.rindex("}") + 1
-                json_str = text[start:end]
-            else:
-                return {}
-            return json.loads(json_str)
-        except Exception:
-            return {}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 # Register Result
 AgentRegistry.register(AgentCapability(

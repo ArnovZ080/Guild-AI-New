@@ -1,18 +1,37 @@
+# Core
 fastapi>=0.104.1
-openai>=1.0.0
 uvicorn[standard]>=0.24.0
 pydantic>=2.5.0
-pydantic-settings
-openai
-aiohttp>=2.0.0
-python-dotenv>=1.0.0
-sqlalchemy>=2.0.23
-alembic>=1.13.1
+pydantic-settings>=2.0.0
+
+# LLM - Vertex AI (Primary)
+google-cloud-aiplatform>=1.60.0
+
+# LLM - Anthropic (Fallback)
+anthropic>=0.39.0
+
+# Database
+sqlalchemy[asyncio]>=2.0.23
 asyncpg>=0.29.0
-celery>=5.3.4
+alembic>=1.13.1
+
+# Cache & Queue
 redis>=5.0.1
+celery>=5.3.4
+
+# Auth
+firebase-admin>=6.2.0
+
+# HTTP
+aiohttp>=3.9.0
+httpx>=0.25.0
+
+# Utils
+python-dotenv>=1.0.0
+python-multipart>=0.0.6
+
 # Dev
 pytest>=7.4.3
+pytest-asyncio>=0.23.0
+aiosqlite>=0.20.0
 black>=23.11.0
-flake8>=6.1.0
-mypy>=1.7.1

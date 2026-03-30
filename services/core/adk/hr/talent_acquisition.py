@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 from services.core.agents.base import BaseAgent
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 import json
 
 class TalentAcquisitionAgent(BaseAgent):
@@ -29,13 +30,15 @@ class TalentAcquisitionAgent(BaseAgent):
         goals = input_data.get("recruitment_goals", {})
         budget = input_data.get("budget", 0)
         
-        sys_prompt = "You are an elite Talent Acquisition Strategist."
+        base_prompt = "You are an elite Talent Acquisition Strategist. You specialize in employer branding and optimizing recruitment funnels."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         Design a hiring strategy for the following goals:
         **Goals:** {json.dumps(goals)}
         **Budget:** {budget}
         
         **Response Format:**
+        Think step by step about the specific goals and budget before defining the channels and allocation. Return JSON exactly matching this structure:
         {{
             "strategy_overview": "string",
             "sourcing_channels": ["string"],
@@ -57,13 +60,15 @@ class TalentAcquisitionAgent(BaseAgent):
         requirements = input_data.get("requirements", [])
         company_context = context or {}
         
-        sys_prompt = "You are an expert HR Copywriter. Write engaging, inclusive job descriptions."
+        base_prompt = "You are an expert HR Copywriter. You write engaging, inclusive, and branded job descriptions that attract top talent."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         **Role Title:** {role_title}
         **Requirements:** {json.dumps(requirements)}
         **Company Context:** {json.dumps(company_context.get('business', 'Unknown'))}
         
         **Response Format:**
+        Think step by step about how to structure the responsibilities and benefits to appeal to the target candidate, then return JSON:
         {{
             "job_title": "string",
             "department": "string",
@@ -85,7 +90,8 @@ class TalentAcquisitionAgent(BaseAgent):
         cv_text = input_data.get("cv_text", "")
         job_requirements = input_data.get("job_requirements", [])
         
-        sys_prompt = "You are a Technical Recruiter filtering resumes."
+        base_prompt = "You are a Technical Recruiter filtering resumes. You excel at extracting signal from noise and maintaining objective scoring criteria."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         **Job Requirements:** {json.dumps(job_requirements)}
         
@@ -93,6 +99,7 @@ class TalentAcquisitionAgent(BaseAgent):
         {cv_text[:4000]} # Truncated
         
         **Response Format:**
+        Think step by step about the gaps in the candidate's CV against the requirements before assigning a match_score. Return JSON:
         {{
             "candidate_name": "string",
             "skills_matched": ["string"],
@@ -114,7 +121,8 @@ class TalentAcquisitionAgent(BaseAgent):
         project_scope = input_data.get("project_scope", "")
         proposals = input_data.get("proposals", [])
         
-        sys_prompt = "You are a Freelance Management Specialist."
+        base_prompt = "You are a Freelance Management Specialist. You are skilled at evaluating independent contractors, setting up clear milestones, and maximizing project ROI."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         Evaluate these freelance proposals against the project scope.
         **Scope:** {project_scope}
@@ -123,6 +131,7 @@ class TalentAcquisitionAgent(BaseAgent):
         {json.dumps(proposals)}
         
         **Response Format:**
+        Think step by step about comparing the proposals based on both cost and expertise, then return JSON:
         {{
             "top_candidate": "string",
             "evaluation_summary": "string",
@@ -137,19 +146,23 @@ class TalentAcquisitionAgent(BaseAgent):
         ])
         return self._extract_json(response)
 
+    @classmethod
+    def _get_fallback_response(cls) -> Dict[str, Any]:
+        return {
+            "error": "Failed to complete talent acquisition request",
+            "strategy_overview": "Strategy generation failed",
+            "sourcing_channels": [],
+            "budget_allocation": {},
+            "key_metrics": [],
+            "job_title": "Role setup failed",
+            "responsibilities": [],
+            "candidate_name": "Unknown",
+            "skills_matched": [],
+            "top_candidate": "Unknown"
+        }
 
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = text[text.find("{"):text.rfind("}")+1]
-            return json.loads(json_str)
-        except Exception as e:
-            self.logger.error(f"JSON extraction failed: {e}")
-            return {"error": "Failed to parse JSON", "raw_response": text}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 AgentRegistry.register(AgentCapability(
     name="TalentAcquisitionAgent",

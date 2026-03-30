@@ -4,6 +4,7 @@ import json
 from services.core.agents.base import BaseAgent, AgentConfig
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 
 @dataclass
 class FinancialReport:
@@ -28,7 +29,7 @@ class FinancialAdvisorAgent(BaseAgent):
         if command == "analyze":
             return await self.analyze_business_finances(input_data, context)
         elif command == "forecast":
-            return await self.forecast_revenue(input_data)
+            return await self.forecast_revenue(input_data, context)
         elif command == "budget":
             return await self.generate_budget_plan(input_data, context)
         else:
@@ -54,7 +55,8 @@ class FinancialAdvisorAgent(BaseAgent):
             goals = business_context.get("goals", {})
             
             # Build comprehensive prompt
-            sys_prompt = f"You are a sophisticated Financial Advisor for a {business.get('type', 'business')}."
+            base_prompt = f"You are a sophisticated Financial Advisor for a {business.get('type', 'business')}. You analyze financial health using frameworks like DuPont Analysis and cash flow forecasting."
+            sys_prompt = self.build_system_prompt(base_prompt, context)
             user_prompt = f"""
             **Current Financial State:**
             - Business Type: {business.get('type', 'Not specified')}
@@ -68,6 +70,8 @@ class FinancialAdvisorAgent(BaseAgent):
             {json.dumps(financial_data) if financial_data else 'No additional transaction data provided.'}
             
             **Provide a comprehensive financial analysis in this JSON format:**
+            First, internally "Think step by step" about the financial metrics and recommendations.
+            Then format the output EXACTLY like this:
             {{
                 "profit_loss_summary": {{
                     "current_monthly_revenue": <number>,
@@ -119,19 +123,21 @@ class FinancialAdvisorAgent(BaseAgent):
             self.logger.error(f"Financial analysis failed: {e}")
             return {"error": str(e)}
 
-    async def forecast_revenue(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def forecast_revenue(self, input_data: Dict[str, Any], context: Optional[Dict] = None) -> Dict[str, Any]:
         """Forecast revenue based on growth strategy"""
         current_revenue = input_data.get("current_revenue", 0)
         growth_strategy = input_data.get("growth_strategy", "linear growth")
         timeframe_months = input_data.get("timeframe_months", 12)
         
-        sys_prompt = "You are a Financial Analyst specializing in revenue forecasting."
+        base_prompt = "You are a Financial Analyst specializing in revenue forecasting and modeling."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         **Current Monthly Revenue:** ${current_revenue}
         **Growth Strategy:** {growth_strategy}
         **Forecast Period:** {timeframe_months} months
         
         **Provide monthly revenue projections:**
+        Think step by step about realistic growth trajectories.
         Response format: {{"projections": [{{"month": 1, "revenue": 5000, "growth_rate": 0.05}}], "assumptions": ["assumption 1"], "confidence": 0.75}}
         """
         
@@ -148,12 +154,14 @@ class FinancialAdvisorAgent(BaseAgent):
         business_context = context or {}
         business_type = business_context.get("business", {}).get("type", "business")
         
-        sys_prompt = f"You are a Financial Advisor for a {business_type}."
+        base_prompt = f"You are a Financial Advisor for a {business_type}, specializing in zero-based budgeting and capital allocation."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         **Monthly Revenue:** ${monthly_revenue}
         **Business Goals:** {business_goals}
         
         **Create an optimized monthly budget allocation.**
+        Think step by step about priority goals versus fixed costs.
         Response format: {{"categories": [{{"name": "Marketing", "percentage": 30, "amount": 1500, "reasoning": "..."}}], "total": {monthly_revenue}}}
         """
         
@@ -163,26 +171,18 @@ class FinancialAdvisorAgent(BaseAgent):
         ])
         return self._extract_json(response)
 
+    @classmethod
+    def _get_fallback_response(cls) -> Dict[str, Any]:
+        return {
+            "error": "Failed to analyze financials",
+            "profit_loss_summary": {}, "cash_flow_projection": {},
+            "investment_recommendations": [], "risk_assessment": {},
+            "action_plan": [], "key_metrics": {}, "health_score": 0,
+            "projections": [], "categories": [] # Generic fallback keys 
+        }
+
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        """Extract JSON from response"""
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            elif "{" in text:
-                # Naive attempt to find outer brackets
-                start = text.index("{")
-                end = text.rindex("}") + 1
-                json_str = text[start:end]
-            else:
-                self.logger.warning("No JSON found in LLM response")
-                return {"raw_response": text}
-            
-            return json.loads(json_str)
-        except Exception as e:
-            self.logger.error(f"JSON extraction failed: {e}")
-            return {"error": "Failed to parse JSON", "raw_response": text}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 # Register Agent
 AgentRegistry.register(AgentCapability(

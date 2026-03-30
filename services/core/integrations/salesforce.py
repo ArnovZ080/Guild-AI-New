@@ -21,32 +21,75 @@ class SalesforceIntegration(BaseIntegration):
         return ["get_contacts", "create_contact", "get_opportunities"]
 
     async def validate_connection(self) -> bool:
-        return bool(self.access_token and self.instance_url)
+        if not self.access_token or not self.instance_url:
+            return False
+        try:
+            await self._ensure_session()
+            headers = {"Authorization": f"Bearer {self.access_token}"}
+            async with self.session.get(
+                f"{self.instance_url}/services/data/{self.api_version}/sobjects/",
+                headers=headers,
+            ) as resp:
+                return resp.status == 200
+        except Exception as e:
+            logger.error(f"Salesforce validation failed: {e}")
+            return False
+
+    async def _ensure_session(self):
+        if not self.session or self.session.closed:
+            self.session = aiohttp.ClientSession()
 
     async def get_contacts(self) -> List[Contact]:
-        # MOCK IMPLEMENTATION
-        logger.info("Fetching Salesforce contacts (MOCK)")
-        return [
-            Contact(
-                id="sf_789",
-                email="bob@example.com",
-                first_name="Bob",
-                last_name="Smith",
-                status=LeadStatus.QUALIFIED,
-                company="Acme Corp"
-            )
-        ]
+        """Fetch contacts from Salesforce via SOQL."""
+        await self._ensure_session()
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        query = "SELECT Id, Email, FirstName, LastName, Company, LeadSource FROM Contact LIMIT 50"
+        async with self.session.get(
+            f"{self.instance_url}/services/data/{self.api_version}/query/",
+            headers=headers,
+            params={"q": query},
+        ) as resp:
+            resp.raise_for_status()
+            data = await resp.json()
+            records = data.get("records", [])
+            return [
+                Contact(
+                    id=r.get("Id", ""),
+                    email=r.get("Email", ""),
+                    first_name=r.get("FirstName", ""),
+                    last_name=r.get("LastName", ""),
+                    status=LeadStatus.QUALIFIED,
+                    company=r.get("Company", ""),
+                )
+                for r in records
+            ]
 
     async def create_contact(self, email: str, first_name: str, last_name: str) -> Contact:
-        # MOCK IMPLEMENTATION
-        logger.info(f"Creating Salesforce contact: {email}")
-        return Contact(
-            id="sf_new_001",
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            status=LeadStatus.NEW
-        )
+        """Create a contact in Salesforce."""
+        await self._ensure_session()
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "Email": email,
+            "FirstName": first_name,
+            "LastName": last_name,
+        }
+        async with self.session.post(
+            f"{self.instance_url}/services/data/{self.api_version}/sobjects/Contact/",
+            headers=headers,
+            json=payload,
+        ) as resp:
+            resp.raise_for_status()
+            data = await resp.json()
+            return Contact(
+                id=data.get("id", ""),
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                status=LeadStatus.NEW,
+            )
 
 # Register
 IntegrationRegistry.register("salesforce", SalesforceIntegration)

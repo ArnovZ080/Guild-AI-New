@@ -1,38 +1,33 @@
-# Build Stage for Frontend
-FROM node:20-slim AS frontend-builder
-WORKDIR /app/services/web
-COPY services/web/package*.json ./
-RUN npm install
-COPY services/web/ ./
-RUN npm run build
+# ── Guild AI Backend ──
+FROM python:3.11-slim AS backend
 
-# Final Stage for Backend + Frontend Production
-FROM python:3.11-slim
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install python dependencies
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code
+# Copy application code
 COPY services /app/services
-COPY requirements.txt /app/
+COPY alembic /app/alembic
+COPY alembic.ini /app/alembic.ini
 
-# Copy built frontend from stage 1
-COPY --from=frontend-builder /app/services/web/dist /app/services/web/dist
-
-# Environment variables
+# Environment
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8080
+ENV PORT=8000
 
-# Expose port
-EXPOSE 8080
+# Create non-root user
+RUN useradd --create-home guild
+USER guild
 
-# Command to run (assuming a main entrypoint that mounts the frontend)
-CMD ["uvicorn", "services.api.main:app", "--host", "0.0.0.0", "--port", "8080"]
+EXPOSE 8000
+
+# Default: run the API server
+CMD ["uvicorn", "services.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

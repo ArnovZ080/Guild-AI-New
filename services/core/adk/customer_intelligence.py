@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from services.core.agents.base import BaseAgent
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 
 # --- Data Models ---
 
@@ -60,7 +61,7 @@ class CustomerIntelligenceAgent(BaseAgent):
             }
             
             # 1. Generate Strategy via LLM
-            cust_strategy = await self._generate_strategy_llm(objective, data_sources)
+            cust_strategy = await self._generate_strategy_llm(objective, data_sources, context)
             
             # 2. Simulate Execution results
             segments = await self.analyze_segments(input_data)
@@ -78,9 +79,10 @@ class CustomerIntelligenceAgent(BaseAgent):
             self.logger.error(f"Customer Analysis failed: {e}", exc_info=True)
             return {"error": str(e)}
 
-    async def _generate_strategy_llm(self, objective: str, data_sources: Dict) -> Dict:
+    async def _generate_strategy_llm(self, objective: str, data_sources: Dict, context: Optional[Dict] = None) -> Dict:
         """Generates comprehensive strategy using LLM."""
-        sys_prompt = "You are the Customer Intelligence Agent, responsible for customer success and retention."
+        base_prompt = "You are the Customer Intelligence Agent, responsible for customer success and retention. You utilize frameworks like RFM (Recency, Frequency, Monetary value) and NPS analysis to map customer journeys and prevent churn."
+        sys_prompt = self.build_system_prompt(base_prompt, context)
         user_prompt = f"""
         **Objective:** {objective}
         **Data Sources:** {json.dumps(data_sources)}
@@ -89,8 +91,15 @@ class CustomerIntelligenceAgent(BaseAgent):
         Create a customer intelligence strategy including data unification, journey mapping, and retention tactics.
         
         **Output Format (JSON):**
-        Return a JSON object with keys: 'strategy_analysis', 'data_unification', 'journey_tracking', 'retention_management'.
-        """
+        Return a JSON object exactly matching this structure:
+        {{
+            "strategy_analysis": "Overview of approach",
+            "data_unification": ["step 1", "step 2"],
+            "journey_tracking": {{"milestones": []}},
+            "retention_management": {{"tactics": []}}
+        }}
+        
+        Think step by step extracting actionable insights."""
         
         try:
             response = await default_llm.chat_completion([
@@ -126,22 +135,17 @@ class CustomerIntelligenceAgent(BaseAgent):
             "prevention_strategy": "Launch automated win-back sequence for 'At-Risk Churn' segment."
         }
         
+    @classmethod
+    def _get_fallback_response(cls) -> Dict[str, Any]:
+        return {
+            "strategy_analysis": "Fallback strategy due to generation failure",
+            "data_unification": [],
+            "journey_tracking": {},
+            "retention_management": {}
+        }
+        
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        """Helper to extract JSON from LLM response."""
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            elif "{" in text:
-                start = text.index("{")
-                end = text.rindex("}") + 1
-                json_str = text[start:end]
-            else:
-                return {}
-            return json.loads(json_str)
-        except Exception:
-            return {}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 # Register Result
 AgentRegistry.register(AgentCapability(

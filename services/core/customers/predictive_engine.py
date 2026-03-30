@@ -63,9 +63,9 @@ class PredictiveEngine:
     # --- Public API ---
 
     @classmethod
-    def generate_actions(cls, customer_id: str) -> List[NextBestAction]:
+    async def generate_actions(cls, db: Optional[Any], user_id: str, customer_id: str) -> List[NextBestAction]:
         """Generate ranked Next Best Action recommendations for a customer."""
-        journey = JourneyTracker.get_journey(customer_id)
+        journey = await JourneyTracker.get_journey(db, user_id, customer_id)
         if not journey:
             logger.warning(f"PredictiveEngine: No journey data for {customer_id}")
             return []
@@ -83,11 +83,11 @@ class PredictiveEngine:
         return actions
 
     @classmethod
-    def get_proactive_tasks(cls) -> List[NextBestAction]:
+    async def get_proactive_tasks(cls, db: Optional[Any], user_id: str) -> List[NextBestAction]:
         """Scan all customers and return the top urgent actions globally."""
         all_actions = []
-        for journey in JourneyTracker.get_all_journeys():
-            customer_actions = cls.generate_actions(journey.customer_id)
+        for journey in await JourneyTracker.get_all_journeys(db, user_id):
+            customer_actions = await cls.generate_actions(db, user_id, journey.customer_id)
             if customer_actions:
                 all_actions.append(customer_actions[0])  # Top action per customer
 
@@ -96,14 +96,14 @@ class PredictiveEngine:
         return all_actions[:20]  # Top 20 most urgent
 
     @classmethod
-    async def generate_actions_llm(cls, customer_id: str) -> List[NextBestAction]:
+    async def generate_actions_llm(cls, db: Optional[Any], user_id: str, customer_id: str) -> List[NextBestAction]:
         """Use LLM for deeper, context-aware action generation."""
-        journey = JourneyTracker.get_journey(customer_id)
+        journey = await JourneyTracker.get_journey(db, user_id, customer_id)
         if not journey:
             return []
 
         # Get best-performing strategies from adaptive learning
-        best_strategy = OutcomeTracker.get_best_strategy("engagement")
+        best_strategy = await OutcomeTracker.get_best_strategy(db, user_id, "engagement")
         strategy_context = f"\nBest performing strategy: {best_strategy}" if best_strategy else ""
 
         sys_prompt = """You are a Customer Success strategist. Analyze the customer journey and recommend 3 specific actions.

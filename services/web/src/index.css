@@ -2,53 +2,142 @@
 @config "../tailwind.config.js";
 
 @layer base {
+  /* ==========================================
+     Light Mode Palette (Default)
+     Inspired by LlamaIndex — clean, airy, professional
+     ========================================== */
   :root {
-    /* 1. App Dark Mode Palette (#090a0f base) */
-    --background: 226 24% 5%;
-    --foreground: 240 5% 96%;
-    --card: 226 24% 5%;
-    --card-foreground: 240 5% 96%;
-    --primary: 217.2 91.2% 59.8%;
-    /* Cobalt Blue #1a6fff */
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 217 91% 60%;
     --primary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 240 5% 65%;
-    /* Softer contrast for body text */
-    --border: 240 5% 15%;
-    /* Extremely subtle borders */
-    --radius: 0.75rem;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+    --radius: 1rem;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Surface system */
+    --surface-base: #FAFBFC;
+    --surface-raised: #FFFFFF;
+    --surface-overlay: rgba(255, 255, 255, 0.8);
+    --surface-glass: rgba(255, 255, 255, 0.7);
+    --surface-glass-border: rgba(0, 0, 0, 0.06);
+    --surface-glass-hover: rgba(255, 255, 255, 0.85);
+
+    /* Ambient background */
+    --ambient-bg: #F8FAFC;
+    --ambient-blob-1: rgba(26, 111, 255, 0.04);
+    --ambient-blob-2: rgba(139, 92, 246, 0.03);
+  }
+
+  /* ==========================================
+     Dark Mode Palette
+     Inspired by ToDesktop — rich navy, color-depth
+     ========================================== */
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 20% 95%;
+    --card: 222 47% 9%;
+    --card-foreground: 210 20% 95%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 33% 15%;
+    --secondary-foreground: 210 20% 95%;
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 217 33% 15%;
+    --accent-foreground: 210 20% 95%;
+    --destructive: 0 63% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+    --popover: 222 47% 9%;
+    --popover-foreground: 210 20% 95%;
+
+    /* Surface system */
+    --surface-base: #0C1222;
+    --surface-raised: #111B2E;
+    --surface-overlay: rgba(12, 18, 34, 0.8);
+    --surface-glass: rgba(255, 255, 255, 0.04);
+    --surface-glass-border: rgba(255, 255, 255, 0.06);
+    --surface-glass-hover: rgba(255, 255, 255, 0.07);
+
+    /* Ambient background */
+    --ambient-bg: #0C1222;
+    --ambient-blob-1: rgba(26, 111, 255, 0.08);
+    --ambient-blob-2: rgba(139, 92, 246, 0.06);
+  }
+
+  * {
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* 2. Space Grotesk for Technical/Header weight */
-  h1,
-  h2,
-  h3,
-  h4,
-  .font-heading {
+  /* Space Grotesk for headings */
+  h1, h2, h3, h4, .font-heading {
     font-family: 'Space Grotesk', sans-serif;
     letter-spacing: -0.03em;
-    @apply font-bold;
+    font-weight: 700;
   }
 }
 
-@layer components {
-
-  /* 3. The "Frosted Glass" Class */
-  .glass-panel {
-    @apply bg-zinc-950/40 backdrop-blur-2xl border border-white/5 shadow-[0_8px_32px_rgba(0, 0, 0, 0.2)];
-  }
-
-  .glass-panel-interactive {
-    @apply glass-panel hover:bg-zinc-900/50 hover:border-white/10 transition-all duration-500;
-  }
+/* ==========================================
+   Glass Panel utility — theme-adaptive
+   ========================================== */
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--surface-glass-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.03);
 }
 
-/* 4. The "Living Heartbeat" Background */
+.dark .glass-panel {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.glass-panel-interactive {
+  background: var(--surface-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--surface-glass-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 300ms ease;
+}
+
+.glass-panel-interactive:hover {
+  background: var(--surface-glass-hover);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dark .glass-panel-interactive:hover {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================
+   Ambient Background — adaptive
+   ========================================== */
 .ambient-bg {
   position: fixed;
   top: 0;
@@ -56,9 +145,10 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  background-color: #090a0f;
+  background-color: var(--ambient-bg);
   overflow: hidden;
   pointer-events: none;
+  transition: background-color 0.5s ease;
 }
 
 .ambient-bg::before,
@@ -67,128 +157,102 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(120px);
-  opacity: 0.1;
   animation: liquidFloat 25s infinite alternate ease-in-out;
 }
 
 .ambient-bg::before {
-  background: #1a6fff;
+  background: var(--ambient-blob-1);
   width: 50vw;
   height: 50vw;
   top: -10%;
   left: -10%;
+  opacity: 1;
 }
 
 .ambient-bg::after {
-  background: #8B5CF6;
+  background: var(--ambient-blob-2);
   width: 40vw;
   height: 40vw;
   bottom: -10%;
   right: -10%;
   animation-delay: -12s;
+  opacity: 1;
 }
 
 @keyframes liquidFloat {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  100% {
-    transform: translate(8%, 12%) scale(1.1);
-  }
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(8%, 12%) scale(1.1); }
 }
 
-/* ============================================
-   x. Psychological Component Styles (Remaining from original)
-   ============================================ */
-@layer components {
+/* ==========================================
+   Component Utilities
+   ========================================== */
 
-  /* AI accent gradient — tight analogous only */
-  .gradient-cobalt {
-    background: linear-gradient(135deg, #1a6fff, #3B82F6);
-  }
-
-  .text-gradient-cobalt {
-    background: linear-gradient(135deg, #1a6fff, #3B82F6);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  /* Skeleton shimmer for loading states */
-  .skeleton-shimmer {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .skeleton-shimmer::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg,
-        transparent,
-        rgba(255, 255, 255, 0.03),
-        transparent);
-    animation: shimmer 2s infinite;
-    transform: translateX(-100%);
-  }
+/* AI accent gradient */
+.gradient-cobalt {
+  background: linear-gradient(135deg, #1a6fff, #6366F1);
 }
 
-/* AI "Thinking" indicator — soft pulsing inner glow */
+.text-gradient-cobalt {
+  background: linear-gradient(135deg, #1a6fff, #6366F1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.02), transparent);
+  animation: shimmer 2s infinite;
+  transform: translateX(-100%);
+}
+
+.dark .skeleton-shimmer::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+}
+
+/* AI Thinking indicator */
 .ai-thinking {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  box-shadow: inset 0 0 20px rgba(26, 111, 255, 0.2);
-  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: inset 0 0 20px rgba(26, 111, 255, 0.15);
+  border-color: rgba(59, 130, 246, 0.25);
 }
 
-/* Phase 5: Psychological Reinforcement (Active States) */
 .ai-active-glow {
-  @apply animate-pulse;
-  box-shadow: inset 0 0 25px rgba(26, 111, 255, 0.15),
-    0 0 15px rgba(26, 111, 255, 0.1);
-  border-color: rgba(26, 111, 255, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: inset 0 0 20px rgba(26, 111, 255, 0.12), 0 0 12px rgba(26, 111, 255, 0.08);
+  border-color: rgba(26, 111, 255, 0.3);
 }
 
-/* Success state — dopamine trigger */
+/* Success State */
 .success-flash {
   animation: successPulse 1.5s ease-out forwards;
 }
 
 @keyframes successPulse {
-  0% {
-    transform: scale(1);
-  }
-
-  20% {
-    transform: scale(1.02);
-    border-color: rgba(16, 185, 129, 0.3);
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
+  0% { transform: scale(1); }
+  20% { transform: scale(1.02); border-color: rgba(16, 185, 129, 0.3); }
+  100% { transform: scale(1); opacity: 0.6; }
 }
 
 @keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
+  100% { transform: translateX(100%); }
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.85;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
 }
 
-/* Custom Scrollbar — nearly invisible */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -198,10 +262,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.12);
 }

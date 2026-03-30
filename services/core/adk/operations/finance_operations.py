@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 from services.core.agents.base import BaseAgent
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 import json
 
 class FinanceOperationsAgent(BaseAgent):
@@ -27,7 +28,7 @@ class FinanceOperationsAgent(BaseAgent):
         transactions = input_data.get("transactions", [])
         period = input_data.get("period", "Current Month")
         
-        sys_prompt = "You are an expert Corporate Accountant. Process the raw transactions into structured financial reports."
+        sys_prompt = self.build_system_prompt("You are an expert Corporate Accountant. Process the raw transactions into structured financial reports.", context)
         user_prompt = f"""
         **Period:** {period}
         **Transactions Count:** {len(transactions)}
@@ -37,12 +38,13 @@ class FinanceOperationsAgent(BaseAgent):
         
         **Response Format:**
         {{
-            "profit_loss": {{"revenue": <num>, "cogs": <num>, "gross_profit": <num>, "operating_expenses": <num>, "net_profit": <num>}},
-            "expense_breakdown": [{{"category": "string", "amount": <num>, "percentage": <num>}}],
+            "profit_loss": {{"revenue": 10000, "cogs": 2000, "gross_profit": 8000, "operating_expenses": 3000, "net_profit": 5000}},
+            "expense_breakdown": [{{"category": "string", "amount": 100, "percentage": 10}}],
             "anomalies": ["string"],
-            "financial_health_score": <0-100>
+            "financial_health_score": 85
         }}
-        """
+        
+        Think step by step compiling revenue vs expenses."""
         
         response = await default_llm.chat_completion([
             {"role": "system", "content": sys_prompt},
@@ -55,7 +57,7 @@ class FinanceOperationsAgent(BaseAgent):
         internal_records = input_data.get("internal_records", [])
         bank_statements = input_data.get("bank_statements", [])
         
-        sys_prompt = "You are a specialized Reconciliation Accountant."
+        sys_prompt = self.build_system_prompt("You are a specialized Reconciliation Accountant.", context)
         user_prompt = f"""
         Compare the internal records against the bank statements and identify any discrepancies.
         Internal Records Count: {len(internal_records)}
@@ -65,11 +67,12 @@ class FinanceOperationsAgent(BaseAgent):
         {{
             "reconciliation_status": "matched|discrepancies_found|needs_review",
             "discrepancies": [
-                {{"transaction_id": "string", "internal_amount": <num>, "bank_amount": <num>, "reason": "string"}}
+                {{"transaction_id": "string", "internal_amount": 100, "bank_amount": 100, "reason": "string"}}
             ],
             "suggested_adjustments": ["string"]
         }}
-        """
+        
+        Think step by step carefully comparing records."""
         
         response = await default_llm.chat_completion([
             {"role": "system", "content": sys_prompt},
@@ -83,7 +86,7 @@ class FinanceOperationsAgent(BaseAgent):
         highlights = input_data.get("operational_highlights", [])
         challenges = input_data.get("challenges", [])
         
-        sys_prompt = "You are the Director of Investor Relations. Draft an engaging, transparent investor update."
+        sys_prompt = self.build_system_prompt("You are the Director of Investor Relations. Draft an engaging, transparent investor update.", context)
         user_prompt = f"""
         Draft an investor update using the provided details.
         
@@ -105,7 +108,8 @@ class FinanceOperationsAgent(BaseAgent):
             "challenges_and_asks": "string",
             "closing": "string"
         }}
-        """
+        
+        Think step by step on structuring the narrative."""
         
         response = await default_llm.chat_completion([
             {"role": "system", "content": sys_prompt},
@@ -113,18 +117,23 @@ class FinanceOperationsAgent(BaseAgent):
         ])
         return self._extract_json(response)
 
+    def _get_fallback_response(self) -> Dict[str, Any]:
+        return {
+            "error": "Failed to complete finance operations request",
+            "profit_loss": {"revenue": 0, "cogs": 0, "gross_profit": 0, "operating_expenses": 0, "net_profit": 0},
+            "expense_breakdown": [],
+            "anomalies": [],
+            "financial_health_score": 0,
+            "reconciliation_status": "needs_review",
+            "discrepancies": [],
+            "suggested_adjustments": [],
+            "subject_line": "Financial Update",
+            "executive_summary": "Report failed.",
+            "financial_update": "Data unavailable."
+        }
+
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = text[text.find("{"):text.rfind("}")+1]
-            return json.loads(json_str)
-        except Exception as e:
-            self.logger.error(f"JSON extraction failed: {e}")
-            return {"error": "Failed to parse JSON", "raw_response": text}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 AgentRegistry.register(AgentCapability(
     name="FinanceOperationsAgent",

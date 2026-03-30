@@ -3,6 +3,7 @@ from datetime import date, datetime
 from enum import Enum
 from pydantic import BaseModel, Field
 import aiohttp
+import httpx
 
 from services.core.logging import logger
 from services.core.integrations.base import BaseIntegration, IntegrationConfig, IntegrationRegistry
@@ -48,25 +49,50 @@ class AhrefsIntegration(BaseIntegration):
         super().__init__(config)
         self.base_url = "https://apiv2.ahrefs.com"
         self.api_key = self.config.credentials.get("api_key")
-        self.session: Optional[aiohttp.ClientSession] = None
 
     @property
     def capabilities(self) -> List[str]:
         return ["get_keyword_data", "get_backlinks", "get_serp_data"]
 
     async def validate_connection(self) -> bool:
-        return bool(self.api_key)
+        if not self.api_key:
+            return False
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(
+                    self.base_url,
+                    params={"token": self.api_key, "from": "ahrefs_rank", "target": "ahrefs.com", "mode": "domain", "limit": 1, "output": "json"},
+                    timeout=10.0,
+                )
+                return resp.status_code == 200
+        except Exception as e:
+            logger.error(f"Ahrefs validation failed: {e}")
+            return False
+
+    async def execute_action(self, action_name: str, params: Dict[str, Any]) -> Any:
+        if action_name == "get_keyword_data":
+            keyword = params.get("keyword", "")
+            return await self.get_keyword_data(keyword)
+        raise ValueError(f"Unknown action {action_name}")
 
     async def get_keyword_data(self, keyword: str) -> KeywordData:
-        # MOCK IMPLEMENTATION
-        logger.info(f"Fetching Ahrefs keyword data for: {keyword}")
-        return KeywordData(
-            keyword=keyword,
-            search_volume=1500,
-            difficulty=KeywordDifficulty.MEDIUM,
-            cpc=2.5,
-            related_keywords=[f"{keyword} tips", f"best {keyword}"]
-        )
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                self.base_url,
+                params={"token": self.api_key, "from": "keywords_explorer", "target": keyword, "mode": "exact", "output": "json"},
+                timeout=15.0,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            keywords = data.get("keywords", [{}])
+            kw = keywords[0] if keywords else {}
+            return KeywordData(
+                keyword=keyword,
+                search_volume=kw.get("volume", 0),
+                difficulty=KeywordDifficulty.MEDIUM,
+                cpc=kw.get("cpc", 0.0),
+                related_keywords=kw.get("related", []),
+            )
 
 class SEMrushIntegration(BaseIntegration):
     """SEMrush SEO Integration"""
@@ -75,25 +101,52 @@ class SEMrushIntegration(BaseIntegration):
         super().__init__(config)
         self.base_url = "https://api.semrush.com"
         self.api_key = self.config.credentials.get("api_key")
-        self.session: Optional[aiohttp.ClientSession] = None
 
     @property
     def capabilities(self) -> List[str]:
         return ["get_keyword_overview", "get_domain_rank"]
 
     async def validate_connection(self) -> bool:
-        return bool(self.api_key)
+        if not self.api_key:
+            return False
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(
+                    self.base_url,
+                    params={"type": "domain_ranks", "key": self.api_key, "domain": "semrush.com", "export_columns": "Dn"},
+                    timeout=10.0,
+                )
+                return resp.status_code == 200
+        except Exception as e:
+            logger.error(f"SEMrush validation failed: {e}")
+            return False
+
+    async def execute_action(self, action_name: str, params: Dict[str, Any]) -> Any:
+        if action_name == "get_keyword_overview":
+            keyword = params.get("keyword", "")
+            return await self.get_keyword_overview(keyword)
+        raise ValueError(f"Unknown action {action_name}")
 
     async def get_keyword_overview(self, keyword: str) -> KeywordData:
-        # MOCK IMPLEMENTATION
-        logger.info(f"Fetching SEMrush keyword overview for: {keyword}")
-        return KeywordData(
-            keyword=keyword,
-            search_volume=1200,
-            difficulty=KeywordDifficulty.HARD,
-            cpc=3.0,
-            related_keywords=[]
-        )
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                self.base_url,
+                params={"type": "phrase_this", "key": self.api_key, "phrase": keyword, "export_columns": "Ph,Nq,Kd,Cp", "database": "us"},
+                timeout=15.0,
+            )
+            resp.raise_for_status()
+            # SEMrush returns semicolon-delimited text
+            lines = resp.text.strip().split("\n")
+            if len(lines) >= 2:
+                parts = lines[1].split(";")
+                return KeywordData(
+                    keyword=keyword,
+                    search_volume=int(parts[1]) if len(parts) > 1 else 0,
+                    difficulty=KeywordDifficulty.HARD,
+                    cpc=float(parts[3]) if len(parts) > 3 else 0.0,
+                    related_keywords=[],
+                )
+            return KeywordData(keyword=keyword, search_volume=0, difficulty=KeywordDifficulty.MEDIUM)
 
 class GoogleSearchConsoleIntegration(BaseIntegration):
     """Google Search Console Integration"""
@@ -102,19 +155,41 @@ class GoogleSearchConsoleIntegration(BaseIntegration):
         super().__init__(config)
         self.base_url = "https://searchconsole.googleapis.com/webmasters/v3"
         self.access_token = self.config.credentials.get("access_token")
-        self.session: Optional[aiohttp.ClientSession] = None
 
     @property
     def capabilities(self) -> List[str]:
         return ["get_sites", "get_search_analytics"]
 
     async def validate_connection(self) -> bool:
-        return bool(self.access_token)
+        if not self.access_token:
+            return False
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(
+                    f"{self.base_url}/sites",
+                    headers={"Authorization": f"Bearer {self.access_token}"},
+                    timeout=10.0,
+                )
+                return resp.status_code == 200
+        except Exception as e:
+            logger.error(f"GSC validation failed: {e}")
+            return False
+
+    async def execute_action(self, action_name: str, params: Dict[str, Any]) -> Any:
+        if action_name == "get_sites":
+            return await self.get_sites()
+        raise ValueError(f"Unknown action {action_name}")
 
     async def get_sites(self) -> List[str]:
-        # MOCK IMPLEMENTATION
-        logger.info("Fetching GSC sites")
-        return ["https://example.com", "https://blog.example.com"]
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                f"{self.base_url}/sites",
+                headers={"Authorization": f"Bearer {self.access_token}"},
+                timeout=10.0,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return [entry.get("siteUrl", "") for entry in data.get("siteEntry", [])]
 
 # Register
 IntegrationRegistry.register("ahrefs", AhrefsIntegration)

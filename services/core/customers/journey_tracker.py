@@ -1,14 +1,14 @@
-"""
-Customer Journey Tracker.
-Tracks customer interactions, manages lifecycle stage progression,
-and computes health/risk metrics.
-"""
 import logging
 from datetime import datetime
 from typing import Dict, Any, List, Optional
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from services.core.db.base import AsyncSessionLocal
+from services.core.db.models import CustomerJourney as DBCustomerJourney
 from .models import (
     JourneyStage, TouchpointType, Touchpoint, Milestone,
-    CustomerJourney
+    CustomerJourney as PydanticCustomerJourney
 )
 
 logger = logging.getLogger(__name__)
@@ -68,69 +68,111 @@ MILESTONE_TRIGGERS = {
     TouchpointType.REFERRAL:           "first_referral",
 }
 
-
 class JourneyTracker:
     """
     Manages customer journeys with automatic stage progression,
-    churn risk scoring, and milestone detection.
+    churn risk scoring, and milestone detection using PostgreSQL.
     """
-
-    _journeys: Dict[str, CustomerJourney] = {}
 
     # --- Touchpoint Recording ---
 
     @classmethod
-    def track(cls, customer_id: str, touchpoint_type: TouchpointType,
+    async def track(cls, db: Optional[AsyncSession], user_id: str, customer_email: str, touchpoint_type: TouchpointType,
               channel: str, platform: str, **kwargs) -> Touchpoint:
         """
         Record a customer touchpoint and update their journey.
         """
-        tp = Touchpoint(
-            customer_id=customer_id,
-            type=touchpoint_type,
-            channel=channel,
-            platform=platform,
-            stage=TOUCHPOINT_STAGE_MAP.get(touchpoint_type, JourneyStage.AWARENESS),
-            sentiment=kwargs.get("sentiment"),
-            outcome=kwargs.get("outcome"),
-            value=kwargs.get("value"),
-            metadata=kwargs.get("metadata", {}),
-        )
-
-        journey = cls._get_or_create(customer_id)
-        journey.touchpoints.append(tp)
-        journey.last_activity = tp.timestamp
-
-        cls._try_advance_stage(journey, tp)
-        cls._check_milestones(journey, tp)
-        cls._recalculate_metrics(journey)
-
-        logger.info(f"JourneyTracker: [{customer_id}] {touchpoint_type.value} → stage={journey.current_stage.value}, health={journey.health}")
-        return tp
+        should_close = False
+        if db is None:
+            db = AsyncSessionLocal()
+            should_close = True
+            
+        try:
+            journey, db_journey = await cls._get_or_create(db, user_id, customer_email)
+            
+            tp = Touchpoint(
+                customer_id=customer_email,
+                type=touchpoint_type,
+                channel=channel,
+                platform=platform,
+                stage=TOUCHPOINT_STAGE_MAP.get(touchpoint_type, JourneyStage.AWARENESS),
+                sentiment=kwargs.get("sentiment"),
+                outcome=kwargs.get("outcome"),
+                value=kwargs.get("value"),
+                metadata=kwargs.get("metadata", {}),
+            )
+            
+            journey.touchpoints.append(tp)
+            journey.last_activity = tp.timestamp
+            
+            cls._try_advance_stage(journey, tp)
+            cls._check_milestones(journey, tp)
+            cls._recalculate_metrics(journey)
+            
+            # Save back to db
+            db_journey.status = journey.current_stage.value
+            db_journey.data = journey.model_dump(mode="json")
+            await db.commit()
+            
+            logger.info(f"JourneyTracker: [{customer_email}] {touchpoint_type.value} → stage={journey.current_stage.value}, health={journey.health}")
+            return tp
+        finally:
+            if should_close:
+                await db.close()
 
     # --- Query ---
 
     @classmethod
-    def get_journey(cls, customer_id: str) -> Optional[CustomerJourney]:
-        return cls._journeys.get(customer_id)
+    async def get_journey(cls, db: Optional[AsyncSession], user_id: str, customer_email: str) -> Optional[PydanticCustomerJourney]:
+        should_close = False
+        if db is None:
+            db = AsyncSessionLocal()
+            should_close = True
+            
+        try:
+            stmt = select(DBCustomerJourney).where(
+                DBCustomerJourney.user_id == user_id,
+                DBCustomerJourney.customer_email == customer_email
+            )
+            result = await db.execute(stmt)
+            db_journey = result.scalar_one_or_none()
+            if not db_journey or not db_journey.data:
+                return None
+            return PydanticCustomerJourney(**db_journey.data)
+        finally:
+            if should_close:
+                await db.close()
 
     @classmethod
-    def get_all_journeys(cls) -> List[CustomerJourney]:
-        return list(cls._journeys.values())
+    async def get_all_journeys(cls, db: Optional[AsyncSession], user_id: str) -> List[PydanticCustomerJourney]:
+        should_close = False
+        if db is None:
+            db = AsyncSessionLocal()
+            should_close = True
+            
+        try:
+            stmt = select(DBCustomerJourney).where(DBCustomerJourney.user_id == user_id)
+            result = await db.execute(stmt)
+            db_journeys = result.scalars().all()
+            return [PydanticCustomerJourney(**j.data) for j in db_journeys if j.data]
+        finally:
+            if should_close:
+                await db.close()
 
     @classmethod
-    def get_at_risk_customers(cls) -> List[CustomerJourney]:
+    async def get_at_risk_customers(cls, db: Optional[AsyncSession], user_id: str) -> List[PydanticCustomerJourney]:
         """Return customers with churn_risk > 0.5, sorted by risk."""
+        journeys = await cls.get_all_journeys(db, user_id)
         return sorted(
-            [j for j in cls._journeys.values() if j.churn_risk > 0.5],
+            [j for j in journeys if j.churn_risk > 0.5],
             key=lambda j: j.churn_risk,
             reverse=True
         )
 
     @classmethod
-    def get_analytics(cls) -> Dict[str, Any]:
+    async def get_analytics(cls, db: Optional[AsyncSession], user_id: str) -> Dict[str, Any]:
         """Aggregated funnel analytics."""
-        journeys = list(cls._journeys.values())
+        journeys = await cls.get_all_journeys(db, user_id)
         if not journeys:
             return {"total_customers": 0}
 
@@ -154,13 +196,38 @@ class JourneyTracker:
     # --- Internal Logic ---
 
     @classmethod
-    def _get_or_create(cls, customer_id: str) -> CustomerJourney:
-        if customer_id not in cls._journeys:
-            cls._journeys[customer_id] = CustomerJourney(customer_id=customer_id)
-        return cls._journeys[customer_id]
+    async def _get_or_create(cls, db: AsyncSession, user_id: str, customer_email: str) -> tuple[PydanticCustomerJourney, DBCustomerJourney]:
+        stmt = select(DBCustomerJourney).where(
+            DBCustomerJourney.user_id == user_id,
+            DBCustomerJourney.customer_email == customer_email
+        )
+        result = await db.execute(stmt)
+        db_journey = result.scalar_one_or_none()
+        
+        if db_journey is None:
+            # Create new
+            db_journey = DBCustomerJourney(
+                user_id=user_id,
+                customer_email=customer_email,
+                segment="default",
+                status="active",
+                data={}
+            )
+            db.add(db_journey)
+            # Default empty journey data
+            journey = PydanticCustomerJourney(customer_id=customer_email)
+            db_journey.data = journey.model_dump(mode="json")
+            await db.flush()
+            return journey, db_journey
+        else:
+            if not db_journey.data:
+                journey = PydanticCustomerJourney(customer_id=customer_email)
+            else:
+                journey = PydanticCustomerJourney(**db_journey.data)
+            return journey, db_journey
 
     @classmethod
-    def _try_advance_stage(cls, journey: CustomerJourney, tp: Touchpoint):
+    def _try_advance_stage(cls, journey: PydanticCustomerJourney, tp: Touchpoint):
         """Advance the stage if the touchpoint implies a valid progression."""
         tp_stage = tp.stage
         valid_next = STAGE_PROGRESSION.get(journey.current_stage, [])
@@ -169,7 +236,7 @@ class JourneyTracker:
             journey.days_in_stage = 0
 
     @classmethod
-    def _check_milestones(cls, journey: CustomerJourney, tp: Touchpoint):
+    def _check_milestones(cls, journey: PydanticCustomerJourney, tp: Touchpoint):
         """Check if this touchpoint triggers a milestone (only once per type)."""
         event_name = MILESTONE_TRIGGERS.get(tp.type)
         if not event_name:
@@ -185,14 +252,26 @@ class JourneyTracker:
             ))
 
     @classmethod
-    def _recalculate_metrics(cls, journey: CustomerJourney):
+    def _recalculate_metrics(cls, journey: PydanticCustomerJourney):
         """Recalculate journey score, churn risk, health, and predictions."""
         # Journey score: sum of touchpoint scores, capped at 100
         total = sum(TOUCHPOINT_SCORES.get(tp.type, 1.0) for tp in journey.touchpoints)
         journey.journey_score = min(100.0, total)
 
         # Duration
-        journey.total_duration_days = (journey.last_activity - journey.journey_start).days
+        from datetime import timezone
+        now = datetime.now(timezone.utc)
+        
+        # Ensure timezone-aware subtraction
+        j_start = journey.journey_start
+        if j_start.tzinfo is None:
+            j_start = j_start.replace(tzinfo=timezone.utc)
+            
+        j_last = journey.last_activity
+        if j_last.tzinfo is None:
+            j_last = j_last.replace(tzinfo=timezone.utc)
+            
+        journey.total_duration_days = (j_last - j_start).days
 
         # Churn risk
         journey.churn_risk = cls._compute_churn_risk(journey)
@@ -207,12 +286,17 @@ class JourneyTracker:
         journey.conversion_probability = cls._compute_conversion(journey)
 
     @classmethod
-    def _compute_churn_risk(cls, journey: CustomerJourney) -> float:
+    def _compute_churn_risk(cls, journey: PydanticCustomerJourney) -> float:
         risk = 0.0
-        now = datetime.utcnow()
+        from datetime import timezone
+        now = datetime.now(timezone.utc)
+        
+        j_last = journey.last_activity
+        if j_last.tzinfo is None:
+            j_last = j_last.replace(tzinfo=timezone.utc)
 
         # Inactivity risk
-        days_inactive = (now - journey.last_activity).days
+        days_inactive = (now - j_last).days
         if days_inactive > 30:
             risk += 0.4
         elif days_inactive > 14:
@@ -236,7 +320,7 @@ class JourneyTracker:
         return min(1.0, risk)
 
     @classmethod
-    def _predict_next_stage(cls, journey: CustomerJourney) -> Optional[JourneyStage]:
+    def _predict_next_stage(cls, journey: PydanticCustomerJourney) -> Optional[JourneyStage]:
         s = journey.journey_score
         stage = journey.current_stage
         if stage == JourneyStage.AWARENESS and s > 20:
@@ -260,7 +344,7 @@ class JourneyTracker:
         return None
 
     @classmethod
-    def _compute_health(cls, journey: CustomerJourney) -> str:
+    def _compute_health(cls, journey: PydanticCustomerJourney) -> str:
         if journey.churn_risk > 0.7:
             return "critical"
         elif journey.churn_risk > 0.4:
@@ -272,7 +356,7 @@ class JourneyTracker:
         return "warning"
 
     @classmethod
-    def _compute_conversion(cls, journey: CustomerJourney) -> float:
+    def _compute_conversion(cls, journey: PydanticCustomerJourney) -> float:
         stage_rates = {
             JourneyStage.AWARENESS: 0.15,
             JourneyStage.CONSIDERATION: 0.25,

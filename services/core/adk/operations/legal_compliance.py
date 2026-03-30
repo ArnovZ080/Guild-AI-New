@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 from services.core.agents.base import BaseAgent
 from services.core.agents.registry import AgentRegistry, AgentCapability
 from services.core.llm import default_llm
+from services.core.utils.json_extractor import extract_json_from_llm_response
 import json
 
 class LegalComplianceAgent(BaseAgent):
@@ -27,7 +28,7 @@ class LegalComplianceAgent(BaseAgent):
         contract_text = input_data.get("contract_text", "")
         party_name = input_data.get("party_name", "Our Company")
         
-        sys_prompt = "You are a Senior Corporate Lawyer. Analyze the contract and highlight obligations and risks."
+        sys_prompt = self.build_system_prompt("You are a Senior Corporate Lawyer. Analyze the contract and highlight obligations and risks.", context)
         user_prompt = f"""
         **Our Party Name:** {party_name}
         
@@ -45,7 +46,8 @@ class LegalComplianceAgent(BaseAgent):
             ],
             "negotiation_recommendations": ["string"]
         }}
-        """
+        
+        Think step by step assessing each paragraph for potential liabilities."""
         
         response = await default_llm.chat_completion([
             {"role": "system", "content": sys_prompt},
@@ -58,7 +60,7 @@ class LegalComplianceAgent(BaseAgent):
         framework = input_data.get("framework", "GDPR")
         operational_data = input_data.get("operational_data", {})
         
-        sys_prompt = f"You are a highly acclaimed {framework} Compliance Auditor."
+        sys_prompt = self.build_system_prompt(f"You are a highly acclaimed {framework} Compliance Auditor.", context)
         user_prompt = f"""
         Review the following operational data and privacy policies against {framework} requirements.
         
@@ -71,9 +73,10 @@ class LegalComplianceAgent(BaseAgent):
             "violations_found": [
                 {{"severity": "critical|high|medium|low", "description": "string", "remediation": "string"}}
             ],
-            "audit_score": <0-100>
+            "audit_score": 50
         }}
-        """
+        
+        Think step by step aligning practices against regulatory articles."""
         
         response = await default_llm.chat_completion([
             {"role": "system", "content": sys_prompt},
@@ -87,7 +90,7 @@ class LegalComplianceAgent(BaseAgent):
         market_conditions = input_data.get("market_conditions", {})
         internal_vulnerabilities = input_data.get("internal_vulnerabilities", [])
         
-        sys_prompt = "You are a Chief Risk Officer. Identify holistic business risks and formulate mitigation strategies."
+        sys_prompt = self.build_system_prompt("You are a Chief Risk Officer. Identify holistic business risks and formulate mitigation strategies.", context)
         user_prompt = f"""
         **Business Context:** {json.dumps(business_context.get('business', 'Unknown'))}
         **Market Conditions:** {json.dumps(market_conditions)}
@@ -103,7 +106,8 @@ class LegalComplianceAgent(BaseAgent):
                 {{"risk": "string", "strategy": "string", "timeline": "string"}}
             ]
         }}
-        """
+        
+        Think step by step through impact scenarios."""
         
         response = await default_llm.chat_completion([
             {"role": "system", "content": sys_prompt},
@@ -111,18 +115,25 @@ class LegalComplianceAgent(BaseAgent):
         ])
         return self._extract_json(response)
 
+    def _get_fallback_response(self) -> Dict[str, Any]:
+        return {
+            "error": "Failed to complete legal compliance request",
+            "contract_type": "Unknown",
+            "key_terms": [],
+            "our_obligations": [],
+            "counterparty_obligations": [],
+            "risks_identified": [],
+            "negotiation_recommendations": [],
+            "compliance_status": "needs_review",
+            "violations_found": [],
+            "audit_score": 0,
+            "overall_risk_profile": "critical",
+            "key_risks": [],
+            "mitigation_plan": []
+        }
+
     def _extract_json(self, text: str) -> Dict[str, Any]:
-        try:
-            if "```json" in text:
-                json_str = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                json_str = text.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = text[text.find("{"):text.rfind("}")+1]
-            return json.loads(json_str)
-        except Exception as e:
-            self.logger.error(f"JSON extraction failed: {e}")
-            return {"error": "Failed to parse JSON", "raw_response": text}
+        return extract_json_from_llm_response(text, fallback=self._get_fallback_response())
 
 AgentRegistry.register(AgentCapability(
     name="LegalComplianceAgent",
