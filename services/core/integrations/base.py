@@ -80,5 +80,15 @@ class IntegrationRegistry:
         return cls._instances.get(name)
 
     @classmethod
+    def get_connector(cls, name: str) -> Optional[BaseIntegration]:
+        """Get an initialized connector instance, or create one with default config."""
+        if name in cls._instances:
+            return cls._instances[name]
+        if name in cls._registry:
+            config = IntegrationConfig(name=name, platform=name)
+            return cls.initialize_integration(name, config)
+        return None
+
+    @classmethod
     def list_instances(cls) -> List[str]:
         return list(cls._instances.keys())

@@ -375,6 +375,39 @@ class KnowledgeDocument(Base):
     user = relationship("UserAccount", back_populates="knowledge_documents")
 
 
-# ── Legacy compatibility aliases (for existing code that imports these names) ──
-# These map old model names to new ones during migration.
+# ── Agent Events (Theater) ──
+
+class AgentEventRecord(Base):
+    __tablename__ = "agent_event_records"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    agent_id = Column(String, nullable=False, index=True)
+    workflow_name = Column(String, nullable=True)
+    event_type = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    how = Column(Text, nullable=True)
+    why = Column(Text, nullable=True)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    data_json = Column(JSONB, default=dict)
+    progress = Column(Float, default=0.0)
+
+
+# ── CRM Expansion (Customer Journey) ──
+
+class CustomerJourney(Base):
+    __tablename__ = "customer_journeys"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    customer_email = Column(String, nullable=False, index=True)
+    stage = Column(String, default="visitor")
+    data = Column(JSONB, default=dict)
+    health_score = Column(Float, default=50.0)
+    conversion_probability = Column(Float, default=0.0)
+    churn_risk = Column(Float, default=0.0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+# ── Legacy compatibility aliases ──
 LLMUsageRecord = TokenUsage

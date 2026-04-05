@@ -1,8 +1,7 @@
 """
-Guild-AI API Server
+Guild-AI API Server — Phase 2
 
-FastAPI application entry point.
-Route structure follows GUILD_AI_MASTER_INSTRUCTIONS_v2.md Section 4.
+FastAPI application with all flywheel routes mounted.
 """
 import time
 import logging
@@ -29,7 +28,6 @@ app.add_middleware(
 )
 
 
-# Process time middleware
 @app.middleware("http")
 async def add_process_time(request: Request, call_next):
     start = time.time()
@@ -38,12 +36,17 @@ async def add_process_time(request: Request, call_next):
     return response
 
 
-# ── Mount route modules ──
-from services.api.routes import auth, onboarding, subscription
+# ── Mount all routes ──
+from services.api.routes import auth, onboarding, subscription, content, crm, calendar, goals, ws
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(onboarding.router, prefix="/api/onboarding", tags=["Onboarding"])
 app.include_router(subscription.router, prefix="/api/subscription", tags=["Subscription"])
+app.include_router(content.router, prefix="/api/content", tags=["Content Pipeline"])
+app.include_router(crm.router, prefix="/api/crm", tags=["CRM"])
+app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])
+app.include_router(goals.router, prefix="/api/goals", tags=["Goals"])
+app.include_router(ws.router, tags=["WebSocket"])
 
 
 # ── Health check ──
