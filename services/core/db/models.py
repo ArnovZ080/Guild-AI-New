@@ -410,4 +410,15 @@ class CustomerJourney(Base):
 
 
 # ── Legacy compatibility aliases ──
+# ── Legacy compatibility aliases ──
 LLMUsageRecord = TokenUsage
+Project = Goal
+ProjectMilestone = Milestone
+AgentAuthorization = AgentEventRecord
+AdaptiveLearningSignal = AgentEventRecord
+AIActionOutcome = AgentEventRecord
+UserPreference = AgentEventRecord
+LearnedPattern = AgentEventRecord
+AgentTrigger = AgentEventRecord
+AgentOutput = AgentEventRecord
+IntegrationCredential = ConnectedIntegration

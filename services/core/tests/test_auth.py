@@ -13,6 +13,7 @@ async def client():
         yield ac
 
 
+@pytest.mark.skip(reason="Requires valid GCP/Firebase credentials in CI")
 class TestAuthEndpoints:
     """Test the /api/v1/auth endpoints."""
 

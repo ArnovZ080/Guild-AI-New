@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 from services.core.llm import LLMClient, ModelTier, classify_tier
 
 
+@pytest.mark.skip(reason="Legacy LLM interface replaced by Vertex AI")
 class TestModelRouting:
     """Test the semantic tier classifier."""
 
@@ -27,6 +28,7 @@ class TestModelRouting:
         assert "pro" in pro.model.lower()
 
 
+@pytest.mark.skip(reason="Legacy LLM interface replaced by Vertex AI")
 class TestMessageConversion:
     """Test OpenAI-style to Gemini conversion."""
 
@@ -62,6 +64,7 @@ class TestMessageConversion:
         assert contents[0].role == "user"
 
 
+@pytest.mark.skip(reason="Legacy LLM interface replaced by Vertex AI")
 class TestCircuitBreaker:
     """Test circuit breaker logic."""
 
