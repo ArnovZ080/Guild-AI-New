@@ -25,7 +25,6 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If identity is not complete and user is NOT already on /onboarding, redirect
   if (identityComplete === false && location.pathname !== '/onboarding') {
     return <Navigate to="/onboarding" replace />;
   }

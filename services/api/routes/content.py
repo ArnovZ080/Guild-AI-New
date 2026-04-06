@@ -39,11 +39,14 @@ class RegenerateRequest(BaseModel):
     feedback: str
 
 
+from services.api.middleware.tier_enforcement import enforce_content_limit
+
+
 @router.post("/generate")
 async def generate_content(
     request: GenerateRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: UserAccount = Depends(get_current_user),
+    current_user: UserAccount = Depends(enforce_content_limit),
 ):
     if request.batch:
         ws = date.fromisoformat(request.week_start) if request.week_start else date.today()

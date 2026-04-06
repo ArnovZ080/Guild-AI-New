@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import {
   MessageSquare, FileText, Activity, TrendingUp, GitBranch, Settings as SettingsIcon,
@@ -11,15 +11,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, useTheme } from './components/ThemeProvider';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
-/* ── Views ── */
-import ChatInterface from './components/chat/ChatInterface';
-import ContentQueue from './components/content/ContentQueue';
-import AgentActivityTheater from './components/theater/AgentActivityTheater';
-import GrowthDashboard from './components/dashboard/GrowthDashboard';
-import WorkflowBuilder from './components/workflows/WorkflowBuilder';
-import SettingsPage from './components/settings/SettingsPage';
-import OnboardingFlow from './components/onboarding/OnboardingFlow';
+/* ── Lazy-loaded views (code-split) ── */
+const ChatInterface = lazy(() => import('./components/chat/ChatInterface'));
+const ContentQueue = lazy(() => import('./components/content/ContentQueue'));
+const AgentActivityTheater = lazy(() => import('./components/theater/AgentActivityTheater'));
+const GrowthDashboard = lazy(() => import('./components/dashboard/GrowthDashboard'));
+const WorkflowBuilder = lazy(() => import('./components/workflows/WorkflowBuilder'));
+const SettingsPage = lazy(() => import('./components/settings/SettingsPage'));
+const OnboardingFlow = lazy(() => import('./components/onboarding/OnboardingFlow'));
 
 /* ── Public pages ── */
 import LandingPage from './pages/LandingPage';
@@ -30,6 +31,13 @@ import WaitlistPage from './pages/WaitlistPage';
 import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import TermsPage from './pages/legal/TermsPage';
 import RefundPolicyPage from './pages/legal/RefundPolicyPage';
+
+/* ── Suspense fallback ── */
+const ViewLoader = () => (
+  <div className="flex items-center justify-center h-full min-h-[300px]">
+    <div className="w-6 h-6 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+  </div>
+);
 
 /* ═══════════════════════════════════════════
    Theme Toggle (compact)
@@ -263,14 +271,14 @@ function AppContent() {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/refund" element={<RefundPolicyPage />} />
 
-          {/* Protected Routes */}
-          <Route path="/" element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
-          <Route path="/content" element={<ProtectedRoute><ContentQueue /></ProtectedRoute>} />
-          <Route path="/theater" element={<ProtectedRoute><AgentActivityTheater /></ProtectedRoute>} />
-          <Route path="/growth" element={<ProtectedRoute><GrowthDashboard /></ProtectedRoute>} />
-          <Route path="/workflows" element={<ProtectedRoute><WorkflowBuilder /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-          <Route path="/onboarding" element={<ProtectedRoute><div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div></ProtectedRoute>} />
+          {/* Protected Routes (lazy-loaded with ErrorBoundary) */}
+          <Route path="/" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><ChatInterface /></Suspense></ErrorBoundary></ProtectedRoute>} />
+          <Route path="/content" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><ContentQueue /></Suspense></ErrorBoundary></ProtectedRoute>} />
+          <Route path="/theater" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><AgentActivityTheater /></Suspense></ErrorBoundary></ProtectedRoute>} />
+          <Route path="/growth" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><GrowthDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
+          <Route path="/workflows" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><WorkflowBuilder /></Suspense></ErrorBoundary></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><SettingsPage /></Suspense></ErrorBoundary></ProtectedRoute>} />
+          <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div></Suspense></ErrorBoundary></ProtectedRoute>} />
 
           {/* Catch-all → Chat */}
           <Route path="*" element={<Navigate to="/" replace />} />
