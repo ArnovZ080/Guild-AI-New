@@ -1,251 +1,357 @@
-import React, { useState, useRef, useEffect } from 'react';
+/**
+ * Guild-AI — Chat Interface (Primary View)
+ *
+ * Claude-style layout with:
+ * - Collapsible conversation sidebar (date-grouped history)
+ * - Message bubbles (user right, assistant left)
+ * - Inline agent activity events + approval cards
+ * - WebSocket real-time updates
+ * - Onboarding mode when identity is incomplete
+ */
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Loader2, Brain, ChevronDown, ChevronUp, Activity, CheckCircle2, ShieldAlert } from 'lucide-react';
-import { agentAPI } from '../../services/api';
+import {
+  Plus, Send, PanelLeftClose, PanelLeft, Bot, User, Sparkles,
+  CheckCircle2, XCircle, Clock, Loader2, ChevronDown,
+} from 'lucide-react';
+import { api } from '../../services/api';
+import { guildWS } from '../../services/websocket';
+import { useAuth } from '../../contexts/AuthContext';
 
-const ChatInterface = () => {
-    const [messages, setMessages] = useState([
-        {
-            id: 'init',
-            role: 'assistant',
-            content: "Welcome back, Executive. Internal systems are operational. I've analyzed your 90-day roadmap and have several optimization signals ready. How shall we proceed today?",
-            timestamp: new Date(),
-            thoughts: "Initializing Executive Suite. Loading strategic context from Project 'The Artisanal Bakery'. Checking recurring triggers..."
-        }
-    ]);
-    const [inputValue, setInputValue] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [showThoughts, setShowThoughts] = useState({});
-    const messagesEndRef = useRef(null);
+/* ─── Helpers ─── */
+function groupByDate(conversations) {
+  const groups = { Today: [], Yesterday: [], 'This Week': [], Earlier: [] };
+  const now = new Date();
+  conversations.forEach((c) => {
+    const d = new Date(c.created_at || Date.now());
+    const diffDays = Math.floor((now - d) / 86400000);
+    if (diffDays === 0) groups.Today.push(c);
+    else if (diffDays === 1) groups.Yesterday.push(c);
+    else if (diffDays < 7) groups['This Week'].push(c);
+    else groups.Earlier.push(c);
+  });
+  return groups;
+}
 
-    // Auto-scroll to bottom
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+/* ─── Message Bubble ─── */
+function MessageBubble({ message }) {
+  const isUser = message.role === 'user';
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}
+    >
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isUser ? 'bg-indigo-500/20 text-indigo-400' : 'gradient-cobalt text-white'}`}>
+        {isUser ? <User size={14} strokeWidth={1.5} /> : <Bot size={14} strokeWidth={1.5} />}
+      </div>
+      <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? 'bg-indigo-500/15 text-zinc-200 rounded-tr-md' : 'glass-panel text-zinc-300 rounded-tl-md'}`}>
+        {message.content}
+        {message.tokens && (
+          <span className="block mt-1 text-[10px] text-zinc-600">{message.tokens} tokens</span>
+        )}
+      </div>
+    </motion.div>
+  );
+}
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    const toggleThoughts = (id) => {
-        setShowThoughts(prev => ({ ...prev, [id]: !prev[id] }));
-    };
-
-    const handleSendMessage = async (messageText = inputValue) => {
-        if (!messageText.trim()) return;
-
-        const userMessage = {
-            id: Date.now(),
-            role: 'user',
-            content: messageText,
-            timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        setInputValue('');
-        setIsLoading(true);
-
-        try {
-            const response = await agentAPI.runAgent('OrchestratorAgent', {
-                objective: messageText
-            });
-
-            const assistantMessage = {
-                id: Date.now() + 1,
-                role: 'assistant',
-                content: response.data?.output || "I've processed your request through the workforce. Tactical adjustments have been applied to the content hub.",
-                timestamp: new Date(),
-                thoughts: response.process_log?.join('\n') || "Deconstructing objective... Identifying optimal agent roster... Enforcing 'Smart Contract' budget check...",
-                educational: response.educational_takeaway,
-                type: response.metadata?.type || 'standard'
-            };
-
-            setMessages(prev => [...prev, assistantMessage]);
-        } catch (error) {
-            const errorMessage = {
-                id: Date.now() + 1,
-                role: 'assistant',
-                content: `Disruption detected in orchestration: ${error.message}. I am stabilizing the workforce connection.`,
-                isError: true,
-                timestamp: new Date()
-            };
-            setMessages(prev => [...prev, errorMessage]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage();
-        }
-    };
-
-    return (
-        <div className="flex flex-col h-screen">
-            {/* Executive Header */}
-            <div className="bg-white/80 dark:bg-[#0C1222]/80 backdrop-blur-xl border-b border-gray-200/60 dark:border-white/[0.06] px-8 py-5 flex items-center justify-between sticky top-0 z-10">
-                <div className="max-w-5xl mx-auto w-full flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-b from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                            <Bot className="w-6 h-6 text-white" strokeWidth={1.5} />
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight font-heading">Executive Orchestrator</h1>
-                            <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                <p className="text-xs font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest">System Voice Active</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex gap-4">
-                        <div className="text-right hidden md:block">
-                            <p className="text-[10px] font-medium text-gray-400 dark:text-zinc-600 uppercase">Strategic Focus</p>
-                            <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Q1 Growth: Artisanal Scaling</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Messages Container */}
-            <div className="flex-1 overflow-y-auto px-6 py-10">
-                <div className="max-w-4xl mx-auto space-y-10">
-                    <AnimatePresence>
-                        {messages.map((message) => (
-                            <motion.div
-                                key={message.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
-                                <div className={`flex gap-4 max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                                    {/* Avatar */}
-                                    <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${message.role === 'user'
-                                            ? 'bg-gray-800 dark:bg-zinc-800'
-                                            : 'bg-white dark:bg-white/[0.06] border border-gray-200/60 dark:border-white/[0.06]'
-                                        }`}>
-                                        {message.role === 'user' ? <User className="w-5 h-5 text-white" strokeWidth={1.5} /> : <Bot className="w-5 h-5 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />}
-                                    </div>
-
-                                    {/* Message Bundle */}
-                                    <div className="space-y-3">
-                                        <div className={`px-6 py-4 rounded-2xl shadow-sm border ${message.role === 'user'
-                                            ? 'bg-gradient-to-b from-blue-500 to-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20'
-                                            : message.isError
-                                                ? 'bg-red-50 dark:bg-red-500/10 text-red-900 dark:text-red-300 border-red-200 dark:border-red-500/20'
-                                                : 'bg-white dark:bg-white/[0.04] text-gray-800 dark:text-zinc-200 border-gray-200/60 dark:border-white/[0.06]'
-                                            }`}>
-                                            <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
-                                            <div className={`text-[10px] mt-3 font-medium uppercase tracking-wider opacity-50 ${message.role === 'user' ? 'text-white' : 'text-gray-500 dark:text-zinc-600'}`}>
-                                                {formatTime(message.timestamp)}
-                                            </div>
-                                        </div>
-
-                                        {/* Thought reflection block */}
-                                        {message.thoughts && message.role === 'assistant' && (
-                                            <div className="bg-gray-50 dark:bg-white/[0.03] border border-gray-200/60 dark:border-white/[0.06] rounded-xl overflow-hidden transition-all">
-                                                <button
-                                                    onClick={() => toggleThoughts(message.id)}
-                                                    className="w-full px-4 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-colors"
-                                                >
-                                                    <span className="text-[10px] font-medium text-gray-500 dark:text-zinc-500 uppercase flex items-center gap-2">
-                                                        <Brain size={12} className="text-indigo-500 dark:text-indigo-400" strokeWidth={1.5} /> Orchestrator Logic
-                                                    </span>
-                                                    {showThoughts[message.id] ? <ChevronUp size={12} className="text-gray-400 dark:text-zinc-600" strokeWidth={1.5} /> : <ChevronDown size={12} className="text-gray-400 dark:text-zinc-600" strokeWidth={1.5} />}
-                                                </button>
-                                                <AnimatePresence>
-                                                    {showThoughts[message.id] && (
-                                                        <motion.div
-                                                            initial={{ height: 0, opacity: 0 }}
-                                                            animate={{ height: 'auto', opacity: 1 }}
-                                                            exit={{ height: 0, opacity: 0 }}
-                                                            className="px-4 py-3 border-t border-gray-200/60 dark:border-white/[0.06]"
-                                                        >
-                                                            <div className="text-[11px] font-mono text-gray-500 dark:text-zinc-500 leading-relaxed max-h-40 overflow-y-auto italic">
-                                                                {message.thoughts}
-                                                            </div>
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
-                                            </div>
-                                        )}
-
-                                        {/* Action Widgets */}
-                                        {message.type === 'authorization' && (
-                                            <div className="bg-gray-900 dark:bg-white/[0.06] p-5 rounded-2xl text-white dark:text-zinc-200 space-y-4 border border-gray-800 dark:border-white/[0.06]">
-                                                <div className="flex items-center gap-2">
-                                                    <ShieldAlert size={18} className="text-emerald-400" strokeWidth={1.5} />
-                                                    <span className="text-xs font-bold uppercase">Authorization Required</span>
-                                                </div>
-                                                <p className="text-sm text-gray-400 dark:text-zinc-500">Agent `SEOAgency` requires approval to execute a high-budget keyword strategy.</p>
-                                                <div className="flex gap-2">
-                                                    <button className="flex-1 py-2 bg-emerald-500 text-white rounded-lg text-xs font-bold hover:bg-emerald-600 transition-colors">Authorize</button>
-                                                    <button className="flex-1 py-2 bg-gray-700 dark:bg-white/5 text-gray-300 dark:text-zinc-500 rounded-lg text-xs font-bold hover:bg-gray-600 dark:hover:bg-white/10 transition-colors">Details</button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
-
-                    {/* Loading Indicator */}
-                    {isLoading && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                            <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-white dark:bg-white/[0.06] border border-gray-200/60 dark:border-white/[0.06] ai-active-glow flex items-center justify-center shadow-sm">
-                                    <Brain className="w-5 h-5 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
-                                </div>
-                                <div className="bg-white dark:bg-white/[0.04] border border-gray-200/60 dark:border-white/[0.06] px-6 py-4 rounded-2xl shadow-sm text-xs font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-3">
-                                    <Activity size={14} className="text-indigo-500 dark:text-indigo-400 animate-pulse" strokeWidth={1.5} /> Synchronizing Workforce...
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    <div ref={messagesEndRef} />
-                </div>
-            </div>
-
-            {/* Elegant Input Area */}
-            <div className="p-8 bg-transparent">
-                <div className="max-w-4xl mx-auto">
-                    <div className="relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
-                        <div className="relative flex gap-3 bg-white dark:bg-white/[0.04] p-2 rounded-2xl border border-gray-200/60 dark:border-white/[0.06] shadow-lg dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
-                            <textarea
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                placeholder="Command your workforce..."
-                                className="flex-1 px-4 py-4 text-sm font-medium focus:outline-none resize-none bg-transparent text-gray-900 dark:text-zinc-200 placeholder:text-gray-400 dark:placeholder:text-zinc-600"
-                                rows={1}
-                                disabled={isLoading}
-                            />
-                            <button
-                                onClick={() => handleSendMessage()}
-                                disabled={isLoading || !inputValue.trim()}
-                                className="px-6 py-3 bg-gradient-to-b from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:grayscale transition-all duration-200 shadow-md shadow-blue-500/20 hover:shadow-lg flex items-center gap-2 active:scale-[0.98]"
-                            >
-                                <Send className="w-4 h-4" strokeWidth={1.5} />
-                                <span className="font-semibold text-xs uppercase tracking-wider">Execute</span>
-                            </button>
-                        </div>
-                    </div>
-                    <p className="text-[10px] text-center text-gray-400 dark:text-zinc-600 font-medium uppercase tracking-widest mt-4">
-                        Powered by Guild Strategic Engine v2.4
-                    </p>
-                </div>
-            </div>
+/* ─── Agent Activity Inline Event ─── */
+function AgentEvent({ event }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="mx-auto max-w-md glass-panel rounded-xl px-4 py-2.5 flex items-center gap-3 text-xs"
+    >
+      <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+        <Sparkles size={12} className="text-emerald-400" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <span className="text-zinc-400 font-medium">{event.agent || 'Agent'}</span>
+        <span className="text-zinc-600 mx-1">—</span>
+        <span className="text-zinc-500">{event.description || 'processing...'}</span>
+      </div>
+      {event.progress != null && (
+        <div className="w-12 h-1 rounded-full bg-white/5 overflow-hidden">
+          <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${event.progress * 100}%` }} />
         </div>
-    );
-};
+      )}
+    </motion.div>
+  );
+}
 
-// Utility
-const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-};
+/* ─── Approval Card (inline) ─── */
+function ApprovalCard({ approval, onApprove, onReject }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mx-auto max-w-lg glass-panel rounded-xl p-4 space-y-3"
+    >
+      <div className="flex items-center gap-2 text-amber-400 text-sm font-medium">
+        <Clock size={14} strokeWidth={1.5} />
+        Approval Required
+      </div>
+      <p className="text-sm text-zinc-300">{approval.description || 'An agent needs your approval to proceed.'}</p>
+      <div className="flex gap-2">
+        <button onClick={() => onApprove(approval)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm font-medium hover:bg-emerald-500/30 transition-colors">
+          <CheckCircle2 size={14} strokeWidth={1.5} /> Approve
+        </button>
+        <button onClick={() => onReject(approval)} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-red-500/20 text-red-400 text-sm font-medium hover:bg-red-500/30 transition-colors">
+          <XCircle size={14} strokeWidth={1.5} /> Reject
+        </button>
+      </div>
+    </motion.div>
+  );
+}
 
-export default ChatInterface;
+/* ─── Thinking Indicator ─── */
+function ThinkingIndicator({ agent }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex gap-3 items-center"
+    >
+      <div className="w-8 h-8 rounded-full gradient-cobalt flex items-center justify-center ai-active-glow">
+        <Bot size={14} className="text-white" />
+      </div>
+      <div className="glass-panel rounded-2xl rounded-tl-md px-4 py-3 flex items-center gap-2 text-sm text-zinc-400">
+        <Loader2 size={14} className="animate-spin text-indigo-400" />
+        {agent ? `${agent} is thinking...` : 'Thinking...'}
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Main Chat Interface
+   ═══════════════════════════════════════════ */
+export default function ChatInterface() {
+  const { user, identityComplete } = useAuth();
+  const [conversations, setConversations] = useState([]);
+  const [activeConvId, setActiveConvId] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const [thinkingAgent, setThinkingAgent] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [agentEvents, setAgentEvents] = useState([]);
+  const messagesEndRef = useRef(null);
+
+  /* Scroll to bottom on new message */
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, agentEvents, thinkingAgent]);
+
+  /* Subscribe to WebSocket events */
+  useEffect(() => {
+    const unsub1 = guildWS.on('agent_event', (data) => {
+      setAgentEvents((prev) => [...prev.slice(-20), data]);
+      setThinkingAgent(data.agent_id || data.agent || null);
+    });
+    const unsub2 = guildWS.on('workflow_complete', () => {
+      setThinkingAgent(null);
+    });
+    return () => { unsub1(); unsub2(); };
+  }, []);
+
+  /* ── Send message ── */
+  const handleSend = useCallback(async () => {
+    if (!input.trim() || sending) return;
+    const userMsg = { role: 'user', content: input.trim(), timestamp: Date.now() };
+    setMessages((prev) => [...prev, userMsg]);
+    setInput('');
+    setSending(true);
+    setThinkingAgent('Guild');
+
+    try {
+      let response;
+      if (!identityComplete) {
+        // Onboarding mode
+        response = await api.onboarding.chat(userMsg.content);
+      } else {
+        // Normal orchestrator mode
+        response = await api.agents.run('OrchestratorAgent', { goal: userMsg.content });
+      }
+      const assistantMsg = {
+        role: 'assistant',
+        content: response.response || response.result || response.reply || JSON.stringify(response),
+        tokens: response.tokens_used,
+        timestamp: Date.now(),
+      };
+      setMessages((prev) => [...prev, assistantMsg]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { role: 'assistant', content: `Sorry, something went wrong: ${err.message}`, timestamp: Date.now() }]);
+    } finally {
+      setSending(false);
+      setThinkingAgent(null);
+      setAgentEvents([]);
+    }
+  }, [input, sending, identityComplete]);
+
+  /* ── New chat ── */
+  const handleNewChat = () => {
+    setMessages([]);
+    setAgentEvents([]);
+    setActiveConvId(null);
+  };
+
+  /* ── Keyboard shortcut ── */
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const grouped = groupByDate(conversations);
+
+  return (
+    <div className="flex h-full">
+      {/* ── Sidebar (conversation history) ── */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.aside
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 280, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="h-full border-r border-white/[0.06] flex flex-col bg-surface-base/50 overflow-hidden hidden md:flex"
+          >
+            <div className="p-3 border-b border-white/[0.06]">
+              <button
+                onClick={handleNewChat}
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-300 hover:bg-white/5 transition-colors border border-white/[0.06]"
+              >
+                <Plus size={16} strokeWidth={1.5} />
+                New Chat
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-2 space-y-4">
+              {Object.entries(grouped).map(([label, convs]) =>
+                convs.length > 0 ? (
+                  <div key={label}>
+                    <p className="px-3 mb-1 text-[10px] font-medium text-zinc-600 uppercase tracking-wider">{label}</p>
+                    {convs.map((c, i) => (
+                      <button
+                        key={c.id || i}
+                        onClick={() => setActiveConvId(c.id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition-colors ${activeConvId === c.id ? 'bg-white/5 text-zinc-200' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.03]'}`}
+                      >
+                        {c.title || `Chat ${i + 1}`}
+                      </button>
+                    ))}
+                  </div>
+                ) : null
+              )}
+              {conversations.length === 0 && (
+                <div className="px-3 py-8 text-center text-zinc-600 text-xs">
+                  No conversations yet.<br />Start a new chat to begin.
+                </div>
+              )}
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      {/* ── Main Chat Area ── */}
+      <div className="flex-1 flex flex-col h-full min-w-0">
+        {/* Header */}
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06]">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-colors hidden md:block">
+            {sidebarOpen ? <PanelLeftClose size={18} strokeWidth={1.5} /> : <PanelLeft size={18} strokeWidth={1.5} />}
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full gradient-cobalt flex items-center justify-center">
+              <Bot size={12} className="text-white" />
+            </div>
+            <h1 className="text-sm font-heading font-bold text-zinc-200">
+              {!identityComplete ? 'Onboarding — Tell Guild About Your Business' : 'Guild Orchestrator'}
+            </h1>
+          </div>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-4 py-20">
+              <div className="w-16 h-16 rounded-2xl gradient-cobalt flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Sparkles size={28} className="text-white" />
+              </div>
+              <h2 className="text-xl font-heading font-bold text-zinc-200">
+                {!identityComplete ? 'Welcome to Guild AI' : 'How can I help you grow today?'}
+              </h2>
+              <p className="text-sm text-zinc-500 max-w-md">
+                {!identityComplete
+                  ? "Let's get to know your business. Tell me about what you do, who your customers are, and what you're working toward."
+                  : 'Ask me to create content, find leads, schedule campaigns, or build workflows. I\'ll coordinate the right agents for you.'}
+              </p>
+              <div className="flex flex-wrap gap-2 justify-center mt-4">
+                {(!identityComplete
+                  ? ["I run a candle business", "I'm a freelance designer", "I have an e-commerce store"]
+                  : ["Create this week's content", "Show me my top leads", "Build a campaign for my new product"]
+                ).map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    onClick={() => { setInput(suggestion); }}
+                    className="px-3 py-1.5 rounded-full text-xs text-zinc-400 border border-white/[0.06] hover:border-indigo-500/30 hover:text-indigo-400 transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {messages.map((msg, i) => (
+            <React.Fragment key={i}>
+              <MessageBubble message={msg} />
+              {/* Show agent events after the last user message while thinking */}
+              {msg.role === 'user' && i === messages.length - 1 && agentEvents.length > 0 && (
+                <div className="space-y-2 py-1">
+                  {agentEvents.slice(-3).map((evt, j) => (
+                    <AgentEvent key={j} event={evt} />
+                  ))}
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+
+          <AnimatePresence>
+            {thinkingAgent && <ThinkingIndicator agent={thinkingAgent} />}
+          </AnimatePresence>
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input */}
+        <div className="px-4 py-3 border-t border-white/[0.06]">
+          <div className="flex items-end gap-2 glass-panel rounded-xl px-3 py-2">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={!identityComplete ? "Tell me about your business..." : "Ask Guild anything..."}
+              rows={1}
+              className="flex-1 bg-transparent text-sm text-zinc-200 placeholder-zinc-600 resize-none outline-none max-h-32"
+              style={{ minHeight: '36px' }}
+            />
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || sending}
+              className="p-2 rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+            >
+              <Send size={16} strokeWidth={1.5} />
+            </button>
+          </div>
+          <p className="text-[10px] text-zinc-700 text-center mt-1.5">
+            Guild may make mistakes. Verify important information.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,18 +1,27 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Calendar, Target, Settings, Sliders, Brain, Link as LinkIcon, Sparkles, MessageSquare, Sun, Moon, Monitor } from 'lucide-react';
-import { ThemeProvider, useTheme } from './components/ThemeProvider';
-import ChatInterface from './components/chat/ChatInterface';
-import ExecutiveDashboard from './components/ExecutiveDashboard';
-import CalendarView from './components/calendar/CalendarView';
-import GoalsDashboard from './components/goals/GoalsDashboard';
-import MemoryAgent from './components/memory/MemoryAgent';
-import ConnectorManager from './components/connectors/ConnectorManager';
-import WorkflowBuilder from './components/workflows/WorkflowBuilder';
-import OnboardingFlow from './components/onboarding/OnboardingFlow';
-import ContentHub from './components/dashboard/ContentHub';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import {
+  MessageSquare, FileText, Activity, TrendingUp, GitBranch, Settings as SettingsIcon,
+  Menu, X, Sun, Moon, Monitor, LogOut, ChevronLeft,
+} from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-// New Launch Pages
+import { ThemeProvider, useTheme } from './components/ThemeProvider';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+/* ── Views ── */
+import ChatInterface from './components/chat/ChatInterface';
+import ContentQueue from './components/content/ContentQueue';
+import AgentActivityTheater from './components/theater/AgentActivityTheater';
+import GrowthDashboard from './components/dashboard/GrowthDashboard';
+import WorkflowBuilder from './components/workflows/WorkflowBuilder';
+import SettingsPage from './components/settings/SettingsPage';
+import OnboardingFlow from './components/onboarding/OnboardingFlow';
+
+/* ── Public pages ── */
 import LandingPage from './pages/LandingPage';
 import PricingPage from './pages/PricingPage';
 import SignupPage from './pages/SignupPage';
@@ -22,158 +31,275 @@ import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import TermsPage from './pages/legal/TermsPage';
 import RefundPolicyPage from './pages/legal/RefundPolicyPage';
 
-function ThemeToggle() {
-    const { theme, setTheme, resolvedTheme } = useTheme();
+/* ═══════════════════════════════════════════
+   Theme Toggle (compact)
+   ═══════════════════════════════════════════ */
+function ThemeToggle({ collapsed }) {
+  const { theme, setTheme } = useTheme();
+  if (collapsed) {
     return (
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200/60 dark:border-white/5">
-            <button
-                onClick={() => setTheme('light')}
-                className={`p-1.5 rounded-lg transition-all ${theme === 'light' ? 'bg-white dark:bg-white/10 shadow-sm text-amber-500' : 'text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400'}`}
-                title="Light mode"
-            >
-                <Sun size={14} strokeWidth={1.5} />
-            </button>
-            <button
-                onClick={() => setTheme('system')}
-                className={`p-1.5 rounded-lg transition-all ${theme === 'system' ? 'bg-white dark:bg-white/10 shadow-sm text-blue-500' : 'text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400'}`}
-                title="System preference"
-            >
-                <Monitor size={14} strokeWidth={1.5} />
-            </button>
-            <button
-                onClick={() => setTheme('dark')}
-                className={`p-1.5 rounded-lg transition-all ${theme === 'dark' ? 'bg-white dark:bg-white/10 shadow-sm text-indigo-500' : 'text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400'}`}
-                title="Dark mode"
-            >
-                <Moon size={14} strokeWidth={1.5} />
-            </button>
-        </div>
+      <button
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        className="p-2 rounded-lg text-muted-foreground hover:bg-white/5 transition-colors"
+        title="Toggle theme"
+      >
+        {theme === 'dark' ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
+      </button>
     );
-}
-
-function NavLink({ to, icon: Icon, label, isActive }) {
-    return (
-        <Link
-            to={to}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${isActive
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-200/40 dark:border-blue-500/20'
-                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300 border border-transparent'
-                }`}
+  }
+  return (
+    <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200/60 dark:border-white/5">
+      {[
+        { key: 'light', icon: Sun, color: 'text-amber-500' },
+        { key: 'system', icon: Monitor, color: 'text-blue-500' },
+        { key: 'dark', icon: Moon, color: 'text-indigo-500' },
+      ].map(({ key, icon: Icon, color }) => (
+        <button
+          key={key}
+          onClick={() => setTheme(key)}
+          className={`p-1.5 rounded-lg transition-all ${theme === key ? `bg-white dark:bg-white/10 shadow-sm ${color}` : 'text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400'}`}
+          title={`${key} mode`}
         >
-            <Icon size={18} strokeWidth={1.5} />
-            {label}
-        </Link>
-    );
+          <Icon size={14} strokeWidth={1.5} />
+        </button>
+      ))}
+    </div>
+  );
 }
 
-function AppContent() {
-    const location = useLocation();
-    const publicPaths = ['/landing', '/login', '/signup', '/waitlist', '/pricing', '/privacy', '/terms', '/refund'];
-    const isPublicPage = publicPaths.includes(location.pathname);
+/* ═══════════════════════════════════════════
+   Sidebar NavLink
+   ═══════════════════════════════════════════ */
+function NavLink({ to, icon: Icon, label, isActive, collapsed, badge }) {
+  return (
+    <Link
+      to={to}
+      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200
+        ${isActive
+          ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+          : 'text-zinc-500 hover:bg-white/5 hover:text-zinc-300 border border-transparent'
+        }
+        ${collapsed ? 'justify-center' : ''}
+      `}
+      title={collapsed ? label : undefined}
+    >
+      <Icon size={18} strokeWidth={1.5} />
+      {!collapsed && <span className="text-sm">{label}</span>}
+      {badge > 0 && (
+        <span className={`absolute ${collapsed ? '-top-1 -right-1' : 'right-2'} min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full bg-indigo-500 text-white`}>
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
+      {collapsed && (
+        <span className="absolute left-full ml-2 px-2 py-1 text-xs rounded-md bg-zinc-800 text-zinc-200 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+          {label}
+        </span>
+      )}
+    </Link>
+  );
+}
 
-    const navItems = [
-        { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-        { to: '/chat', icon: MessageSquare, label: 'Executive Chat' },
-        { to: '/calendar', icon: Calendar, label: 'Strategic Calendar' },
-        { to: '/content', icon: Sparkles, label: 'Content Hub' },
-        { to: '/workflows', icon: Sliders, label: 'Workflow Builder' },
-    ];
-
-    const platformItems = [
-        { to: '/memory', icon: Brain, label: 'Memory' },
-        { to: '/connectors', icon: LinkIcon, label: 'Connectors' },
-        { to: '/onboarding', icon: Sparkles, label: 'Onboarding' },
-    ];
-
-    return (
-        <div className="flex h-screen">
-            {/* Sidebar Navigation */}
-            {!isPublicPage && (
-                <aside className="w-64 flex flex-col fixed h-full z-10 bg-white/80 dark:bg-[#0C1222]/80 backdrop-blur-xl border-r border-gray-200/60 dark:border-white/[0.06]">
-                    <div className="p-6 border-b border-gray-200/60 dark:border-white/[0.06]">
-                        <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 font-heading">
-                            <div className="w-8 h-8 gradient-cobalt rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                                <span className="font-bold text-white text-sm">G</span>
-                            </div>
-                            <span className="text-gradient-cobalt">Guild AI</span>
-                        </h2>
-                    </div>
-
-                    <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                        {navItems.map(item => (
-                            <NavLink
-                                key={item.to}
-                                to={item.to}
-                                icon={item.icon}
-                                label={item.label}
-                                isActive={location.pathname === item.to}
-                            />
-                        ))}
-                        <div className="pt-4 mt-4 border-t border-gray-200/60 dark:border-white/[0.06]">
-                            <p className="px-4 text-[10px] font-medium text-gray-400 dark:text-zinc-700 uppercase tracking-wider mb-2">Platform</p>
-                            {platformItems.map(item => (
-                                <NavLink
-                                    key={item.to}
-                                    to={item.to}
-                                    icon={item.icon}
-                                    label={item.label}
-                                    isActive={location.pathname === item.to}
-                                />
-                            ))}
-                        </div>
-                    </nav>
-
-                    <div className="p-4 border-t border-gray-200/60 dark:border-white/[0.06] space-y-3">
-                        <ThemeToggle />
-                        <div className="flex items-center gap-3 px-2">
-                            <div className="w-8 h-8 rounded-full gradient-cobalt border border-blue-500/20" />
-                            <div>
-                                <p className="text-sm font-medium text-gray-800 dark:text-zinc-300">Arno van Zyl</p>
-                                <p className="text-xs text-gray-400 dark:text-zinc-600">CEO</p>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+/* ═══════════════════════════════════════════
+   Mobile Bottom TabBar
+   ═══════════════════════════════════════════ */
+function MobileTabBar({ navItems, currentPath }) {
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around h-16 bg-surface-base/95 backdrop-blur-xl border-t border-white/[0.06] md:hidden">
+      {navItems.map(({ to, icon: Icon, label, badge }) => {
+        const active = currentPath === to || (to !== '/' && currentPath.startsWith(to));
+        return (
+          <Link
+            key={to}
+            to={to}
+            className={`relative flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-colors ${active ? 'text-indigo-400' : 'text-zinc-600'}`}
+          >
+            <Icon size={20} strokeWidth={1.5} />
+            <span className="text-[10px]">{label}</span>
+            {badge > 0 && (
+              <span className="absolute -top-0.5 right-0 min-w-[14px] h-[14px] flex items-center justify-center text-[8px] font-bold rounded-full bg-indigo-500 text-white">
+                {badge}
+              </span>
             )}
-
-            {/* Main Content Area */}
-            <main className={`flex-1 overflow-y-auto ${!isPublicPage ? 'ml-64' : ''}`}>
-                <Routes>
-                    {/* Public Routes */}
-                    <Route path="/landing" element={<LandingPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
-                    <Route path="/waitlist" element={<WaitlistPage />} />
-                    <Route path="/pricing" element={<PricingPage />} />
-                    <Route path="/privacy" element={<PrivacyPolicyPage />} />
-                    <Route path="/terms" element={<TermsPage />} />
-                    <Route path="/refund" element={<RefundPolicyPage />} />
-
-                    {/* Protected Routes (Dashboard) */}
-                    <Route path="/" element={<ExecutiveDashboard />} />
-                    <Route path="/chat" element={<ChatInterface />} />
-                    <Route path="/calendar" element={<CalendarView />} />
-                    <Route path="/content" element={<ContentHub />} />
-                    <Route path="/workflows" element={<WorkflowBuilder />} />
-                    <Route path="/memory" element={<MemoryAgent />} />
-                    <Route path="/connectors" element={<ConnectorManager />} />
-                    <Route path="/onboarding" element={<div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div>} />
-                    <Route path="/settings" element={<div className="p-8 text-gray-500 dark:text-zinc-500">Settings Coming Soon</div>} />
-                </Routes>
-            </main>
-        </div>
-    );
+          </Link>
+        );
+      })}
+    </nav>
+  );
 }
 
+/* ═══════════════════════════════════════════
+   Adaptive Ambient Background
+   ═══════════════════════════════════════════ */
+function AmbientBackground() {
+  const [hue, setHue] = useState(230);
+
+  useEffect(() => {
+    function updateHue() {
+      const h = new Date().getHours();
+      // Dawn (5-8) warm 30, Morning (8-12) neutral 200, Afternoon (12-17) blue 230,
+      // Evening (17-20) amber 35, Night (20-5) indigo 250
+      if (h >= 5 && h < 8) setHue(30);
+      else if (h >= 8 && h < 12) setHue(200);
+      else if (h >= 12 && h < 17) setHue(230);
+      else if (h >= 17 && h < 20) setHue(35);
+      else setHue(250);
+    }
+    updateHue();
+    const interval = setInterval(updateHue, 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      className="ambient-bg"
+      aria-hidden="true"
+      style={{
+        '--ambient-hue': hue,
+      }}
+    />
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Main App Content (with sidebar)
+   ═══════════════════════════════════════════ */
+function AppContent() {
+  const location = useLocation();
+  const { user, logout } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const publicPaths = ['/landing', '/login', '/signup', '/waitlist', '/pricing', '/privacy', '/terms', '/refund'];
+  const isPublicPage = publicPaths.includes(location.pathname);
+
+  const navItems = [
+    { to: '/', icon: MessageSquare, label: 'Chat', badge: 0 },
+    { to: '/content', icon: FileText, label: 'Content', badge: 0 },
+    { to: '/theater', icon: Activity, label: 'Theater', badge: 0 },
+    { to: '/growth', icon: TrendingUp, label: 'Growth', badge: 0 },
+    { to: '/workflows', icon: GitBranch, label: 'Workflows', badge: 0 },
+    { to: '/settings', icon: SettingsIcon, label: 'Settings', badge: 0 },
+  ];
+
+  const currentPath = location.pathname;
+
+  return (
+    <div className="flex h-screen">
+      {/* ── Desktop Sidebar ── */}
+      {!isPublicPage && user && (
+        <aside
+          className={`hidden md:flex flex-col fixed h-full z-20 transition-all duration-300 bg-surface-base/80 backdrop-blur-xl border-r border-white/[0.06]
+            ${sidebarCollapsed ? 'w-[68px]' : 'w-60'}
+          `}
+        >
+          {/* Logo */}
+          <div className="p-4 border-b border-white/[0.06] flex items-center gap-2">
+            <div className="w-8 h-8 gradient-cobalt rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0">
+              <span className="font-bold text-white text-sm">G</span>
+            </div>
+            {!sidebarCollapsed && (
+              <span className="text-gradient-cobalt font-heading text-lg font-bold tracking-tight">Guild AI</span>
+            )}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={`ml-auto p-1 rounded-md text-zinc-600 hover:text-zinc-400 hover:bg-white/5 transition-colors ${sidebarCollapsed ? 'rotate-180' : ''}`}
+            >
+              <ChevronLeft size={16} strokeWidth={1.5} />
+            </button>
+          </div>
+
+          {/* Nav Links */}
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                {...item}
+                isActive={currentPath === item.to || (item.to !== '/' && currentPath.startsWith(item.to))}
+                collapsed={sidebarCollapsed}
+              />
+            ))}
+          </nav>
+
+          {/* Bottom section */}
+          <div className="p-3 border-t border-white/[0.06] space-y-2">
+            <ThemeToggle collapsed={sidebarCollapsed} />
+            {user && (
+              <div className="flex items-center gap-2 px-1">
+                <div className="w-7 h-7 rounded-full gradient-cobalt border border-blue-500/20 flex-shrink-0" />
+                {!sidebarCollapsed && (
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-zinc-300 truncate">{user.displayName || user.email?.split('@')[0]}</p>
+                    <p className="text-[10px] text-zinc-600 truncate">{user.email}</p>
+                  </div>
+                )}
+                <button onClick={logout} className="p-1.5 rounded-md text-zinc-600 hover:text-red-400 hover:bg-white/5 transition-colors" title="Logout">
+                  <LogOut size={14} strokeWidth={1.5} />
+                </button>
+              </div>
+            )}
+          </div>
+        </aside>
+      )}
+
+      {/* ── Mobile Bottom Tab Bar ── */}
+      {!isPublicPage && user && (
+        <MobileTabBar navItems={navItems.slice(0, 5)} currentPath={currentPath} />
+      )}
+
+      {/* ── Main Content ── */}
+      <main
+        className={`flex-1 overflow-y-auto transition-all duration-300
+          ${!isPublicPage && user ? (sidebarCollapsed ? 'md:ml-[68px]' : 'md:ml-60') : ''}
+          ${!isPublicPage && user ? 'pb-16 md:pb-0' : ''}
+        `}
+      >
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/waitlist" element={<WaitlistPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/refund" element={<RefundPolicyPage />} />
+
+          {/* Protected Routes */}
+          <Route path="/" element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
+          <Route path="/content" element={<ProtectedRoute><ContentQueue /></ProtectedRoute>} />
+          <Route path="/theater" element={<ProtectedRoute><AgentActivityTheater /></ProtectedRoute>} />
+          <Route path="/growth" element={<ProtectedRoute><GrowthDashboard /></ProtectedRoute>} />
+          <Route path="/workflows" element={<ProtectedRoute><WorkflowBuilder /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+          <Route path="/onboarding" element={<ProtectedRoute><div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div></ProtectedRoute>} />
+
+          {/* Catch-all → Chat */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+
+      <ToastContainer
+        position="bottom-right"
+        theme="dark"
+        toastClassName="!bg-surface-raised !border !border-white/[0.06] !text-zinc-200 !rounded-xl !shadow-2xl"
+      />
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Root App
+   ═══════════════════════════════════════════ */
 function App() {
-    return (
-        <ThemeProvider>
-            <div className="ambient-bg" aria-hidden="true" />
-            <Router>
-                <AppContent />
-            </Router>
-        </ThemeProvider>
-    );
+  return (
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <AmbientBackground />
+          <AppContent />
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
+  );
 }
 
 export default App;
