@@ -21,6 +21,8 @@ celery>=5.3.4
 
 # Auth
 firebase-admin>=6.2.0
+passlib[bcrypt]>=1.7.4
+PyJWT>=2.8.0
 
 # HTTP
 aiohttp>=3.9.0
