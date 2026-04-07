@@ -1,61 +1,22 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 
-const ThemeContext = createContext({ theme: 'system', resolvedTheme: 'light', setTheme: () => {} });
+const ThemeContext = createContext({ theme: 'dark', resolvedTheme: 'dark', setTheme: () => {} });
 
 export function useTheme() {
     return useContext(ThemeContext);
 }
 
+/**
+ * ThemeProvider — hardcoded to dark mode.
+ * Light mode removed pre-launch to avoid text-invisible bugs.
+ */
 export function ThemeProvider({ children }) {
-    const [theme, setThemeState] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('guild-theme') || 'system';
-        }
-        return 'system';
-    });
-
-    const [resolvedTheme, setResolvedTheme] = useState('light');
-
-    const setTheme = (newTheme) => {
-        setThemeState(newTheme);
-        localStorage.setItem('guild-theme', newTheme);
-    };
-
-    const toggleTheme = () => {
-        if (resolvedTheme === 'dark') {
-            setTheme('light');
-        } else {
-            setTheme('dark');
-        }
-    };
-
     useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-        const updateTheme = () => {
-            let resolved;
-            if (theme === 'system') {
-                resolved = mediaQuery.matches ? 'dark' : 'light';
-            } else {
-                resolved = theme;
-            }
-            setResolvedTheme(resolved);
-
-            const root = document.documentElement;
-            if (resolved === 'dark') {
-                root.classList.add('dark');
-            } else {
-                root.classList.remove('dark');
-            }
-        };
-
-        updateTheme();
-        mediaQuery.addEventListener('change', updateTheme);
-        return () => mediaQuery.removeEventListener('change', updateTheme);
-    }, [theme]);
+        document.documentElement.classList.add('dark');
+    }, []);
 
     return (
-        <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme: 'dark', resolvedTheme: 'dark', setTheme: () => {} }}>
             {children}
         </ThemeContext.Provider>
     );

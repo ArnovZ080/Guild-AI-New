@@ -2,16 +2,16 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import {
   MessageSquare, FileText, Activity, TrendingUp, GitBranch, Settings as SettingsIcon,
-  Menu, X, Sun, Moon, Monitor, LogOut, ChevronLeft,
+  LogOut, ChevronLeft,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { ThemeProvider, useTheme } from './components/ThemeProvider';
+import { ThemeProvider } from './components/ThemeProvider';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
+import AmbientEmbers from './components/AmbientEmbers';
 
 /* ── Lazy-loaded views (code-split) ── */
 const ChatInterface = lazy(() => import('./components/chat/ChatInterface'));
@@ -39,41 +39,7 @@ const ViewLoader = () => (
   </div>
 );
 
-/* ═══════════════════════════════════════════
-   Theme Toggle (compact)
-   ═══════════════════════════════════════════ */
-function ThemeToggle({ collapsed }) {
-  const { theme, setTheme } = useTheme();
-  if (collapsed) {
-    return (
-      <button
-        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="p-2 rounded-lg text-muted-foreground hover:bg-white/5 transition-colors"
-        title="Toggle theme"
-      >
-        {theme === 'dark' ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
-      </button>
-    );
-  }
-  return (
-    <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200/60 dark:border-white/5">
-      {[
-        { key: 'light', icon: Sun, color: 'text-amber-500' },
-        { key: 'system', icon: Monitor, color: 'text-blue-500' },
-        { key: 'dark', icon: Moon, color: 'text-indigo-500' },
-      ].map(({ key, icon: Icon, color }) => (
-        <button
-          key={key}
-          onClick={() => setTheme(key)}
-          className={`p-1.5 rounded-lg transition-all ${theme === key ? `bg-white dark:bg-white/10 shadow-sm ${color}` : 'text-gray-400 dark:text-zinc-600 hover:text-gray-600 dark:hover:text-zinc-400'}`}
-          title={`${key} mode`}
-        >
-          <Icon size={14} strokeWidth={1.5} />
-        </button>
-      ))}
-    </div>
-  );
-}
+
 
 /* ═══════════════════════════════════════════
    Sidebar NavLink
@@ -135,38 +101,7 @@ function MobileTabBar({ navItems, currentPath }) {
   );
 }
 
-/* ═══════════════════════════════════════════
-   Adaptive Ambient Background
-   ═══════════════════════════════════════════ */
-function AmbientBackground() {
-  const [hue, setHue] = useState(230);
 
-  useEffect(() => {
-    function updateHue() {
-      const h = new Date().getHours();
-      // Dawn (5-8) warm 30, Morning (8-12) neutral 200, Afternoon (12-17) blue 230,
-      // Evening (17-20) amber 35, Night (20-5) indigo 250
-      if (h >= 5 && h < 8) setHue(30);
-      else if (h >= 8 && h < 12) setHue(200);
-      else if (h >= 12 && h < 17) setHue(230);
-      else if (h >= 17 && h < 20) setHue(35);
-      else setHue(250);
-    }
-    updateHue();
-    const interval = setInterval(updateHue, 60_000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div
-      className="ambient-bg"
-      aria-hidden="true"
-      style={{
-        '--ambient-hue': hue,
-      }}
-    />
-  );
-}
 
 /* ═══════════════════════════════════════════
    Main App Content (with sidebar)
@@ -229,7 +164,6 @@ function AppContent() {
 
           {/* Bottom section */}
           <div className="p-3 border-t border-white/[0.06] space-y-2">
-            <ThemeToggle collapsed={sidebarCollapsed} />
             {user && (
               <div className="flex items-center gap-2 px-1">
                 <div className="w-7 h-7 rounded-full gradient-cobalt border border-blue-500/20 flex-shrink-0" />
@@ -302,7 +236,7 @@ function App() {
     <ThemeProvider>
       <Router>
         <AuthProvider>
-          <AmbientBackground />
+          <AmbientEmbers />
           <AppContent />
         </AuthProvider>
       </Router>

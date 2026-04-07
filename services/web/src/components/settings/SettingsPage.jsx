@@ -7,12 +7,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   User, Link2, CreditCard, BookOpen, Sliders, Shield,
-  Loader2, Check, Upload, Trash2, ExternalLink, Sun, Moon,
+  Loader2, Check, Upload, Trash2, ExternalLink,
   Bell, BellOff, ToggleLeft, ToggleRight,
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../ThemeProvider';
+
 import { toast } from 'react-toastify';
 
 /* ─── Tab config ─── */
@@ -256,30 +256,11 @@ function KnowledgeTab() {
 
 /* ── Preferences Tab ── */
 function PreferencesTab() {
-  const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState(true);
   const [autoApprove, setAutoApprove] = useState(false);
 
   return (
     <div className="space-y-4">
-      <div className="glass-panel rounded-xl p-4 flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-zinc-200">Theme</p>
-          <p className="text-xs text-zinc-500">Choose your preferred color scheme</p>
-        </div>
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-          {['light', 'system', 'dark'].map((t) => (
-            <button
-              key={t}
-              onClick={() => setTheme(t)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors capitalize ${theme === t ? 'bg-white/[0.08] text-zinc-200' : 'text-zinc-500'}`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div className="glass-panel rounded-xl p-4 flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-zinc-200">Notifications</p>
