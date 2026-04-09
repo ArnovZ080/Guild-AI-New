@@ -1,28 +1,114 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, FileText } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 function TermsPage() {
-    return (
-        <div className="min-h-screen bg-white/[0.03] pt-24">
-            <div className="container mx-auto px-4 max-w-4xl bg-white p-12 rounded-3xl shadow-sm border border-slate-100 mb-24">
-                <Link to="/"><Button variant="ghost" className="mb-8"><ArrowLeft className="w-4 h-4 mr-2" strokeWidth={1.5} /> Back to Home</Button></Link>
-                <h1 className="text-4xl font-black mb-4">Terms & Conditions</h1>
-                <p className="text-zinc-500 mb-12">Last updated: February 2026</p>
-
-                <section className="prose prose-slate max-w-none space-y-8 text-zinc-400 font-medium">
-                    <div>
-                        <h2 className="text-2xl font-bold mb-4 text-slate-900">1. Acceptance of Terms</h2>
-                        <p>By using Guild AI, you agree to these terms. Our software provides AI-driven business assistance; results depend on your input and market conditions.</p>
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-bold mb-4 text-slate-900">2. Use License</h2>
-                        <p>Permission is granted to use Guild AI for your business operations. This is a license, not a transfer of title.</p>
-                    </div>
-                </section>
+  return (
+    <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6">
+      <div className="container mx-auto max-w-4xl">
+        <Link to="/landing">
+          <Button variant="ghost" className="text-zinc-500 hover:text-white mb-12 group">
+            <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+            Back to Landing
+          </Button>
+        </Link>
+        
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.5 }}
+           className="glass-panel p-12 rounded-3xl"
+        >
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 rounded-xl gradient-cobalt flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+              <FileText size={24} />
             </div>
-        </div>
-    )
+            <div>
+              <h1 className="text-4xl font-bold font-heading">Terms of Service</h1>
+              <p className="text-zinc-500 text-sm">Last updated: March 30, 2026</p>
+            </div>
+          </div>
+
+          <div className="prose prose-invert prose-zinc max-w-none">
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold font-heading mb-4">1. Agreement to Terms</h2>
+              <p className="text-zinc-400 leading-relaxed mb-4">
+                By accessing and using Guild AI's platform, you agree to be bound by these Terms of Service. 
+                If you do not agree to these terms, you may not access our services.
+              </p>
+            </section>
+
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold font-heading mb-4">2. Description of Service</h2>
+              <p className="text-zinc-400 leading-relaxed mb-4">
+                Guild AI provides an autonomous growth engine powered by specialized agents. Our services include 
+                the "Content-to-Customer Flywheel," conversational onboarding (Source of Truth), and cross-platform 
+                automation.
+              </p>
+              <ul className="list-disc pl-6 space-y-2 text-zinc-400">
+                <li>Access to the AI Orchestrator and 114+ specialized agents.</li>
+                <li>Content generation using Vertex AI (Imagen 3 and Veo 3).</li>
+                <li>Integration with third-party platforms for publishing and lead management.</li>
+                <li>Quality assurance via the Judge Layer.</li>
+              </ul>
+            </section>
+
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold font-heading mb-4">3. Subscriptions & Billing</h2>
+              <p className="text-zinc-400 leading-relaxed mb-4">
+                We offer three primary tiers: Starter ($49), Growth ($149), and Scale ($299). By subscribing, you agree:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 text-zinc-400">
+                <li>Payments are processed securely via Paystack.</li>
+                <li>Subscriptions are recurring unless canceled through the Settings panel.</li>
+                <li>We provide a 21-day trial for new users on paid tiers.</li>
+                <li>Usage-based add-ons (extra video generation) are billed separately.</li>
+              </ul>
+            </section>
+
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold font-heading mb-4">4. Intellectual Property</h2>
+              <p className="text-zinc-400 leading-relaxed mb-4">
+                <strong>Your Content:</strong> You retain ownership of all data you input and all content 
+                generated by Guild AI specifically for your business.
+              </p>
+              <p className="text-zinc-400 leading-relaxed mb-4">
+                <strong>Our Platform:</strong> Guild AI, the agents, the Orchestrator logic, and all source 
+                code are the exclusive property of Arno Adaptive Holdings.
+              </p>
+            </section>
+
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold font-heading mb-4">5. Responsible Use</h2>
+              <p className="text-zinc-400 leading-relaxed mb-4">
+                You agree not to use Guild AI for generating misinformation, illegal content, or performing 
+                unauthorized mass-outreach outside of platform-specific rate limits. We reserve the right 
+                to terminate accounts that violate these principles.
+              </p>
+            </section>
+
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold font-heading mb-4">6. Limitation of Liability</h2>
+              <p className="text-zinc-400 leading-relaxed">
+                Guild AI provides tools to assist in business growth but does not guarantee specific revenue 
+                outcomes. We are not liable for any indirect or consequential damages arising from the use 
+                of the platform.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold font-heading mb-4">7. Contact Information</h2>
+              <p className="text-zinc-400">
+                For questions regarding these terms, please contact us at:
+              </p>
+              <p className="text-indigo-400 font-bold mt-2">legal@guildof1.com</p>
+            </section>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  )
 }
 
 export default TermsPage

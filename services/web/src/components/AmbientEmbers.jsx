@@ -70,15 +70,15 @@ export default function AmbientEmbers() {
       particles.push({
         x: Math.random(),
         y: Math.random(),
-        vx: (Math.random() - 0.5) * 0.00015,
-        vy: -(Math.random() * 0.00022 + 0.00006),
-        r: Math.random() * 1.8 + 0.4,
-        base: Math.random() * 0.5 + 0.2,
+        vx: (Math.random() - 0.5) * 0.0003, // doubled from 0.00015
+        vy: -(Math.random() * 0.00044 + 0.00012), // doubled from 0.00022 + 0.00006
+        r: Math.random() * 2.0 + 0.5, // slightly larger
+        base: Math.random() * 0.6 + 0.3, // slightly brighter
         t: Math.random() * Math.PI * 2,
-        ts: Math.random() * 0.018 + 0.005,
+        ts: Math.random() * 0.03 + 0.01, // doubled twinkle speed
         col: pickColor(),
-        swayAmp: (Math.random() - 0.5) * 0.0001,
-        swayFreq: Math.random() * 0.035 + 0.008,
+        swayAmp: (Math.random() - 0.5) * 0.0002, // doubled from 0.0001
+        swayFreq: Math.random() * 0.07 + 0.016, // doubled from 0.035 + 0.008
         swayOff: Math.random() * Math.PI * 2,
       });
     }

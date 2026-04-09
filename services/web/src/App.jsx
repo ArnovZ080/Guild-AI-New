@@ -31,6 +31,13 @@ import WaitlistPage from './pages/WaitlistPage';
 import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import TermsPage from './pages/legal/TermsPage';
 import RefundPolicyPage from './pages/legal/RefundPolicyPage';
+import AboutUsPage from './pages/AboutUsPage';
+import ContactPage from './pages/ContactPage';
+import AffiliatesPage from './pages/AffiliatesPage';
+import FeaturesPage from './pages/FeaturesPage';
+import AIAgentsPage from './pages/AIAgentsPage';
+import IntegrationsPage from './pages/IntegrationsPage';
+
 
 /* ── Suspense fallback ── */
 const ViewLoader = () => (
@@ -111,7 +118,12 @@ function AppContent() {
   const { user, logout } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const publicPaths = ['/landing', '/login', '/signup', '/waitlist', '/pricing', '/privacy', '/terms', '/refund'];
+  const publicPaths = [
+    '/landing', '/login', '/signup', '/waitlist', '/pricing', 
+    '/privacy', '/terms', '/refund', '/about', '/contact', 
+    '/affiliates', '/features', '/agents', '/integrations'
+  ];
+
   const isPublicPage = publicPaths.includes(location.pathname);
 
   const navItems = [
@@ -204,6 +216,13 @@ function AppContent() {
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/refund" element={<RefundPolicyPage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/affiliates" element={<AffiliatesPage />} />
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/agents" element={<AIAgentsPage />} />
+          <Route path="/integrations" element={<IntegrationsPage />} />
+
 
           {/* Protected Routes (lazy-loaded with ErrorBoundary) */}
           <Route path="/" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><ChatInterface /></Suspense></ErrorBoundary></ProtectedRoute>} />
@@ -228,13 +247,14 @@ function AppContent() {
   );
 }
 
-/* ═══════════════════════════════════════════
-   Root App
-   ═══════════════════════════════════════════ */
+import ScrollToTop from './components/ScrollToTop';
+
+/* ── Root App ── */
 function App() {
   return (
     <ThemeProvider>
       <Router>
+        <ScrollToTop />
         <AuthProvider>
           <AmbientEmbers />
           <AppContent />
