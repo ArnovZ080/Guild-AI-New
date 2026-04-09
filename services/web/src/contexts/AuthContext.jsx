@@ -1,5 +1,5 @@
 /**
- * Guild-AI — Auth Context
+ * Guild-AI - Auth Context
  *
  * Wraps Firebase auth state and provides:
  *  - user / loading / error state

@@ -8,7 +8,7 @@ function PrivacyPolicyPage() {
     <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6">
       <div className="container mx-auto max-w-4xl">
         <Link to="/landing">
-          <Button variant="ghost" className="text-zinc-500 hover:text-white mb-12 group">
+          <Button variant="ghost" className="text-zinc-400 hover:text-white mb-12 group">
             <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Landing
           </Button>
@@ -26,7 +26,7 @@ function PrivacyPolicyPage() {
             </div>
             <div>
               <h1 className="text-4xl font-bold font-heading">Privacy Policy</h1>
-              <p className="text-zinc-500 text-sm">Last updated: March 30, 2026</p>
+              <p className="text-zinc-400 text-sm">Last updated: March 30, 2026</p>
             </div>
           </div>
 

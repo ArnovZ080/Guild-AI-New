@@ -1,5 +1,5 @@
 /**
- * Guild-AI — Agent Activity Theater
+ * Guild-AI - Agent Activity Theater
  *
  * Real-time visibility into agent operations.
  * Card grid + activity feed + pending approvals.
@@ -19,7 +19,7 @@ import { toast } from 'react-toastify';
 const statusConfig = {
   active: { color: 'text-emerald-400', bg: 'bg-emerald-500/15', pulse: 'animate-pulse', label: 'Active' },
   thinking: { color: 'text-amber-400', bg: 'bg-amber-500/15', pulse: 'animate-pulse', label: 'Thinking' },
-  idle: { color: 'text-zinc-500', bg: 'bg-zinc-500/10', pulse: '', label: 'Idle' },
+  idle: { color: 'text-zinc-400', bg: 'bg-zinc-500/10', pulse: '', label: 'Idle' },
   failed: { color: 'text-red-400', bg: 'bg-red-500/15', pulse: '', label: 'Failed' },
   complete: { color: 'text-blue-400', bg: 'bg-blue-500/15', pulse: '', label: 'Complete' },
 };
@@ -42,11 +42,11 @@ function AgentCard({ agent }) {
           </div>
           <div>
             <h4 className="text-sm font-medium text-zinc-200">{agent.name || agent.agent_id}</h4>
-            <span className={`text-[10px] font-medium ${status.color}`}>{status.label}</span>
+            <span className={`text-xs font-medium ${status.color}`}>{status.label}</span>
           </div>
         </div>
         {agent.progress != null && (
-          <span className="text-xs text-zinc-500">{Math.round(agent.progress * 100)}%</span>
+          <span className="text-xs text-zinc-400">{Math.round(agent.progress * 100)}%</span>
         )}
       </div>
 
@@ -66,13 +66,13 @@ function AgentCard({ agent }) {
       {(agent.why || agent.how) && (
         <div className="space-y-1 text-xs">
           {agent.why && (
-            <div className="flex items-start gap-1.5 text-zinc-500">
+            <div className="flex items-start gap-1.5 text-zinc-400">
               <HelpCircle size={12} className="text-amber-500 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
               <span><strong className="text-zinc-400">Why:</strong> {agent.why}</span>
             </div>
           )}
           {agent.how && (
-            <div className="flex items-start gap-1.5 text-zinc-500">
+            <div className="flex items-start gap-1.5 text-zinc-400">
               <Info size={12} className="text-blue-400 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
               <span><strong className="text-zinc-400">How:</strong> {agent.how}</span>
             </div>
@@ -81,14 +81,14 @@ function AgentCard({ agent }) {
       )}
 
       {/* Expandable Log */}
-      <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1 text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors">
+      <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1 text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
         {expanded ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
         {expanded ? 'Hide log' : 'Show log'}
       </button>
       <AnimatePresence>
         {expanded && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-            <pre className="text-[10px] text-zinc-600 bg-white/[0.02] rounded-lg p-2 max-h-32 overflow-y-auto whitespace-pre-wrap">
+            <pre className="text-xs text-zinc-600 bg-white/[0.02] rounded-lg p-2 max-h-32 overflow-y-auto whitespace-pre-wrap">
               {agent.process_log || agent.log || 'No log data available.'}
             </pre>
           </motion.div>
@@ -178,7 +178,7 @@ export default function AgentActivityTheater() {
             <h1 className="text-lg font-heading font-bold text-zinc-200">Agent Theater</h1>
             <div className="flex items-center gap-1.5 text-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-zinc-500">{activeCount} active</span>
+              <span className="text-zinc-400">{activeCount} active</span>
             </div>
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function AgentActivityTheater() {
         {agents.length === 0 ? (
           <div className="glass-panel rounded-xl p-12 text-center space-y-3">
             <Activity size={32} className="mx-auto text-zinc-600" strokeWidth={1.5} />
-            <p className="text-sm text-zinc-500">No agent activity yet.</p>
+            <p className="text-sm text-zinc-400">No agent activity yet.</p>
             <p className="text-xs text-zinc-600">Start a conversation or run a workflow to see agents in action.</p>
           </div>
         ) : (
@@ -203,7 +203,7 @@ export default function AgentActivityTheater() {
         <div className="px-4 py-3 border-b border-white/[0.06] flex items-center gap-2">
           <Zap size={14} className="text-amber-400" strokeWidth={1.5} />
           <h2 className="text-sm font-medium text-zinc-300">Activity Feed</h2>
-          <span className="ml-auto text-[10px] text-zinc-600">{feed.length} events</span>
+          <span className="ml-auto text-xs text-zinc-600">{feed.length} events</span>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-2">
           {feed.length === 0 ? (

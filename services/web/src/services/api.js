@@ -1,5 +1,5 @@
 /**
- * Guild-AI — Comprehensive API Client
+ * Guild-AI - Comprehensive API Client
  * Covers all Phase 1 + Phase 2 backend endpoints.
  */
 

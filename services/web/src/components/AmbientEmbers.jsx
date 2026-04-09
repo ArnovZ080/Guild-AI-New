@@ -9,7 +9,7 @@ import { useEffect, useRef } from 'react';
  * Time-of-day colour shift creates an organic, living quality.
  *
  * Performance: ~60-70 particles on desktop, ~35 on mobile.
- * Uses requestAnimationFrame — no jank.
+ * Uses requestAnimationFrame - no jank.
  */
 export default function AmbientEmbers() {
   const canvasRef = useRef(null);
@@ -29,7 +29,7 @@ export default function AmbientEmbers() {
       '99, 102, 241',   // indigo (weighted higher)
       '139, 92, 246',   // soft violet
       '180, 210, 240',  // pale sky
-      '217, 119, 6',    // warm amber (sparse — like actual embers)
+      '217, 119, 6',    // warm amber (sparse - like actual embers)
     ];
 
     const COLORS_MORNING = [
@@ -94,7 +94,7 @@ export default function AmbientEmbers() {
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // Upward drift — wrap at top
+        // Upward drift - wrap at top
         p.y += p.vy;
         if (p.y < -0.02) {
           p.y = 1.02;

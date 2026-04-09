@@ -37,7 +37,7 @@ function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full grid md:grid-cols-2 glass-panel rounded-3xl overflow-hidden">
-        {/* Left panel — value prop */}
+        {/* Left panel - value prop */}
         <div className="p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-indigo-500/10 to-emerald-500/5 border-r border-white/[0.06]">
           <div>
             <div className="flex items-center gap-2 mb-10">
@@ -51,29 +51,29 @@ function SignupPage() {
               <div className="flex items-start gap-3">
                 <div className="bg-indigo-500/20 p-2 rounded-lg flex-shrink-0"><Sparkles className="text-indigo-400" size={18} strokeWidth={1.5} /></div>
                 <div>
-                  <p className="font-medium text-zinc-200 text-sm">AI Growth Flywheel</p>
-                  <p className="text-xs text-zinc-500">Create → Publish → Capture → Nurture → Convert. Automatically.</p>
+                  <p className="font-medium text-zinc-200 text-sm">AI Growth Engine</p>
+                  <p className="text-xs text-zinc-400">Create → Publish → Capture → Nurture → Convert. Automatically.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="bg-emerald-500/20 p-2 rounded-lg flex-shrink-0"><ShieldCheck className="text-emerald-400" size={18} strokeWidth={1.5} /></div>
                 <div>
-                  <p className="font-medium text-zinc-200 text-sm">Judge Quality Layer</p>
-                  <p className="text-xs text-zinc-500">Every piece of content is evaluated before publishing.</p>
+                  <p className="font-medium text-zinc-200 text-sm">Quality Assurance System</p>
+                  <p className="text-xs text-zinc-400">Every piece of content is evaluated before publishing.</p>
                 </div>
               </div>
             </div>
           </div>
           <div className="pt-8 border-t border-white/[0.06] mt-8">
-            <p className="text-xs text-zinc-600 italic">"The only platform that doesn't just give you tools, but a growth engine."</p>
+            <p className="text-xs text-zinc-500 italic">"The only platform that doesn't just give you tools, but a growth engine."</p>
           </div>
         </div>
 
-        {/* Right panel — form */}
+        {/* Right panel - form */}
         <div className="p-8 md:p-12">
           <div className="mb-6">
             <h1 className="text-2xl font-heading font-bold text-zinc-200 mb-1">Create Account</h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-zinc-400">
               Plan: <span className="text-indigo-400 font-medium capitalize">{selectedPlan}</span>
             </p>
           </div>
@@ -86,11 +86,11 @@ function SignupPage() {
               { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••' },
             ].map(({ key, label, type, placeholder }) => (
               <div key={key}>
-                <label className="text-xs text-zinc-500 mb-1 block">{label}</label>
+                <label className="text-xs text-zinc-400 mb-1 block">{label}</label>
                 <input
                   type={type}
                   placeholder={placeholder}
-                  className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-500 outline-none focus:border-indigo-500/30 transition-colors"
                   onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
                   required={key !== 'businessName'}
                 />
@@ -104,7 +104,7 @@ function SignupPage() {
 
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/[0.06]" /></div>
-            <div className="relative flex justify-center"><span className="bg-surface-raised px-3 text-xs text-zinc-600">or</span></div>
+            <div className="relative flex justify-center"><span className="bg-surface-raised px-3 text-xs text-zinc-500">or</span></div>
           </div>
 
           <button onClick={handleGoogle} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-300 hover:bg-white/10 transition-colors">
@@ -112,7 +112,7 @@ function SignupPage() {
             Continue with Google
           </button>
 
-          <p className="text-center text-sm text-zinc-500 mt-4">
+          <p className="text-center text-sm text-zinc-400 mt-4">
             Already have an account? <Link to="/login" className="text-indigo-400 font-medium hover:text-indigo-300">Login</Link>
           </p>
         </div>

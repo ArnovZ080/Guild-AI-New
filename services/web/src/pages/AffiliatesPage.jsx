@@ -32,14 +32,14 @@ function AffiliatesPage() {
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
-      title: 'Flywheel Conversions',
-      description: 'Our Content-to-Customer story leads to industry-leading conversion rates compared to generic AI tools.',
+      title: 'High Growth Conversions',
+      description: 'Our simple content-to-customer story leads to industry-leading conversion rates compared to generic AI tools.',
       color: 'from-blue-500 to-indigo-500'
     },
     {
       icon: <Rocket className="w-6 h-6" />,
-      title: 'Premium Product',
-      description: 'Promote a platform powered by Vertex AI (Gemini 2.0, Imagen 3, Veo 3) that actually delivers results.',
+      title: 'Professional Platform',
+      description: 'Promote a professional growth engine that actually delivers results for real businesses.',
       color: 'from-purple-500 to-violet-500'
     },
     {
@@ -76,7 +76,7 @@ function AffiliatesPage() {
     e.preventDefault()
     setIsSubmitting(true)
     await new Promise(resolve => setTimeout(resolve, 1500))
-    alert('Application submitted! Our affiliate orchestrator will review your profile.')
+    alert('Application submitted! Our team will review your profile.')
     setIsSubmitting(false)
   }
 
@@ -88,7 +88,7 @@ function AffiliatesPage() {
     <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6">
       <div className="container mx-auto max-w-6xl">
         <Link to="/landing">
-          <Button variant="ghost" className="text-zinc-500 hover:text-white mb-12 group">
+          <Button variant="ghost" className="text-zinc-400 hover:text-white mb-12 group">
             <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Landing
           </Button>
@@ -107,7 +107,7 @@ function AffiliatesPage() {
                     Partner in <span className="text-gradient-cobalt">Growth</span>
                 </h1>
                 <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-                    Earn <strong>30% recurring commission</strong> by introducing solopreneurs to the world\'s first autonomous AI growth engine.
+                    Earn <strong>30% recurring commission</strong> by introducing solopreneurs to a professional AI-powered growth engine.
                 </p>
             </motion.div>
         </section>
@@ -120,7 +120,7 @@ function AffiliatesPage() {
                         {b.icon}
                     </div>
                     <h3 className="text-xl font-bold font-heading mb-3">{b.title}</h3>
-                    <p className="text-sm text-zinc-500 leading-relaxed font-light">{b.description}</p>
+                    <p className="text-sm text-zinc-400 leading-relaxed font-light">{b.description}</p>
                 </div>
             ))}
         </div>
@@ -129,13 +129,13 @@ function AffiliatesPage() {
         <section className="mb-24">
             <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold font-heading tracking-tight mb-4">Commission Tiers</h2>
-                <p className="text-zinc-500">Lucrative recurring payouts across our high-retention tiers.</p>
+                <p className="text-zinc-400">Lucrative recurring payouts across our high-retention tiers.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
                 {commissionTiers.map((t, i) => (
                     <div key={i} className={`glass-panel p-10 rounded-3xl relative overflow-hidden ${t.popular ? 'border-indigo-500/30 ring-1 ring-indigo-500/20' : 'border-white/10'}`}>
-                        {t.popular && <div className="absolute top-0 right-0 py-1 px-4 bg-indigo-500 text-[10px] font-black tracking-widest uppercase">Target Tier</div>}
-                        <h4 className="text-zinc-500 font-heading text-sm mb-4 uppercase tracking-widest">{t.plan} Referrals</h4>
+                        {t.popular && <div className="absolute top-0 right-0 py-1 px-4 bg-indigo-500 text-xs font-black tracking-widest uppercase">Target Tier</div>}
+                        <h4 className="text-zinc-400 font-heading text-sm mb-4 uppercase tracking-widest">{t.plan} Referrals</h4>
                         <div className="text-4xl font-black mb-8">{t.commission} <span className="text-zinc-700 text-lg font-normal"> /mo</span></div>
                         <div className="space-y-4 pt-6 border-t border-white/5">
                             <div className="flex justify-between text-sm">
@@ -193,7 +193,7 @@ function AffiliatesPage() {
                     <Button type="submit" disabled={isSubmitting} className="w-full bg-white text-black hover:bg-zinc-200 rounded-xl py-6 font-bold text-lg transition-all active:scale-95">
                         {isSubmitting ? 'Processing...' : 'Submit Partnership Request'}
                     </Button>
-                    <p className="text-[10px] text-center text-zinc-600 uppercase tracking-widest pt-4">Subject to manual review by our team.</p>
+                    <p className="text-xs text-center text-zinc-600 uppercase tracking-widest pt-4">Subject to manual review by our team.</p>
                 </form>
             </motion.div>
         </div>

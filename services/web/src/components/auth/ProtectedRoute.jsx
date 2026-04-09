@@ -1,5 +1,5 @@
 /**
- * Guild-AI — Route Guard
+ * Guild-AI - Route Guard
  *
  * Unauthenticated  → /login
  * No identity      → /onboarding

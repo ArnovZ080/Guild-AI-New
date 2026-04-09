@@ -37,7 +37,7 @@ CardTitle.displayName = "CardTitle"
 const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
     <p
         ref={ref}
-        className={cn("text-sm text-gray-500 dark:text-zinc-500", className)}
+        className={cn("text-sm text-gray-500 dark:text-zinc-400", className)}
         {...props}
     />
 ))

@@ -1,9 +1,9 @@
 /**
- * Guild-AI — Growth Dashboard
+ * Guild-AI - Growth Dashboard
  *
  * Replaces ExecutiveDashboard.
  * Shows: stat cards, "What's Working" insights, goals & milestones, recent leads.
- * All data from API — no mock/hardcoded values.
+ * All data from API - no mock/hardcoded values.
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
@@ -20,7 +20,7 @@ function StatCard({ icon: Icon, label, value, change, color }) {
   return (
     <div className="glass-panel rounded-xl p-4 space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-zinc-500">{label}</span>
+        <span className="text-xs text-zinc-400">{label}</span>
         <div className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center`}>
           <Icon size={16} strokeWidth={1.5} />
         </div>
@@ -48,7 +48,7 @@ function GoalCard({ goal, onRepeat }) {
         <Target size={16} className="text-indigo-400 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
         <div className="flex-1 min-w-0">
           <h4 className="text-sm font-medium text-zinc-200 truncate">{goal.title || goal.description}</h4>
-          <p className="text-xs text-zinc-500">{currentVal.toLocaleString()} / {targetVal.toLocaleString()}</p>
+          <p className="text-xs text-zinc-400">{currentVal.toLocaleString()} / {targetVal.toLocaleString()}</p>
         </div>
         <span className="text-xs font-medium text-zinc-400">{Math.round(pct * 100)}%</span>
       </div>
@@ -86,7 +86,7 @@ function LeadRow({ lead }) {
         <p className="text-sm text-zinc-300 truncate">{lead.name || lead.email}</p>
         <p className="text-xs text-zinc-600">{lead.source || 'Unknown source'}</p>
       </div>
-      <span className={`text-xs font-medium px-2 py-0.5 rounded ${score >= 80 ? 'bg-emerald-500/15 text-emerald-400' : score >= 60 ? 'bg-amber-500/15 text-amber-400' : 'bg-zinc-500/10 text-zinc-500'}`}>
+      <span className={`text-xs font-medium px-2 py-0.5 rounded ${score >= 80 ? 'bg-emerald-500/15 text-emerald-400' : score >= 60 ? 'bg-amber-500/15 text-amber-400' : 'bg-zinc-500/10 text-zinc-400'}`}>
         ICP {score}%
       </span>
     </div>
@@ -178,7 +178,7 @@ export default function GrowthDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-heading font-bold text-zinc-200">Growth Dashboard</h1>
-        <button onClick={loadData} className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-colors">
+        <button onClick={loadData} className="p-2 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
           <RefreshCw size={16} strokeWidth={1.5} />
         </button>
       </div>
@@ -200,7 +200,7 @@ export default function GrowthDashboard() {
         <p className="text-sm text-zinc-400 leading-relaxed">
           {insights || 'Start publishing content and generating leads to see AI-powered insights about what\'s working for your business.'}
         </p>
-        {insights && <p className="text-[10px] text-zinc-600 italic">— ContentIntelligenceAgent</p>}
+        {insights && <p className="text-xs text-zinc-600 italic">- ContentIntelligenceAgent</p>}
       </div>
 
       {/* Goals & Milestones */}
@@ -230,7 +230,7 @@ export default function GrowthDashboard() {
         {goals.length === 0 ? (
           <div className="glass-panel rounded-xl p-8 text-center space-y-2">
             <Target size={28} className="mx-auto text-zinc-600" strokeWidth={1.5} />
-            <p className="text-sm text-zinc-500">No goals set yet.</p>
+            <p className="text-sm text-zinc-400">No goals set yet.</p>
             <button onClick={() => setShowAddGoal(true)} className="text-xs text-indigo-400 hover:text-indigo-300">Create your first goal →</button>
           </div>
         ) : (
@@ -248,7 +248,7 @@ export default function GrowthDashboard() {
         {leads.length === 0 ? (
           <div className="glass-panel rounded-xl p-8 text-center space-y-2">
             <Users size={28} className="mx-auto text-zinc-600" strokeWidth={1.5} />
-            <p className="text-sm text-zinc-500">No leads captured yet.</p>
+            <p className="text-sm text-zinc-400">No leads captured yet.</p>
             <p className="text-xs text-zinc-600">Leads will appear here as your content captures engagement.</p>
           </div>
         ) : (

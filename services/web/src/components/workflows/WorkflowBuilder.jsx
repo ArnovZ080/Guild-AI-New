@@ -1,9 +1,9 @@
 /**
- * Guild-AI — Workflow Builder (3 Modes)
+ * Guild-AI - Workflow Builder (3 Modes)
  *
- * Tab 1: Pre-built Templates — card grid with launch
- * Tab 2: AI Builder — natural language → DAG preview → execute
- * Tab 3: Custom Builder — ReactFlow canvas
+ * Tab 1: Pre-built Templates - card grid with launch
+ * Tab 2: AI Builder - natural language → DAG preview → execute
+ * Tab 3: Custom Builder - ReactFlow canvas
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -53,7 +53,7 @@ function TemplateCard({ template, onLaunch }) {
 
       <div className="flex flex-wrap gap-1">
         {template.steps.map((step, i) => (
-          <span key={i} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400">
+          <span key={i} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400">
             {step}
             {i < template.steps.length - 1 && <ChevronRight size={8} />}
           </span>
@@ -61,7 +61,7 @@ function TemplateCard({ template, onLaunch }) {
       </div>
 
       <div className="flex items-center justify-between pt-1">
-        <span className="flex items-center gap-1 text-[10px] text-zinc-600">
+        <span className="flex items-center gap-1 text-xs text-zinc-600">
           <Clock size={10} strokeWidth={1.5} /> {template.cost}
         </span>
         <button
@@ -206,7 +206,7 @@ export default function WorkflowBuilder() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-white/[0.08] text-zinc-200' : 'text-zinc-500 hover:text-zinc-300'}`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-white/[0.08] text-zinc-200' : 'text-zinc-400 hover:text-zinc-300'}`}
           >
             <tab.icon size={14} strokeWidth={1.5} />
             {tab.label}

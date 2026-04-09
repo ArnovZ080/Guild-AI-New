@@ -39,7 +39,7 @@ function LoginPage() {
             G
           </div>
           <h1 className="text-3xl font-heading font-bold text-zinc-200">Welcome Back</h1>
-          <p className="text-zinc-500 mt-2">Log in to your Guild AI growth engine.</p>
+          <p className="text-zinc-400 mt-2">Log in to your Guild AI growth engine.</p>
         </div>
 
         <div className="glass-panel rounded-2xl p-8 space-y-6">
@@ -49,17 +49,17 @@ function LoginPage() {
               <input
                 type="email"
                 placeholder="Email Address"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-500 outline-none focus:border-indigo-500/30 transition-colors"
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
             </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600 w-4 h-4" strokeWidth={1.5} />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4" strokeWidth={1.5} />
               <input
                 type="password"
                 placeholder="Password"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-500 outline-none focus:border-indigo-500/30 transition-colors"
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
               />
@@ -75,7 +75,7 @@ function LoginPage() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/[0.06]" /></div>
-            <div className="relative flex justify-center"><span className="bg-surface-base px-3 text-xs text-zinc-600">or</span></div>
+            <div className="relative flex justify-center"><span className="bg-surface-base px-3 text-xs text-zinc-500">or</span></div>
           </div>
 
           <button onClick={handleGoogle} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 border border-white/[0.06] text-sm text-zinc-300 hover:bg-white/10 transition-colors">
@@ -83,12 +83,12 @@ function LoginPage() {
             Continue with Google
           </button>
 
-          <p className="text-center text-sm text-zinc-500">
+          <p className="text-center text-sm text-zinc-400">
             Don't have an account? <Link to="/signup" className="text-indigo-400 font-medium hover:text-indigo-300">Get Started</Link>
           </p>
         </div>
 
-        <p className="text-center text-xs text-zinc-700">© 2026 Guild AI. Your growth partner.</p>
+        <p className="text-center text-xs text-zinc-600">© 2026 Guild AI. Your growth partner.</p>
       </div>
     </div>
   );

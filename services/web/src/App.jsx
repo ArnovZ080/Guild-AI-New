@@ -35,7 +35,7 @@ import AboutUsPage from './pages/AboutUsPage';
 import ContactPage from './pages/ContactPage';
 import AffiliatesPage from './pages/AffiliatesPage';
 import FeaturesPage from './pages/FeaturesPage';
-import AIAgentsPage from './pages/AIAgentsPage';
+import HowItWorksPage from './pages/HowItWorksPage';
 import IntegrationsPage from './pages/IntegrationsPage';
 
 
@@ -58,7 +58,7 @@ function NavLink({ to, icon: Icon, label, isActive, collapsed, badge }) {
       className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200
         ${isActive
           ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-          : 'text-zinc-500 hover:bg-white/5 hover:text-zinc-300 border border-transparent'
+          : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-300 border border-transparent'
         }
         ${collapsed ? 'justify-center' : ''}
       `}
@@ -67,7 +67,7 @@ function NavLink({ to, icon: Icon, label, isActive, collapsed, badge }) {
       <Icon size={18} strokeWidth={1.5} />
       {!collapsed && <span className="text-sm">{label}</span>}
       {badge > 0 && (
-        <span className={`absolute ${collapsed ? '-top-1 -right-1' : 'right-2'} min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full bg-indigo-500 text-white`}>
+        <span className={`absolute ${collapsed ? '-top-1 -right-1' : 'right-2'} min-w-[18px] h-[18px] flex items-center justify-center text-xs font-bold rounded-full bg-indigo-500 text-white`}>
           {badge > 99 ? '99+' : badge}
         </span>
       )}
@@ -95,7 +95,7 @@ function MobileTabBar({ navItems, currentPath }) {
             className={`relative flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-colors ${active ? 'text-indigo-400' : 'text-zinc-600'}`}
           >
             <Icon size={20} strokeWidth={1.5} />
-            <span className="text-[10px]">{label}</span>
+            <span className="text-xs">{label}</span>
             {badge > 0 && (
               <span className="absolute -top-0.5 right-0 min-w-[14px] h-[14px] flex items-center justify-center text-[8px] font-bold rounded-full bg-indigo-500 text-white">
                 {badge}
@@ -121,7 +121,7 @@ function AppContent() {
   const publicPaths = [
     '/landing', '/login', '/signup', '/waitlist', '/pricing', 
     '/privacy', '/terms', '/refund', '/about', '/contact', 
-    '/affiliates', '/features', '/agents', '/integrations'
+    '/affiliates', '/features', '/how-it-works', '/integrations'
   ];
 
   const isPublicPage = publicPaths.includes(location.pathname);
@@ -182,7 +182,7 @@ function AppContent() {
                 {!sidebarCollapsed && (
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-zinc-300 truncate">{user.displayName || user.email?.split('@')[0]}</p>
-                    <p className="text-[10px] text-zinc-600 truncate">{user.email}</p>
+                    <p className="text-xs text-zinc-600 truncate">{user.email}</p>
                   </div>
                 )}
                 <button onClick={logout} className="p-1.5 rounded-md text-zinc-600 hover:text-red-400 hover:bg-white/5 transition-colors" title="Logout">
@@ -220,7 +220,7 @@ function AppContent() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/affiliates" element={<AffiliatesPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/agents" element={<AIAgentsPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/integrations" element={<IntegrationsPage />} />
 
 

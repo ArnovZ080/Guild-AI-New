@@ -1,5 +1,5 @@
 /**
- * Guild-AI — Firebase Auth Service
+ * Guild-AI - Firebase Auth Service
  *
  * Initializes Firebase and exports auth primitives.
  * Requires VITE_FIREBASE_* environment variables.
@@ -31,7 +31,7 @@ try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
 } catch (e) {
-  console.warn('Firebase init skipped — missing config:', e.message);
+  console.warn('Firebase init skipped - missing config:', e.message);
 }
 
 export {

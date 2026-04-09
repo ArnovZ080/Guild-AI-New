@@ -1,5 +1,5 @@
 /**
- * Guild-AI — WebSocket Client
+ * Guild-AI - WebSocket Client
  *
  * Manages a single WebSocket connection to the backend.
  * Dispatches typed events to registered listeners.

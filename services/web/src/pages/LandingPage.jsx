@@ -21,28 +21,28 @@ function LandingPage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const flywheelSteps = [
-        { title: 'LEARN', description: 'Deep conversational onboarding to master your business identity.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CREATE', description: 'Imagen 3 and Veo 3 powered content generation (text, image, video).', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'PUBLISH', description: 'Smart scheduling based on audience behavioral patterns.', icon: <Layout />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'ATTRACT', description: 'Platform-native outreach and engagement automation.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CAPTURE', description: 'Intelligent lead scoring and enrichment in your built-in CRM.', icon: <Users />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'NURTURE', description: 'Personalized drip sequences to turn leads into prospects.', icon: <MessageSquare />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CONVERT', description: 'Strategic conversion cycles that feed back into the learning engine.', icon: <Rocket />, color: 'from-blue-600 to-indigo-600' },
+    const growthSteps = [
+        { title: 'LEARN', description: 'Tell Guild about your business in a simple conversation. It remembers everything - your voice, your audience, your goals.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CREATE', description: 'Blog posts, social media, reels, emails, and ad creatives - all written and designed in your brand voice.', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'PUBLISH', description: 'Your content goes live at the perfect time on every platform. Automatically, every week.', icon: <Layout />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'ATTRACT', description: 'People discover your business through the content Guild creates - across social, search, and email.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CAPTURE', description: 'When someone engages, Guild adds them to your contacts and scores how likely they are to buy.', icon: <Users />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'NURTURE', description: 'Personalised follow-up emails and messages keep the conversation going until they are ready to buy.', icon: <MessageSquare />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CONVERT', description: 'Guild tracks what content drives sales and does more of it. Every week, the system gets smarter.', icon: <Rocket />, color: 'from-blue-600 to-indigo-600' },
     ];
 
     const plans = [
         {
             name: 'Starter',
             price: '$49',
-            description: 'Perfect for solopreneurs building their foundation.',
+            description: 'Start creating on-brand content with AI.',
             features: [
-                'Business Identity Onboarding',
-                '50 Content Pieces / mo',
-                'Text & Image Generation',
-                '3 Connected Platforms',
-                'Judge Layer QA',
-                'Standard Workflows'
+                'Personalised business onboarding',
+                '50 content pieces per month',
+                'Blog posts, social media & images',
+                '3 connected platforms',
+                'Brand quality checks on every piece',
+                'Pre-built marketing templates'
             ],
             cta: 'Get Started',
             popular: false
@@ -50,15 +50,15 @@ function LandingPage() {
         {
             name: 'Growth',
             price: '$149',
-            description: 'The complete content-to-customer flywheel.',
+            description: 'Create content, capture leads, and grow your customer base.',
             features: [
                 'Everything in Starter',
-                '200 Content Pieces / mo',
-                '10 AI Videos (Veo 3)',
-                'Unlimited Platforms',
-                'Built-in CRM & Lead Capture',
-                'Nurture Email Sequences',
-                'Ad Creative Generation'
+                '200 content pieces per month',
+                '10 AI-generated videos',
+                'Unlimited connected platforms',
+                'Contacts & lead tracking (CRM)',
+                'Automated follow-up emails',
+                'Facebook & Instagram ad designs'
             ],
             cta: 'Start Free Trial',
             popular: true
@@ -66,17 +66,17 @@ function LandingPage() {
         {
             name: 'Scale',
             price: '$299',
-            description: 'Enterprise-grade automation for high-growth teams.',
+            description: 'For growing businesses and agencies managing multiple brands.',
             features: [
                 'Everything in Growth',
-                '500 Content Pieces / mo',
-                '30 AI Videos (Veo 3)',
-                'Advanced Workflow Builder',
-                'A/B Testing Automation',
-                'White-label Brand Profiles',
-                'Priority Support'
+                '500 content pieces per month',
+                '30 AI-generated videos',
+                'Custom workflow builder',
+                'A/B testing on content & ads',
+                'White-label for client brands',
+                'Priority support'
             ],
-            cta: 'Go Scale',
+            cta: 'Start Free Trial',
             popular: false
         }
     ];
@@ -95,8 +95,8 @@ function LandingPage() {
                         <span className="text-xl font-bold tracking-tight font-heading">Guild <span className="text-indigo-400">AI</span></span>
                     </div>
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+                        <Link to="/how-it-works" className="hover:text-white transition-colors">How It Works</Link>
                         <Link to="/features" className="hover:text-white transition-colors">Features</Link>
-                        <Link to="/agents" className="hover:text-white transition-colors">Agents</Link>
                         <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
                         <Link to="/about" className="hover:text-white transition-colors">About</Link>
                     </div>
@@ -119,7 +119,7 @@ function LandingPage() {
                     >
                         <Badge className="mb-6 bg-white/5 text-indigo-300 border border-white/10 px-4 py-1 flex items-center gap-2 w-fit mx-auto backdrop-blur-sm">
                             <Sparkles size={14} className="animate-pulse" />
-                            The World's First Autonomous Growth Engine
+                            AI-Powered Content & Growth for Small Business
                         </Badge>
                         <h1 className="text-6xl md:text-8xl font-bold font-heading leading-[1.1] tracking-tight mb-8">
                             Guild knows your business, <br />
@@ -127,16 +127,16 @@ function LandingPage() {
                             and turns them into buyers.
                         </h1>
                         <p className="text-xl text-zinc-400 max-w-3xl mx-auto mb-10 leading-relaxed font-light">
-                            Stop juggling AI tools. Guild is a complete flywheel that learns your business, creates on-brand content (text, image, video), and nurtures engagement into revenue—autonomously.
+                            You're paying for 6 different tools and still doing all the work yourself. Guild replaces them with one system that creates your content, posts it at the right time, and follows up with every person who engages - so you can run your business instead of your marketing.
                         </p>
-                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                                    <Button size="lg" className="bg-white text-black hover:bg-zinc-200 rounded-full px-10 py-7 text-lg font-bold transition-all hover:scale-105 active:scale-95" onClick={() => handleSignup('Growth')}>
-                                        Start Free Trial <ArrowRight className="ml-2 text-indigo-600" />
-                                    </Button>
-                                    <Button size="lg" variant="ghost" className="text-zinc-400 hover:text-indigo-400 rounded-full px-8 py-7 text-lg group">
-                                        <Play className="mr-2 fill-indigo-400/50 group-hover:fill-indigo-400 transition-all shadow-glow-sm" size={18} /> Watch the Flywheel
-                                    </Button>
-                                </div>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <Button size="lg" className="bg-white text-black hover:bg-zinc-200 rounded-full px-10 py-7 text-lg font-bold transition-all hover:scale-105 active:scale-95" onClick={() => handleSignup('Growth')}>
+                                Start Your Free Trial <ArrowRight className="ml-2 text-indigo-600" />
+                            </Button>
+                            <Button size="lg" variant="ghost" className="text-zinc-400 hover:text-indigo-400 rounded-full px-8 py-7 text-lg group">
+                                <Play className="mr-2 fill-indigo-400/50 group-hover:fill-indigo-400 transition-all shadow-glow-sm" size={18} /> See How It Works
+                            </Button>
+                        </div>
                     </motion.div>
                 </div>
 
@@ -167,18 +167,18 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* The Flywheel */}
+            {/* How It Works Section */}
             <section className="py-24 px-6 border-y border-white/5 relative overflow-hidden">
                 <div className="container mx-auto max-w-7xl relative z-10">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">The Growth Flywheel</h2>
-                        <p className="text-zinc-500 max-w-2xl mx-auto text-lg leading-relaxed">
-                            Unlike other AI platforms that stop at creation, Guild completes the recursive loop from first contact to loyal customer.
+                        <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">How Guild Grows Your Business</h2>
+                        <p className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                            Most AI tools help you create content. Guild creates it, publishes it, finds the people who engage, and turns them into paying customers.
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
-                        {flywheelSteps.map((step, i) => (
+                        {growthSteps.map((step, i) => (
                             <motion.div 
                                 key={i}
                                 whileHover={{ y: -5 }}
@@ -188,18 +188,19 @@ function LandingPage() {
                                     {step.icon}
                                 </div>
                                 <h3 className="text-sm font-bold font-heading tracking-[0.2em] mb-3 text-zinc-100 uppercase">{step.title}</h3>
-                                <p className="text-xs text-zinc-500 leading-relaxed font-light">{step.description}</p>
+                                <p className="text-sm text-zinc-400 leading-relaxed font-light">{step.description}</p>
                             </motion.div>
                         ))}
                     </div>
                     
                     <div className="mt-20 flex justify-center gap-8 items-center flex-wrap opacity-60 hover:opacity-100 transition-all duration-700">
-                        <span className="text-xs font-bold uppercase tracking-[0.3em] text-indigo-500/50 block w-full text-center mb-8">Integrated with the Launch Ecosystem</span>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Meta Ads</div>
+                        <span className="text-xs font-bold uppercase tracking-[0.3em] text-indigo-500/50 block w-full text-center mb-8">Connects with the tools you already use</span>
+                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Instagram</div>
                         <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">LinkedIn</div>
+                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Facebook</div>
+                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Mailchimp</div>
                         <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Shopify</div>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">ConvertKit</div>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">HubSpot</div>
+                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Google Ads</div>
                     </div>
                 </div>
             </section>
@@ -211,7 +212,7 @@ function LandingPage() {
                         <div className="relative">
                             <div className="absolute -inset-20 bg-indigo-500/5 blur-[100px] rounded-full" />
                             <h2 className="text-4xl md:text-5xl font-bold font-heading mb-8 relative">
-                                Why Guild is <br /> <span className="text-indigo-400">Lightyears</span> Ahead
+                                What Makes <br /> <span className="text-indigo-400">Guild Different</span>
                             </h2>
                             <div className="space-y-8 relative">
                                 <div className="flex gap-6">
@@ -219,8 +220,8 @@ function LandingPage() {
                                         <Shield size={22} strokeWidth={1.5} />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold mb-2 font-heading">The Judge Layer</h4>
-                                        <p className="text-zinc-500 leading-relaxed">No "AI slop". Every output—post, video, or email—passes through brand compliance and fact-verification rubsics before you ever see it.</p>
+                                        <h4 className="text-xl font-bold mb-2 font-heading">Everything Stays On-Brand</h4>
+                                        <p className="text-base text-zinc-400 leading-relaxed font-light">Every post, email, and video is checked for brand voice, accuracy, and quality before you see it. No generic AI content. No embarrassing mistakes. You review and approve - nothing goes live without your say.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -228,8 +229,8 @@ function LandingPage() {
                                         <Layout size={22} strokeWidth={1.5} />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold mb-2 font-heading">Smart Executive Calendar</h4>
-                                        <p className="text-zinc-500 leading-relaxed">Autonomous scheduling that learns from your audience. Content publishes at the atomic second it is most likely to convert.</p>
+                                        <h4 className="text-xl font-bold mb-2 font-heading">Posts When Your Audience Is Watching</h4>
+                                        <p className="text-base text-zinc-400 leading-relaxed font-light">Guild learns when your followers are most active and schedules your content automatically. It syncs with your calendar so nothing clashes with your meetings or personal time.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -237,8 +238,8 @@ function LandingPage() {
                                         <Award size={22} strokeWidth={1.5} />
                                     </div>
                                     <div>
-                                        <h4 className="text-xl font-bold mb-2 font-heading">Vertex AI Media Engine</h4>
-                                        <p className="text-zinc-500 leading-relaxed">Imagen 3 for stunning graphics and Veo 3 for cinema-quality AI video—integrated natively into your creation pipeline.</p>
+                                        <h4 className="text-xl font-bold mb-2 font-heading">Professional Graphics and Video</h4>
+                                        <p className="text-base text-zinc-400 leading-relaxed font-light">AI-generated images for your social posts, carousels, and ads. AI-generated video for reels and product showcases. Content that looks like you hired a creative agency - ready in minutes, not weeks.</p>
                                     </div>
                                 </div>
                             </div>
@@ -247,30 +248,39 @@ function LandingPage() {
                             <h3 className="text-2xl font-bold font-heading mb-8">The Math is Simple</h3>
                             <div className="space-y-6 mb-10">
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-zinc-500 uppercase tracking-widest">Marketing Director</span>
-                                    <span className="font-medium">$12,000/mo</span>
+                                    <span className="text-zinc-400 uppercase tracking-widest">Content creation (Jasper)</span>
+                                    <span className="font-medium">$59/mo</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-zinc-500 uppercase tracking-widest">Content Creator</span>
-                                    <span className="font-medium">$5,000/mo</span>
+                                    <span className="text-zinc-400 uppercase tracking-widest">Scheduling (Buffer)</span>
+                                    <span className="font-medium">$30/mo</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-zinc-500 uppercase tracking-widest">Lead Qualifier</span>
-                                    <span className="font-medium">$4,000/mo</span>
+                                    <span className="text-zinc-400 uppercase tracking-widest">Email marketing (Mailchimp)</span>
+                                    <span className="font-medium">$50/mo</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-zinc-500 uppercase tracking-widest">Ad Strategist</span>
-                                    <span className="font-medium">$3,500/mo</span>
+                                    <span className="text-zinc-400 uppercase tracking-widest">CRM (HubSpot Starter)</span>
+                                    <span className="font-medium">$50/mo</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-zinc-400 uppercase tracking-widest">Design (Canva Pro)</span>
+                                    <span className="font-medium">$15/mo</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-zinc-400 uppercase tracking-widest">Freelance writer</span>
+                                    <span className="font-medium">$300/mo</span>
                                 </div>
                                 <div className="pt-6 border-t border-white/10 flex justify-between items-center">
-                                    <span className="text-zinc-400 font-bold uppercase tracking-[0.2em] text-xs">Human Team Monthly</span>
-                                    <span className="text-2xl font-bold text-red-500">$24,500</span>
+                                    <span className="text-zinc-400 font-bold uppercase tracking-[0.2em] text-xs">Your current marketing stack</span>
+                                    <span className="text-2xl font-bold text-red-500">$504/mo</span>
                                 </div>
+                                <p className="text-xs text-zinc-600 italic mt-2">(and you still do all the work yourself)</p>
                             </div>
                             <div className="p-8 gradient-cobalt rounded-xl text-center shadow-3xl">
                                 <span className="text-xs uppercase tracking-[0.3em] font-bold text-white/70">Guild AI Growth Plan</span>
-                                <div className="text-5xl font-black mt-2">$149</div>
-                                <p className="text-xs mt-4 font-medium text-white/50 tracking-tighter italic">99.4% Gross Efficiency Increase • 24/7 Autonomy</p>
+                                <div className="text-5xl font-black mt-2">$149/mo</div>
+                                <p className="text-xs mt-4 font-medium text-white/50 tracking-tighter italic">Save 10+ hours a week on marketing</p>
                             </div>
                         </div>
                     </div>
@@ -281,8 +291,8 @@ function LandingPage() {
             <section className="py-24 px-6">
                 <div className="container mx-auto max-w-6xl">
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Simple, Growth-Driven Pricing</h2>
-                        <p className="text-zinc-500 max-w-xl mx-auto">One subscription replaces over $700 in separate software tools.</p>
+                        <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Simple Pricing. Real Results.</h2>
+                        <p className="text-zinc-400 max-w-xl mx-auto">One subscription replaces 6+ separate tools - and does the work for you.</p>
                     </div>
                     <div className="grid md:grid-cols-3 gap-8">
                         {plans.map((p, i) => (
@@ -291,9 +301,9 @@ function LandingPage() {
                                 <h3 className="text-2xl font-bold font-heading mb-1">{p.name}</h3>
                                 <div className="flex items-baseline gap-1 mb-6">
                                     <span className="text-5xl font-black">{p.price}</span>
-                                    <span className="text-zinc-500 text-sm">/mo</span>
+                                    <span className="text-zinc-400 text-sm">/mo</span>
                                 </div>
-                                <p className="text-zinc-500 text-sm mb-8">{p.description}</p>
+                                <p className="text-zinc-400 text-sm mb-8">{p.description}</p>
                                 <Button className={`w-full py-7 rounded-2xl mb-10 text-lg font-bold ${p.popular ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-500/20 active:scale-95' : 'bg-white/5 hover:bg-white/10 text-white'}`} onClick={() => handleSignup(p.name)}>
                                     {p.cta}
                                 </Button>
@@ -325,17 +335,17 @@ function LandingPage() {
                             viewport={{ once: true }}
                         >
                             <h2 className="text-5xl md:text-6xl font-black font-heading tracking-tight mb-8">
-                                Start Your AI <br /> <span className="text-indigo-400 underline decoration-indigo-500/30">Growth Engine</span> Today.
+                                Ready to Stop Doing <br /> <span className="text-indigo-400 underline decoration-indigo-500/30">Your Own Marketing?</span>
                             </h2>
                             <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                                Join the future of business. Let Guild learn, create, and find your customers while you focus on the big picture.
+                                Guild creates your content, publishes it, and follows up with every person who engages. You just approve and watch your business grow.
                             </p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                                 <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-full px-12 py-8 text-xl font-bold shadow-2xl shadow-indigo-500/20" onClick={() => handleSignup('Growth')}>
-                                    Claim Your 21-Day Free Trial
+                                    Start Your Free Trial
                                 </Button>
                             </div>
-                            <p className="mt-8 text-zinc-500 text-sm italic">No credit card required. Cancel anytime with one tap.</p>
+                            <p className="mt-8 text-zinc-400 text-sm italic">No credit card required. Cancel anytime.</p>
                         </motion.div>
                     </div>
                 </div>
@@ -348,23 +358,23 @@ function LandingPage() {
                         <div className="col-span-1 md:col-span-1">
                             <div className="flex items-center gap-3 mb-6">
                                 <img src={guildLogo} alt="Guild" className="w-8 h-8 rounded-md grayscale opacity-50" />
-                                <span className="font-bold tracking-tight text-white/50 underline decoration-white/10 uppercase text-sm">Guild Autonomous AI</span>
+                                <span className="font-bold tracking-tight text-white/50 underline decoration-white/10 uppercase text-sm">Guild AI</span>
                             </div>
                             <p className="text-zinc-600 text-sm leading-relaxed">
-                                Building the recursive engine that powers the world's most successful solopreneurs.
+                                AI-powered growth for small businesses.
                             </p>
                         </div>
                         <div>
-                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-500 mb-8">Product</h4>
+                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-400 mb-8">Product</h4>
                             <ul className="space-y-4 text-sm font-medium text-zinc-400">
-                                <li><Link to="/features" className="hover:text-indigo-400 transition-colors">Capability Ecosystem</Link></li>
-                                <li><Link to="/agents" className="hover:text-indigo-400 transition-colors">14 Elite Agents</Link></li>
-                                <li><Link to="/integrations" className="hover:text-indigo-400 transition-colors">21 Launch Integrations</Link></li>
-                                <li><Link to="/pricing" className="hover:text-indigo-400 transition-colors">Transparent Pricing</Link></li>
+                                <li><Link to="/features" className="hover:text-indigo-400 transition-colors">Features</Link></li>
+                                <li><Link to="/how-it-works" className="hover:text-indigo-400 transition-colors">How It Works</Link></li>
+                                <li><Link to="/integrations" className="hover:text-indigo-400 transition-colors">Integrations</Link></li>
+                                <li><Link to="/pricing" className="hover:text-indigo-400 transition-colors">Pricing</Link></li>
                             </ul>
                         </div>
                         <div>
-                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-500 mb-8">Company</h4>
+                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-400 mb-8">Company</h4>
                             <ul className="space-y-4 text-sm font-medium text-zinc-400">
                                 <li><Link to="/about" className="hover:text-white transition-colors">Our Vision</Link></li>
                                 <li><Link to="/affiliates" className="hover:text-white transition-colors">Affiliate Program</Link></li>
@@ -372,16 +382,16 @@ function LandingPage() {
                             </ul>
                         </div>
                         <div>
-                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-500 mb-8">Legal</h4>
+                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-400 mb-8">Legal</h4>
                             <ul className="space-y-4 text-sm font-medium text-zinc-400">
-                                <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Principles</Link></li>
-                                <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Growth</Link></li>
-                                <li><Link to="/refund" className="hover:text-white transition-colors">Refund Promise</Link></li>
+                                <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                                <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                                <li><Link to="/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
                             </ul>
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-700">
-                        <p>© 2026 THE AI CRUCIBLE • ALL RIGHTS RESERVED</p>
+                     <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs uppercase tracking-[0.2em] font-bold text-zinc-700">
+                        <p>© 2026 GUILD AI • ALL RIGHTS RESERVED</p>
                         <div className="flex gap-8 mt-4 md:mt-0">
                             <span className="hover:text-indigo-400 cursor-pointer transition-colors uppercase">Twitter/X</span>
                             <span className="hover:text-indigo-400 cursor-pointer transition-colors uppercase">LinkedIn</span>
@@ -396,15 +406,15 @@ function LandingPage() {
 
 function AgentSimulatedLogs() {
     const logs = [
-        { agent: 'ORCHESTRATOR', msg: 'Decomposing objective: "Launch Content Flywheel v2"', status: 'active' },
-        { agent: 'RESEARCHER', msg: 'Analyzing competitor sentiment on X and LinkedIn...', status: 'active' },
-        { agent: 'COPYWRITER', msg: 'Drafting multi-threaded post series for LinkedIn...', status: 'pending' },
-        { agent: 'CREATIVE_PROD', msg: 'Rendering cinematic Veo 3 output [ID: 882]...', status: 'active' },
-        { agent: 'JUDGE', msg: 'Validating brand compliance for "Post_01"...', status: 'waiting' },
-        { agent: 'GROWTH', msg: 'Calculating keyword difficulty for "Autonomous Growth"', status: 'active' },
-        { agent: 'CRM', msg: 'Enriching 12 lead profiles from incoming engagement...', status: 'active' },
-        { agent: 'CAMPAIGN', msg: 'Optimization cycle 4: Meta Ads re-allocating budget...', status: 'active' },
-        { agent: 'LEAD', msg: 'Scoring prospect "tech_visionary" → ICP Score: 0.94', status: 'success' },
+        { agent: 'GUILD', msg: 'Learning your brand voice from uploaded documents...', status: 'active' },
+        { agent: 'WRITER', msg: 'Drafting 3 LinkedIn posts for this week...', status: 'active' },
+        { agent: 'DESIGNER', msg: 'Creating Instagram carousel for spring collection...', status: 'active' },
+        { agent: 'VIDEO', msg: 'Generating 15-second product showcase reel...', status: 'pending' },
+        { agent: 'QUALITY', msg: 'Checking brand voice on "Post_01" - passed ✓', status: 'success' },
+        { agent: 'SCHEDULER', msg: 'LinkedIn post scheduled for Tuesday 12:30pm (peak engagement)...', status: 'active' },
+        { agent: 'CRM', msg: 'New lead captured: Sarah M. from Instagram comment (ICP: 92%)...', status: 'success' },
+        { agent: 'NURTURE', msg: 'Sending welcome email to 3 new subscribers...', status: 'active' },
+        { agent: 'GROWTH', msg: 'Instagram reels at 6pm getting 2.5x more saves - adjusting schedule...', status: 'active' },
     ];
 
     const [visibleLogs, setVisibleLogs] = useState([]);
@@ -429,7 +439,7 @@ function AgentSimulatedLogs() {
                 >
                     <span className="text-indigo-400 font-bold shrink-0">[{log.agent}]</span>
                     <span className="text-zinc-400">{log.msg}</span>
-                    <span className="ml-auto text-indigo-500/50 text-[10px] animate-pulse">●</span>
+                    <span className="ml-auto text-indigo-500/50 text-xs animate-pulse">●</span>
                 </motion.div>
             ))}
         </div>

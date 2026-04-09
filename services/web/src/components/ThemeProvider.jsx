@@ -7,7 +7,7 @@ export function useTheme() {
 }
 
 /**
- * ThemeProvider — hardcoded to dark mode.
+ * ThemeProvider - hardcoded to dark mode.
  * Light mode removed pre-launch to avoid text-invisible bugs.
  */
 export function ThemeProvider({ children }) {

@@ -1,5 +1,5 @@
 /**
- * Guild-AI — Chat Interface (Primary View)
+ * Guild-AI - Chat Interface (Primary View)
  *
  * Claude-style layout with:
  * - Collapsible conversation sidebar (date-grouped history)
@@ -48,7 +48,7 @@ function MessageBubble({ message }) {
       <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? 'bg-indigo-500/15 text-zinc-200 rounded-tr-md' : 'glass-panel text-zinc-300 rounded-tl-md'}`}>
         {message.content}
         {message.tokens && (
-          <span className="block mt-1 text-[10px] text-zinc-600">{message.tokens} tokens</span>
+          <span className="block mt-1 text-xs text-zinc-600">{message.tokens} tokens</span>
         )}
       </div>
     </motion.div>
@@ -68,8 +68,8 @@ function AgentEvent({ event }) {
       </div>
       <div className="flex-1 min-w-0">
         <span className="text-zinc-400 font-medium">{event.agent || 'Agent'}</span>
-        <span className="text-zinc-600 mx-1">—</span>
-        <span className="text-zinc-500">{event.description || 'processing...'}</span>
+        <span className="text-zinc-600 mx-1">-</span>
+        <span className="text-zinc-400">{event.description || 'processing...'}</span>
       </div>
       {event.progress != null && (
         <div className="w-12 h-1 rounded-full bg-white/5 overflow-hidden">
@@ -234,12 +234,12 @@ export default function ChatInterface() {
               {Object.entries(grouped).map(([label, convs]) =>
                 convs.length > 0 ? (
                   <div key={label}>
-                    <p className="px-3 mb-1 text-[10px] font-medium text-zinc-600 uppercase tracking-wider">{label}</p>
+                    <p className="px-3 mb-1 text-xs font-medium text-zinc-600 uppercase tracking-wider">{label}</p>
                     {convs.map((c, i) => (
                       <button
                         key={c.id || i}
                         onClick={() => setActiveConvId(c.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition-colors ${activeConvId === c.id ? 'bg-white/5 text-zinc-200' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.03]'}`}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition-colors ${activeConvId === c.id ? 'bg-white/5 text-zinc-200' : 'text-zinc-400 hover:text-zinc-300 hover:bg-white/[0.03]'}`}
                       >
                         {c.title || `Chat ${i + 1}`}
                       </button>
@@ -261,7 +261,7 @@ export default function ChatInterface() {
       <div className="flex-1 flex flex-col h-full min-w-0">
         {/* Header */}
         <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06]">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-colors hidden md:block">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors hidden md:block">
             {sidebarOpen ? <PanelLeftClose size={18} strokeWidth={1.5} /> : <PanelLeft size={18} strokeWidth={1.5} />}
           </button>
           <div className="flex items-center gap-2">
@@ -269,7 +269,7 @@ export default function ChatInterface() {
               <Bot size={12} className="text-white" />
             </div>
             <h1 className="text-sm font-heading font-bold text-zinc-200">
-              {!identityComplete ? 'Onboarding — Tell Guild About Your Business' : 'Guild Orchestrator'}
+              {!identityComplete ? 'Onboarding - Tell Guild About Your Business' : 'Guild Orchestrator'}
             </h1>
           </div>
         </div>
@@ -284,7 +284,7 @@ export default function ChatInterface() {
               <h2 className="text-xl font-heading font-bold text-zinc-200">
                 {!identityComplete ? 'Welcome to Guild AI' : 'How can I help you grow today?'}
               </h2>
-              <p className="text-sm text-zinc-500 max-w-md">
+              <p className="text-sm text-zinc-400 max-w-md">
                 {!identityComplete
                   ? "Let's get to know your business. Tell me about what you do, who your customers are, and what you're working toward."
                   : 'Ask me to create content, find leads, schedule campaigns, or build workflows. I\'ll coordinate the right agents for you.'}
@@ -347,7 +347,7 @@ export default function ChatInterface() {
               <Send size={16} strokeWidth={1.5} />
             </button>
           </div>
-          <p className="text-[10px] text-zinc-700 text-center mt-1.5">
+          <p className="text-xs text-zinc-700 text-center mt-1.5">
             Guild may make mistakes. Verify important information.
           </p>
         </div>

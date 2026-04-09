@@ -45,7 +45,7 @@ function WaitlistPage() {
         <div className="min-h-screen bg-transparent flex items-center justify-center p-6">
             <div className="max-w-2xl w-full">
                 <Link to="/landing">
-                    <Button variant="ghost" className="text-zinc-500 hover:text-white mb-12 group">
+                    <Button variant="ghost" className="text-zinc-400 hover:text-white mb-12 group">
                         <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
                         Back to Landing
                     </Button>
@@ -120,18 +120,18 @@ function WaitlistPage() {
                                 <CheckCircle2 className="text-emerald-400 w-12 h-12" strokeWidth={1.5} />
                             </div>
                             <h2 className="text-4xl md:text-5xl font-black font-heading mb-6 tracking-tight">You're in the queue.</h2>
-                            <p className="text-zinc-500 text-xl mb-12 font-light">
+                            <p className="text-zinc-400 text-xl mb-12 font-light">
                                 Your priority position is <span className="text-indigo-400 font-bold font-heading">#{position}</span>.<br />
                                 We'll reach out to your inbox as soon as a slot opens for your niche.
                             </p>
                             
                             <div className="p-8 bg-white/5 rounded-3xl border border-white/10 mb-12 max-w-sm mx-auto">
-                                <p className="text-[10px] font-black text-indigo-400 mb-2 uppercase tracking-[0.2em]">Priority Jump</p>
+                                <p className="text-xs font-black text-indigo-400 mb-2 uppercase tracking-[0.2em]">Priority Jump</p>
                                 <p className="text-zinc-400 text-sm font-light leading-relaxed">Refer 1 founder to Guild AI and skip exactly <span className="text-white font-bold">500 spots</span> instantly.</p>
                             </div>
 
                             <Link to="/landing">
-                                <Button variant="ghost" className="text-zinc-500 hover:text-white px-8">
+                                <Button variant="ghost" className="text-zinc-400 hover:text-white px-8">
                                     Return to Home
                                 </Button>
                             </Link>

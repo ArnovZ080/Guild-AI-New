@@ -1,5 +1,5 @@
 /**
- * Guild-AI — Content Queue + Calendar (Unified View)
+ * Guild-AI - Content Queue + Calendar (Unified View)
  *
  * 3 tabs: Queue | Calendar | Published
  * Queue: Content cards with Judge scores, approve/reject/edit, bulk approve
@@ -35,7 +35,7 @@ function getTypeIcon(type) {
 /* ─── Score Badge ─── */
 function ScoreBadge({ label, pass }) {
   return (
-    <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ${pass ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>
+    <span className={`inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded ${pass ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>
       {pass ? <Check size={10} /> : <X size={10} />} {label}
     </span>
   );
@@ -65,7 +65,7 @@ function ContentCard({ item, onApprove, onReject, onEdit, selected, onToggleSele
           </label>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="flex items-center gap-1 text-xs text-zinc-500">
+              <span className="flex items-center gap-1 text-xs text-zinc-400">
                 {getTypeIcon(item.content_type || item.type)}
                 {item.platform || 'General'}
               </span>
@@ -86,7 +86,7 @@ function ContentCard({ item, onApprove, onReject, onEdit, selected, onToggleSele
 
         {/* Schedule */}
         {item.scheduled_at && (
-          <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+          <div className="flex items-center gap-1.5 text-xs text-zinc-400">
             <Clock size={12} strokeWidth={1.5} />
             {format(new Date(item.scheduled_at), 'EEE, MMM d · h:mm a')}
           </div>
@@ -110,10 +110,10 @@ function ContentCard({ item, onApprove, onReject, onEdit, selected, onToggleSele
 
         {/* Actions */}
         <div className="flex items-center gap-2 pt-1">
-          <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+          <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors">
             <Eye size={12} strokeWidth={1.5} /> {expanded ? 'Collapse' : 'Preview'}
           </button>
-          <button onClick={() => onEdit(item)} className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+          <button onClick={() => onEdit(item)} className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-300 transition-colors">
             <Edit3 size={12} strokeWidth={1.5} /> Edit
           </button>
           <div className="flex-1" />
@@ -163,7 +163,7 @@ function GenerateModal({ open, onClose }) {
 
         <div className="space-y-3">
           <div>
-            <label className="text-xs text-zinc-500 mb-1 block">Topic or brief</label>
+            <label className="text-xs text-zinc-400 mb-1 block">Topic or brief</label>
             <textarea
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
@@ -175,7 +175,7 @@ function GenerateModal({ open, onClose }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-zinc-500 mb-1 block">Type</label>
+              <label className="text-xs text-zinc-400 mb-1 block">Type</label>
               <select value={contentType} onChange={(e) => setContentType(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-300 outline-none">
                 <option value="social">Social Post</option>
                 <option value="blog">Blog Article</option>
@@ -185,7 +185,7 @@ function GenerateModal({ open, onClose }) {
               </select>
             </div>
             <div>
-              <label className="text-xs text-zinc-500 mb-1 block">Platform</label>
+              <label className="text-xs text-zinc-400 mb-1 block">Platform</label>
               <select value={platform} onChange={(e) => setPlatform(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-300 outline-none">
                 <option value="linkedin">LinkedIn</option>
                 <option value="instagram">Instagram</option>
@@ -200,7 +200,7 @@ function GenerateModal({ open, onClose }) {
           {/* Quick options */}
           <div className="flex flex-wrap gap-2">
             {["Generate this week's content", "Create a promotional post", "Write a newsletter"].map((q) => (
-              <button key={q} onClick={() => setTopic(q)} className="text-[10px] px-2 py-1 rounded-full border border-white/[0.06] text-zinc-500 hover:text-indigo-400 hover:border-indigo-500/30 transition-colors">
+              <button key={q} onClick={() => setTopic(q)} className="text-xs px-2 py-1 rounded-full border border-white/[0.06] text-zinc-400 hover:text-indigo-400 hover:border-indigo-500/30 transition-colors">
                 {q}
               </button>
             ))}
@@ -227,11 +227,11 @@ function WeekCalendar({ events }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <button onClick={() => setWeekStart(subWeeks(weekStart, 1))} className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-colors">
+        <button onClick={() => setWeekStart(subWeeks(weekStart, 1))} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
           <ChevronLeft size={16} strokeWidth={1.5} />
         </button>
         <h3 className="text-sm font-medium text-zinc-300">{format(weekStart, 'MMM d')} – {format(addDays(weekStart, 6), 'MMM d, yyyy')}</h3>
-        <button onClick={() => setWeekStart(addWeeks(weekStart, 1))} className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-colors">
+        <button onClick={() => setWeekStart(addWeeks(weekStart, 1))} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
           <ChevronRight size={16} strokeWidth={1.5} />
         </button>
       </div>
@@ -242,12 +242,12 @@ function WeekCalendar({ events }) {
           const dayEvents = (events || []).filter((e) => isSameDay(new Date(e.scheduled_at || e.start), day));
           return (
             <div key={day.toISOString()} className={`glass-panel rounded-xl p-2 min-h-[120px] ${isToday ? 'border-indigo-500/30' : ''}`}>
-              <p className={`text-xs font-medium mb-1 ${isToday ? 'text-indigo-400' : 'text-zinc-500'}`}>
+              <p className={`text-xs font-medium mb-1 ${isToday ? 'text-indigo-400' : 'text-zinc-400'}`}>
                 {format(day, 'EEE d')}
               </p>
               <div className="space-y-1">
                 {dayEvents.map((evt, i) => (
-                  <div key={i} className="text-[10px] px-1.5 py-1 rounded bg-indigo-500/10 text-indigo-300 truncate">
+                  <div key={i} className="text-xs px-1.5 py-1 rounded bg-indigo-500/10 text-indigo-300 truncate">
                     {evt.title || evt.content_type || 'Event'}
                   </div>
                 ))}
@@ -326,18 +326,18 @@ export default function ContentQueue() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-white/[0.08] text-zinc-200' : 'text-zinc-500 hover:text-zinc-300'}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-white/[0.08] text-zinc-200' : 'text-zinc-400 hover:text-zinc-300'}`}
             >
               <tab.icon size={14} strokeWidth={1.5} />
               {tab.label}
               {tab.count != null && tab.count > 0 && (
-                <span className="min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full bg-indigo-500/20 text-indigo-400">{tab.count}</span>
+                <span className="min-w-[18px] h-[18px] flex items-center justify-center text-xs font-bold rounded-full bg-indigo-500/20 text-indigo-400">{tab.count}</span>
               )}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={loadData} className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-colors">
+          <button onClick={loadData} className="p-2 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
             <RefreshCw size={16} strokeWidth={1.5} />
           </button>
           <button onClick={() => setShowGenerate(true)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors">
@@ -353,7 +353,7 @@ export default function ContentQueue() {
           <button onClick={handleBulkApprove} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 transition-colors">
             <CheckCheck size={12} strokeWidth={1.5} /> Approve All
           </button>
-          <button onClick={() => setSelected(new Set())} className="text-xs text-zinc-500 hover:text-zinc-300">Clear</button>
+          <button onClick={() => setSelected(new Set())} className="text-xs text-zinc-400 hover:text-zinc-300">Clear</button>
         </motion.div>
       )}
 
@@ -369,7 +369,7 @@ export default function ContentQueue() {
               {queue.length === 0 ? (
                 <div className="glass-panel rounded-xl p-12 text-center space-y-3">
                   <FileText size={32} className="mx-auto text-zinc-600" strokeWidth={1.5} />
-                  <p className="text-sm text-zinc-500">No content in your queue yet.</p>
+                  <p className="text-sm text-zinc-400">No content in your queue yet.</p>
                   <button onClick={() => setShowGenerate(true)} className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
                     Generate your first content →
                   </button>
@@ -401,19 +401,19 @@ export default function ContentQueue() {
               {published.length === 0 ? (
                 <div className="glass-panel rounded-xl p-12 text-center space-y-3">
                   <BarChart3 size={32} className="mx-auto text-zinc-600" strokeWidth={1.5} />
-                  <p className="text-sm text-zinc-500">No published content yet.</p>
+                  <p className="text-sm text-zinc-400">No published content yet.</p>
                   <p className="text-xs text-zinc-600">Approve content from the Queue to see it here.</p>
                 </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {published.map((item) => (
                     <div key={item.id} className="glass-panel rounded-xl p-4 space-y-2">
-                      <div className="flex items-center gap-2 text-xs text-zinc-500">
+                      <div className="flex items-center gap-2 text-xs text-zinc-400">
                         {getTypeIcon(item.content_type || item.type)}
                         {item.platform || 'General'}
                       </div>
                       <h4 className="text-sm font-medium text-zinc-300 truncate">{item.title}</h4>
-                      <div className="flex gap-3 text-xs text-zinc-500">
+                      <div className="flex gap-3 text-xs text-zinc-400">
                         {item.engagement && <span>👍 {item.engagement}</span>}
                         {item.reach && <span>👁 {item.reach}</span>}
                         {item.clicks && <span>🔗 {item.clicks}</span>}

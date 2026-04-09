@@ -32,7 +32,7 @@ function ContactPage() {
     {
       icon: <MessageSquare className="w-6 h-6" />,
       title: 'Live Chat',
-      description: 'Human-agent hybrid support',
+      description: 'Expert support team',
       contact: 'Available 9am-6pm SAST',
       color: 'from-indigo-500 to-purple-500'
     },
@@ -54,7 +54,7 @@ function ContactPage() {
     setIsSubmitting(true)
     // Simulated contact form logic
     await new Promise(resolve => setTimeout(resolve, 1500))
-    alert('Thank you! Your message has been routed to our support orchestrator.')
+    alert('Thank you! Your message has been routed to our support team.')
     setFormData({ name: '', email: '', company: '', subject: 'general', message: '' })
     setIsSubmitting(false)
   }
@@ -63,7 +63,7 @@ function ContactPage() {
     <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6">
       <div className="container mx-auto max-w-6xl">
         <Link to="/landing">
-          <Button variant="ghost" className="text-zinc-500 hover:text-white mb-12 group">
+          <Button variant="ghost" className="text-zinc-400 hover:text-white mb-12 group">
             <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Landing
           </Button>
@@ -78,7 +78,7 @@ function ContactPage() {
                 Get in <span className="text-gradient-cobalt">Touch</span>
             </h1>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto font-light leading-relaxed">
-                Have questions about your autonomous workforce? Our team is ready to help you scale.
+                Have questions about your Guild AI tools? Our team is ready to help you scale.
             </p>
           </motion.div>
         </section>
@@ -90,7 +90,7 @@ function ContactPage() {
                         {method.icon}
                     </div>
                     <h3 className="text-xl font-bold font-heading mb-2">{method.title}</h3>
-                    <p className="text-sm text-zinc-500 mb-4 font-light">{method.description}</p>
+                    <p className="text-sm text-zinc-400 mb-4 font-light">{method.description}</p>
                     <p className="font-medium text-indigo-400">{method.contact}</p>
                 </div>
             ))}
@@ -146,8 +146,8 @@ function ContactPage() {
                     <h4 className="text-white font-bold font-heading text-lg mb-4 flex items-center gap-2">
                         <Clock size={20} className="text-indigo-400" /> Business Operations
                     </h4>
-                    <p>Monday — Friday: 9am — 6pm SAST</p>
-                    <p>Saturday: 10am — 2pm SAST</p>
+                    <p>Monday - Friday: 9am - 6pm SAST</p>
+                    <p>Saturday: 10am - 2pm SAST</p>
                     <p>Agents: Operational 24/7/365</p>
                 </div>
                 <div className="p-8 glass-panel rounded-2xl border-indigo-500/10">
