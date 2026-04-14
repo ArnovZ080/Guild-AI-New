@@ -48,6 +48,7 @@ class UserAccount(Base):
     connected_integrations = relationship("ConnectedIntegration", back_populates="user")
     knowledge_documents = relationship("KnowledgeDocument", back_populates="user")
     token_usage = relationship("TokenUsage", back_populates="user")
+    media_assets = relationship("MediaAsset", back_populates="user")
 
 
 class BusinessIdentity(Base):
@@ -409,7 +410,44 @@ class CustomerJourney(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-# ── Legacy compatibility aliases ──
+
+# ── Media Library ──
+
+class MediaAsset(Base):
+    __tablename__ = "media_assets"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
+
+    # File info
+    filename = Column(String, nullable=False)
+    original_filename = Column(String, nullable=False)
+    mime_type = Column(String, nullable=False)          # image/jpeg, image/png, video/mp4
+    file_size = Column(Integer, nullable=False)          # bytes
+    storage_url = Column(String, nullable=False)         # full URL to retrieve the file
+    thumbnail_url = Column(String, nullable=True)        # smaller version for grid display
+
+    # AI-generated metadata
+    ai_description = Column(Text, nullable=True)         # "A soy candle in a glass jar on wooden table"
+    ai_tags = Column(JSONB, default=list)                # ["product", "candle", "spring"]
+    ai_colors = Column(JSONB, default=list)              # ["#F5E6D3", "#8B4513", "#FFD700"]
+    ai_embedding_id = Column(String, nullable=True)      # Qdrant point ID for semantic search
+
+    # User metadata
+    category = Column(String, nullable=True)             # "products", "team", "lifestyle", "logo", "brand"
+    user_tags = Column(JSONB, default=list)
+    alt_text = Column(String, nullable=True)             # accessibility text
+
+    # Dimensions
+    width = Column(Integer, nullable=True)
+    height = Column(Integer, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = relationship("UserAccount", back_populates="media_assets")
+
+
 # ── Legacy compatibility aliases ──
 LLMUsageRecord = TokenUsage
 Project = Goal
@@ -422,3 +460,4 @@ LearnedPattern = AgentEventRecord
 AgentTrigger = AgentEventRecord
 AgentOutput = AgentEventRecord
 IntegrationCredential = ConnectedIntegration
+

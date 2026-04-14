@@ -71,8 +71,16 @@ class ContentGenerator:
             identity = await BusinessIdentityManager.get(db, user_id)
             business_identity = self._identity_to_dict(identity) if identity else {}
 
+        # Step 0: Check Media Library for relevant user-uploaded images
+        media_url = await self._select_media_for_content(user_id, topic, platform)
+
         # Step 1: Generate content via LLM
         content_data = await self._create_content(content_type, platform, topic, business_identity)
+
+        # If user media found, use it instead of/alongside AI-generated images
+        if media_url:
+            existing_urls = content_data.get("media_urls", [])
+            content_data["media_urls"] = [media_url] + existing_urls
 
         # Step 2: Judge evaluation
         from services.core.agents.judge import JudgeAgent
@@ -102,12 +110,61 @@ class ContentGenerator:
                 "judge_score": evaluation.get("overall_score", 0),
                 "revision_count": retries,
                 "rubric_used": rubric.get("criteria", []),
+                "used_library_media": bool(media_url),
             },
         )
         db.add(item)
         await db.commit()
         await db.refresh(item)
         return item
+
+    async def _select_media_for_content(self, user_id: str, topic: str, platform: str) -> Optional[str]:
+        """
+        Search the user's Media Library for relevant images.
+        If a good match is found, use it instead of generating a new AI image.
+
+        Returns the storage_url of the best matching asset, or None if no good match.
+        """
+        try:
+            from services.core.knowledge.pipeline import KnowledgePipeline
+            from services.core.db.models import MediaAsset
+
+            pipeline = KnowledgePipeline()
+            collection = f"guild_media_{user_id.replace('-', '_')}"
+
+            # Generate embedding for the topic
+            embeddings = await pipeline._generate_embeddings([topic])
+            if not embeddings:
+                return None
+
+            qdrant = pipeline._get_qdrant()
+            if not qdrant:
+                return None
+
+            results = qdrant.query_points(
+                collection_name=collection,
+                query=embeddings[0],
+                limit=3,
+            )
+
+            if results.points and results.points[0].score > 0.75:  # High confidence match
+                embedding_id = str(results.points[0].id)
+                from services.core.db.base import AsyncSessionLocal
+                async with AsyncSessionLocal() as db:
+                    result = await db.execute(
+                        select(MediaAsset).where(
+                            MediaAsset.user_id == user_id,
+                            MediaAsset.ai_embedding_id == embedding_id,
+                        )
+                    )
+                    asset = result.scalar_one_or_none()
+                    if asset:
+                        logger.info("Using library media for '%s': %s", topic, asset.storage_url)
+                        return asset.storage_url
+        except Exception as e:
+            logger.warning("Media search failed, will generate: %s", e)
+
+        return None
 
     async def regenerate_content(
         self,

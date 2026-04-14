@@ -73,11 +73,19 @@ async def run_async_migrations() -> None:
     and associate a connection with the context.
 
     """
+    config_section = config.get_section(config.config_ini_section, {})
+
+    # Cloud DBs (Neon, Supabase) require SSL
+    db_url = config_section.get("sqlalchemy.url", "")
+    connect_args = {}
+    if any(host in db_url for host in ["neon.tech", "supabase.co", "supabase.com"]):
+        connect_args["ssl"] = True
 
     connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        config_section,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=connect_args,
     )
 
     async with connectable.connect() as connection:

@@ -198,6 +198,22 @@ export const api = {
       authFetch('/api/v1/dashboard/snapshot'),
   },
 
+  // ── Media Library ──
+  media: {
+    upload: (formData) =>
+      authFetch('/api/media/upload', { method: 'POST', body: formData }),
+    list: (params = {}) =>
+      authFetch(`/api/media/?${new URLSearchParams(params)}`),
+    search: (query) =>
+      authFetch(`/api/media/search?q=${encodeURIComponent(query)}`),
+    delete: (id) =>
+      authFetch(`/api/media/${id}`, { method: 'DELETE' }),
+    update: (id, data) =>
+      authFetch(`/api/media/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    enhance: (id, instructions) =>
+      authFetch(`/api/media/${id}/enhance`, { method: 'POST', body: JSON.stringify(instructions) }),
+  },
+
   // ── Health ──
   health: () => publicFetch('/health'),
 };

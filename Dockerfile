@@ -33,12 +33,16 @@ COPY alembic.ini .
 # Copy frontend build from Stage 1
 COPY --from=frontend-builder /app/web/dist services/web/dist
 
+# Create media upload directory
+RUN mkdir -p /app/uploads/media
+
 # Environment
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8001
 
 # Non-root user
 RUN useradd --create-home guild
+RUN chown -R guild:guild /app/uploads
 USER guild
 
 EXPOSE 8001

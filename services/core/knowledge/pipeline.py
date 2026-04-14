@@ -34,7 +34,10 @@ class KnowledgePipeline:
         if self._qdrant is None:
             try:
                 from qdrant_client import QdrantClient
-                self._qdrant = QdrantClient(url=settings.QDRANT_URL)
+                kwargs = {"url": settings.QDRANT_URL}
+                if settings.QDRANT_API_KEY:
+                    kwargs["api_key"] = settings.QDRANT_API_KEY
+                self._qdrant = QdrantClient(**kwargs)
             except Exception as e:
                 logger.error("Qdrant connection failed: %s", e)
         return self._qdrant

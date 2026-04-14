@@ -1,5 +1,6 @@
 # Guild AI — Cloud Build Configuration
 # Builds the multi-stage Docker image and deploys to Cloud Run
+# Uses free-tier cloud services: Supabase (DB + Storage), Upstash (Redis), Qdrant Cloud (Vectors)
 
 steps:
   # Build the Docker image
@@ -26,6 +27,7 @@ steps:
     secretEnv: ['DATABASE_URL']
 
   # Deploy to Cloud Run
+  # No Cloud SQL proxy or VPC connector needed — connects directly to Supabase/Neon, Upstash, Qdrant Cloud
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -41,7 +43,7 @@ steps:
       - '--min-instances=0'
       - '--max-instances=10'
       - '--allow-unauthenticated'
-      - '--set-secrets=DATABASE_URL=guild-database-url:latest,REDIS_URL=guild-redis-url:latest,SECRET_KEY=guild-secret-key:latest,PAYSTACK_SECRET_KEY=guild-paystack-secret:latest'
+      - '--set-secrets=DATABASE_URL=guild-database-url:latest,REDIS_URL=guild-redis-url:latest,SECRET_KEY=guild-secret-key:latest,PAYSTACK_SECRET_KEY=guild-paystack-secret:latest,QDRANT_API_KEY=guild-qdrant-api-key:latest,SUPABASE_SERVICE_KEY=guild-supabase-service-key:latest'
 
 availableSecrets:
   secretManager:

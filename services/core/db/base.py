@@ -7,7 +7,20 @@ db_url = settings.DATABASE_URL
 if db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
-engine = create_async_engine(db_url, echo=False)
+# Build connection args — Neon, Supabase, and cloud providers require SSL
+connect_args = {}
+if any(host in db_url for host in ["neon.tech", "supabase.co", "supabase.com"]):
+    connect_args["ssl"] = True
+
+engine = create_async_engine(
+    db_url,
+    echo=False,
+    connect_args=connect_args,
+    # Cloud DBs autosuspend — pool_pre_ping handles reconnection gracefully
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10,
+)
 AsyncSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession, expire_on_commit=False
 )
@@ -20,3 +33,4 @@ async def get_db():
             yield session
         finally:
             await session.close()
+

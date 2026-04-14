@@ -1,7 +1,9 @@
-version: "3.8"
+# Local development — all services run locally
+# For beta/production, services are replaced by free cloud providers
+# Set DATABASE_URL, REDIS_URL, QDRANT_URL in .env to override
 
 services:
-  # ── Infrastructure ──
+  # ── Infrastructure (local profile only) ──
   db:
     image: postgres:15-alpine
     container_name: guild_postgres
@@ -18,6 +20,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       retries: 5
+    profiles: ["local"]
 
   redis:
     image: redis:7-alpine
@@ -31,6 +34,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       retries: 5
+    profiles: ["local"]
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -45,6 +49,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:6333/"]
       interval: 5s
       retries: 5
+    profiles: ["local"]
 
   # ── Application ──
   api:
@@ -52,22 +57,19 @@ services:
     container_name: guild_api
     restart: always
     ports:
-      - "8000:8000"
+      - "8001:8001"
     env_file:
       - .env
+    volumes:
+      - media_uploads:/app/uploads/media
+    # When using cloud services, override env vars in .env
+    # When using local profile, these defaults connect to local containers
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:password@db:5432/guild
-      REDIS_URL: redis://redis:6379/0
-      CELERY_BROKER_URL: redis://redis:6379/1
-      CELERY_RESULT_BACKEND: redis://redis:6379/2
-      QDRANT_URL: http://qdrant:6333
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      qdrant:
-        condition: service_healthy
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://postgres:password@db:5432/guild}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/1}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
 
   celery_worker:
     build: .
@@ -77,16 +79,11 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:password@db:5432/guild
-      REDIS_URL: redis://redis:6379/0
-      CELERY_BROKER_URL: redis://redis:6379/1
-      CELERY_RESULT_BACKEND: redis://redis:6379/2
-      QDRANT_URL: http://qdrant:6333
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://postgres:password@db:5432/guild}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/1}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
 
   celery_beat:
     build: .
@@ -96,13 +93,11 @@ services:
     env_file:
       - .env
     environment:
-      CELERY_BROKER_URL: redis://redis:6379/1
-      CELERY_RESULT_BACKEND: redis://redis:6379/2
-    depends_on:
-      redis:
-        condition: service_healthy
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/1}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
 
 volumes:
   postgres_data:
   redis_data:
   qdrant_data:
+  media_uploads:
