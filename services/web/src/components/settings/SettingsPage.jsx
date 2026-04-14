@@ -10,6 +10,7 @@ import {
   Loader2, Check, Upload, Trash2, ExternalLink, Search, X, Tag,
   Bell, BellOff, ToggleLeft, ToggleRight, Sparkles, Palette, Move,
 } from 'lucide-react';
+import ZARPrice from '../ui/ZARPrice';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -183,6 +184,7 @@ function SubscriptionTab() {
             {plan.popular && <span className="text-xs font-medium text-indigo-400 bg-indigo-500/15 px-2 py-0.5 rounded-full">Most Popular</span>}
             <h4 className="text-sm font-heading font-bold text-zinc-200 capitalize">{plan.name}</h4>
             <p className="text-2xl font-bold text-zinc-100">${plan.price}<span className="text-xs text-zinc-400">/mo</span></p>
+            <ZARPrice usd={plan.price} className="text-xs" />
             <ul className="space-y-1">
               {plan.features.map((f) => (
                 <li key={f} className="flex items-center gap-1.5 text-xs text-zinc-400">

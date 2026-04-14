@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import ZARPrice from '@/components/ui/ZARPrice'
 import { Button } from '@/components/ui/button'
 import { Check, Sparkles, Zap, Shield, Rocket, ArrowLeft } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -119,6 +120,7 @@ function PricingPage() {
                                     <span className="text-5xl font-bold font-heading">{p.price}</span>
                                     <span className="text-zinc-400">{p.period}</span>
                                 </div>
+                                <ZARPrice usd={parseInt(p.price.replace('$', ''))} period={p.period} />
                                 <p className="text-base text-zinc-400 mt-4 font-light">{p.description}</p>
                             </div>
 

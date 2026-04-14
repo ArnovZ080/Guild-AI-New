@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import ZARPrice from '@/components/ui/ZARPrice'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -273,13 +274,17 @@ function LandingPage() {
                                 </div>
                                 <div className="pt-6 border-t border-white/10 flex justify-between items-center">
                                     <span className="text-zinc-400 font-bold uppercase tracking-[0.2em] text-xs">Your current marketing stack</span>
-                                    <span className="text-2xl font-bold text-red-500">$504/mo</span>
+                                    <div className="text-right">
+                                        <span className="text-2xl font-bold text-red-500">$504/mo</span>
+                                        <ZARPrice usd={504} className="text-red-400/50 text-xs" />
+                                    </div>
                                 </div>
                                 <p className="text-xs text-zinc-600 italic mt-2">(and you still do all the work yourself)</p>
                             </div>
                             <div className="p-8 gradient-cobalt rounded-xl text-center shadow-3xl">
                                 <span className="text-xs uppercase tracking-[0.3em] font-bold text-white/70">Guild AI Growth Plan</span>
                                 <div className="text-5xl font-black mt-2">$149/mo</div>
+                                <ZARPrice usd={149} className="text-white/50 text-sm" />
                                 <p className="text-xs mt-4 font-medium text-white/50 tracking-tighter italic">Save 10+ hours a week on marketing</p>
                             </div>
                         </div>
@@ -299,10 +304,11 @@ function LandingPage() {
                             <div key={i} className={`glass-panel p-10 rounded-3xl relative flex flex-col ${p.popular ? 'border-indigo-500/50 scale-105 z-10 shadow-2xl shadow-indigo-500/10' : 'border-white/10'}`}>
                                 {p.popular && <Badge className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white font-bold border-none">MOST POPULAR</Badge>}
                                 <h3 className="text-2xl font-bold font-heading mb-1">{p.name}</h3>
-                                <div className="flex items-baseline gap-1 mb-6">
+                                <div className="flex items-baseline gap-1 mb-2">
                                     <span className="text-5xl font-black">{p.price}</span>
                                     <span className="text-zinc-400 text-sm">/mo</span>
                                 </div>
+                                <ZARPrice usd={parseInt(p.price.replace('$', ''))} className="mb-6" />
                                 <p className="text-zinc-400 text-sm mb-8">{p.description}</p>
                                 <Button className={`w-full py-7 rounded-2xl mb-10 text-lg font-bold ${p.popular ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-500/20 active:scale-95' : 'bg-white/5 hover:bg-white/10 text-white'}`} onClick={() => handleSignup(p.name)}>
                                     {p.cta}
