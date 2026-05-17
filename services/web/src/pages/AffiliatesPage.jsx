@@ -27,25 +27,25 @@ function AffiliatesPage() {
     {
       icon: <DollarSign className="w-6 h-6" />,
       title: '30% Recurring Commission',
-      description: 'Earn 30% of every payment from customers you refer, for as long as they remain subscribed.',
+      description: 'Earn 30% of every payment from customers you refer, for the entire life of their subscription. Not a one-time bounty — recurring revenue.',
       color: 'from-emerald-500 to-teal-500'
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
-      title: 'High Growth Conversions',
-      description: 'Our simple content-to-customer story leads to industry-leading conversion rates compared to generic AI tools.',
+      title: 'A Story That Converts',
+      description: 'Guild closes the full loop from content to customers — a clear, specific promise that\'s easy to explain and easy to believe.',
       color: 'from-blue-500 to-indigo-500'
     },
     {
       icon: <Rocket className="w-6 h-6" />,
-      title: 'Professional Platform',
-      description: 'Promote a professional growth engine that actually delivers results for real businesses.',
+      title: 'Something Worth Promoting',
+      description: 'Refer your audience to a platform that actually delivers results — not another AI writing tool that stops at content creation.',
       color: 'from-purple-500 to-violet-500'
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: 'Dedicated Support',
-      description: 'Get priority support, marketing assets, and a dedicated affiliate dashboard.',
+      title: 'Direct Partner Support',
+      description: 'Marketing assets, a real-time affiliate dashboard, and direct access to Arno for any questions. Not a ticketing system.',
       color: 'from-pink-500 to-rose-500'
     }
   ]
@@ -53,22 +53,25 @@ function AffiliatesPage() {
   const commissionTiers = [
     {
       plan: 'Starter',
-      price: '$49/mo',
-      commission: '$14.70/mo',
-      annual: '$176.40/yr'
+      price: '$39/mo',
+      regularPrice: '$49/mo',
+      commission: '$11.70/mo',
+      annual: '$140.40/yr'
     },
     {
       plan: 'Growth',
-      price: '$149/mo',
-      commission: '$44.70/mo',
-      annual: '$536.40/yr',
+      price: '$119/mo',
+      regularPrice: '$149/mo',
+      commission: '$35.70/mo',
+      annual: '$428.40/yr',
       popular: true
     },
     {
       plan: 'Scale',
-      price: '$299/mo',
-      commission: '$89.70/mo',
-      annual: '$1,076.40/yr'
+      price: '$239/mo',
+      regularPrice: '$299/mo',
+      commission: '$71.70/mo',
+      annual: '$860.40/yr'
     }
   ]
 
@@ -76,7 +79,7 @@ function AffiliatesPage() {
     e.preventDefault()
     setIsSubmitting(true)
     await new Promise(resolve => setTimeout(resolve, 1500))
-    alert('Application submitted! Our team will review your profile.')
+    alert('Application submitted! Arno will review your profile and be in touch.')
     setIsSubmitting(false)
   }
 
@@ -104,10 +107,10 @@ function AffiliatesPage() {
                     <Rocket className="text-indigo-400" />
                 </div>
                 <h1 className="text-5xl md:text-7xl font-bold font-heading tracking-tight mb-8">
-                    Partner in <span className="text-gradient-cobalt">Growth</span>
+                    Earn While You <span className="text-gradient-cobalt">Refer</span>
                 </h1>
                 <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-                    Earn <strong>30% recurring commission</strong> by introducing solopreneurs to a professional AI-powered growth engine.
+                    Introduce small business owners to a platform that closes the full loop from content to customers — and earn <strong>30% recurring commission</strong> for every month they stay.
                 </p>
             </motion.div>
         </section>
@@ -125,27 +128,29 @@ function AffiliatesPage() {
             ))}
         </div>
 
-        {/* Projections */}
+        {/* Commission Tiers */}
         <section className="mb-24">
             <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold font-heading tracking-tight mb-4">Commission Tiers</h2>
-                <p className="text-zinc-400">Lucrative recurring payouts across our high-retention tiers.</p>
+                <h2 className="text-4xl font-bold font-heading tracking-tight mb-4">What You Earn</h2>
+                <p className="text-zinc-400">Recurring monthly commissions based on the plan your referral subscribes to. Founding member rates shown.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
                 {commissionTiers.map((t, i) => (
                     <div key={i} className={`glass-panel p-10 rounded-3xl relative overflow-hidden ${t.popular ? 'border-indigo-500/30 ring-1 ring-indigo-500/20' : 'border-white/10'}`}>
-                        {t.popular && <div className="absolute top-0 right-0 py-1 px-4 bg-indigo-500 text-xs font-black tracking-widest uppercase">Target Tier</div>}
-                        <h4 className="text-zinc-400 font-heading text-sm mb-4 uppercase tracking-widest">{t.plan} Referrals</h4>
-                        <div className="text-4xl font-black mb-8">{t.commission} <span className="text-zinc-700 text-lg font-normal"> /mo</span></div>
+                        {t.popular && <div className="absolute top-0 right-0 py-1 px-4 bg-indigo-500 text-xs font-black tracking-widest uppercase">Highest Volume</div>}
+                        <h4 className="text-zinc-400 font-heading text-sm mb-1 uppercase tracking-widest">{t.plan} Referrals</h4>
+                        <p className="text-zinc-600 text-xs mb-4">Subscriber pays {t.price} <span className="line-through">{t.regularPrice}</span></p>
+                        <div className="text-4xl font-black mb-8 text-emerald-400">{t.commission} <span className="text-zinc-700 text-lg font-normal"> /mo</span></div>
                         <div className="space-y-4 pt-6 border-t border-white/5">
                             <div className="flex justify-between text-sm">
-                                <span className="text-zinc-600">Annual Payout</span>
+                                <span className="text-zinc-600">Annual per referral</span>
                                 <span className="font-bold text-emerald-400">{t.annual}</span>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
+            <p className="text-center text-zinc-600 text-xs mt-6">Commission calculated on founding member rates. Payouts bi-weekly via PayPal or bank transfer.</p>
         </section>
 
         {/* Form */}
@@ -153,20 +158,24 @@ function AffiliatesPage() {
             <div className="space-y-8">
                 <h2 className="text-4xl font-bold font-heading tracking-tight">Apply to the <br /> <span className="text-indigo-400">Partner Program</span></h2>
                 <p className="text-zinc-400 font-light text-lg">
-                    We're looking for partners who understand the solopreneur journey and are passionate about AI efficiency.
+                    We're selective. We're looking for partners who speak directly to small business owners and genuinely understand the problem Guild solves.
                 </p>
                 <div className="space-y-4">
                     <div className="flex gap-4 items-center">
-                        <CheckCircle2 className="text-emerald-500" size={20} />
-                        <span className="text-sm text-zinc-300">Ready-made marketing kits</span>
+                        <CheckCircle2 className="text-emerald-500 shrink-0" size={20} />
+                        <span className="text-sm text-zinc-300">Ready-made marketing assets and copy</span>
                     </div>
                     <div className="flex gap-4 items-center">
-                        <CheckCircle2 className="text-emerald-500" size={20} />
+                        <CheckCircle2 className="text-emerald-500 shrink-0" size={20} />
                         <span className="text-sm text-zinc-300">Bi-weekly commission payouts</span>
                     </div>
                     <div className="flex gap-4 items-center">
-                        <CheckCircle2 className="text-emerald-500" size={20} />
+                        <CheckCircle2 className="text-emerald-500 shrink-0" size={20} />
                         <span className="text-sm text-zinc-300">Real-time tracking dashboard</span>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                        <CheckCircle2 className="text-emerald-500 shrink-0" size={20} />
+                        <span className="text-sm text-zinc-300">Direct line to Arno for partner questions</span>
                     </div>
                 </div>
             </div>
@@ -183,17 +192,21 @@ function AffiliatesPage() {
                         <Input name="name" value={formData.name} onChange={handleInputChange} required className="bg-white/5 border-white/10 rounded-xl" />
                     </div>
                     <div className="space-y-2">
-                        <Label className="text-zinc-400">Primary Channel (Website/Social)</Label>
+                        <Label className="text-zinc-400">Email Address</Label>
+                        <Input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="bg-white/5 border-white/10 rounded-xl" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-zinc-400">Primary Channel (Website / Social / Newsletter)</Label>
                         <Input name="website" value={formData.website} onChange={handleInputChange} required className="bg-white/5 border-white/10 rounded-xl" />
                     </div>
                     <div className="space-y-2">
-                        <Label className="text-zinc-400">Audience Description</Label>
-                        <Textarea name="audience" value={formData.audience} onChange={handleInputChange} required className="bg-white/5 border-white/10 rounded-xl" rows={3} />
+                        <Label className="text-zinc-400">Tell us about your audience</Label>
+                        <Textarea name="audience" value={formData.audience} onChange={handleInputChange} required className="bg-white/5 border-white/10 rounded-xl" rows={3} placeholder="Who follows you, what industry, approximate size..." />
                     </div>
                     <Button type="submit" disabled={isSubmitting} className="w-full bg-white text-black hover:bg-zinc-200 rounded-xl py-6 font-bold text-lg transition-all active:scale-95">
-                        {isSubmitting ? 'Processing...' : 'Submit Partnership Request'}
+                        {isSubmitting ? 'Submitting...' : 'Submit Partnership Application'}
                     </Button>
-                    <p className="text-xs text-center text-zinc-600 uppercase tracking-widest pt-4">Subject to manual review by our team.</p>
+                    <p className="text-xs text-center text-zinc-600 uppercase tracking-widest pt-2">Reviewed personally by Arno. Usually within 48 hours.</p>
                 </form>
             </motion.div>
         </div>

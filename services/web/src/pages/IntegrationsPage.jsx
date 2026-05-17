@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion'
 
 function IntegrationsPage() {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
 
@@ -35,9 +36,9 @@ function IntegrationsPage() {
     { name: 'Shopify', category: 'marketing', description: 'Create product-focused content and blog posts for your store.', icon: <ShoppingCart size={18} />, color: 'from-emerald-500 to-green-600' },
 
     // Email & CRM
-    { name: 'HubSpot', category: 'email_crm', description: 'Sync contacts, track deals, and automate your sales sales process.', icon: <Database size={18} />, color: 'from-orange-500 to-orange-600' },
-    { name: 'Pipedrive', category: 'email_crm', description: 'Manage your sales sales process and log every customer interaction.', icon: <Briefcase size={18} />, color: 'from-zinc-800 to-zinc-900' },
-    { name: 'Built-in CRM', category: 'email_crm', description: 'Guild\'s own contact manager - capture leads from content engagement automatically.', icon: <Check size={18} />, color: 'from-indigo-600 to-blue-600' },
+    { name: 'HubSpot', category: 'email_crm', description: 'Sync contacts, track deals, and automate your sales process.', icon: <Database size={18} />, color: 'from-orange-500 to-orange-600' },
+    { name: 'Pipedrive', category: 'email_crm', description: 'Manage your sales pipeline and log every customer interaction.', icon: <Briefcase size={18} />, color: 'from-zinc-800 to-zinc-900' },
+    { name: 'Built-in CRM', category: 'email_crm', description: 'Guild\'s own contact manager — captures leads from content engagement automatically, no setup required.', icon: <Check size={18} />, color: 'from-indigo-600 to-blue-600' },
     { name: 'SendGrid', category: 'email_crm', description: 'Send transactional emails and automated nurture sequences.', icon: <Mail size={18} />, color: 'from-blue-400 to-blue-500' },
     { name: 'Mailchimp', category: 'email_crm', description: 'Manage email lists and send newsletters to your subscribers.', icon: <MessageSquare size={18} />, color: 'from-yellow-500 to-yellow-600' },
     { name: 'ConvertKit', category: 'email_crm', description: 'Advanced email sequences for creators and course sellers.', icon: <Folder size={18} />, color: 'from-indigo-400 to-indigo-500' },
@@ -82,7 +83,7 @@ function IntegrationsPage() {
                     Connect the Tools <br /> <span className="text-gradient-cobalt">You Already Use</span>
                 </h1>
                 <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-                    Guild plugs into the platforms where your audience already is and the tools you already pay for. Connect in one click - no code required.
+                    Guild plugs into the platforms where your audience already is and the tools you already pay for. Connect in one click — no code, no developer, no setup fee.
                 </p>
             </motion.div>
         </section>
@@ -93,7 +94,7 @@ function IntegrationsPage() {
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
                     <Input 
-                        placeholder="Search launch integrations..." 
+                        placeholder="Search integrations..." 
                         className="pl-12 py-7 bg-transparent border-white/10 rounded-2xl text-lg focus:ring-indigo-500/50"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -134,7 +135,7 @@ function IntegrationsPage() {
             
             <div className="mt-20 text-center">
                 <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 text-xs font-bold text-zinc-500 uppercase tracking-widest">
-                    More integrations coming soon. Request one →
+                    More integrations coming soon — request one via contact page →
                 </div>
             </div>
         </section>
@@ -143,12 +144,15 @@ function IntegrationsPage() {
         <section className="container mx-auto max-w-4xl">
             <div className="glass-panel p-16 rounded-3xl text-center border border-indigo-500/20 shadow-glow">
                 <h2 className="text-4xl font-bold font-heading mb-6 tracking-tight">Connect Your Tools in One Click</h2>
-                <p className="text-zinc-400 mb-10 text-lg font-light">No code. No setup fees. Just connect and go.</p>
-                <Link to="/signup">
-                    <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-full px-12 py-8 text-xl font-bold border-t border-white/20">
-                        Start Your Free Trial
-                    </Button>
-                </Link>
+                <p className="text-zinc-400 mb-3 text-lg font-light">No code. No setup fees. Just connect and go.</p>
+                <p className="text-zinc-600 text-sm mb-10">Founding members lock in their rate permanently — 50 spots before public launch.</p>
+                <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-full px-12 py-8 text-xl font-bold border-t border-white/20"
+                    onClick={() => navigate('/waitlist')}
+                >
+                    Claim Founding Access
+                </Button>
             </div>
         </section>
       </div>

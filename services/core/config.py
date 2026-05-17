@@ -62,7 +62,7 @@ class Settings(BaseSettings):
         "video/mp4", "video/quicktime", "video/webm",
     ]
 
-    model_config = {"env_file": ".env", "case_sensitive": True}
+    model_config = {"env_file": ".env", "case_sensitive": True, "extra": "ignore"}
 
 
 settings = Settings()

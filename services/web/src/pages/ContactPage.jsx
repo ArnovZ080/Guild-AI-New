@@ -25,22 +25,22 @@ function ContactPage() {
     {
       icon: <Mail className="w-6 h-6" />,
       title: 'Email Us',
-      description: 'Get a response within 24 hours',
+      description: 'Response within 24 hours on business days',
       contact: 'support@guildof1.com',
       color: 'from-blue-500 to-indigo-500'
     },
     {
       icon: <MessageSquare className="w-6 h-6" />,
       title: 'Live Chat',
-      description: 'Expert support team',
-      contact: 'Available 9am-6pm SAST',
+      description: 'Human support — not a bot',
+      contact: 'Available 9am–6pm SAST',
       color: 'from-indigo-500 to-purple-500'
     },
     {
       icon: <Phone className="w-6 h-6" />,
-      title: 'Schedule a Demo',
-      description: 'Walkthrough with an expert',
-      contact: 'In-app Calendar integration',
+      title: 'Book an Onboarding Call',
+      description: 'Founding members get a direct call with Arno before going live',
+      contact: 'Scheduled after signup',
       color: 'from-purple-500 to-pink-500'
     }
   ]
@@ -52,9 +52,8 @@ function ContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // Simulated contact form logic
     await new Promise(resolve => setTimeout(resolve, 1500))
-    alert('Thank you! Your message has been routed to our support team.')
+    alert('Message received. We\'ll be in touch within 24 hours.')
     setFormData({ name: '', email: '', company: '', subject: 'general', message: '' })
     setIsSubmitting(false)
   }
@@ -78,7 +77,7 @@ function ContactPage() {
                 Get in <span className="text-gradient-cobalt">Touch</span>
             </h1>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto font-light leading-relaxed">
-                Have questions about your Guild AI tools? Our team is ready to help you scale.
+                Questions about founding member access, how Guild works, or whether it's right for your business — we're here and we respond personally.
             </p>
           </motion.div>
         </section>
@@ -119,9 +118,10 @@ function ContactPage() {
                         <Label className="text-zinc-400">Subject</Label>
                         <select name="subject" value={formData.subject} onChange={handleInputChange} className="w-full bg-white/5 border border-white/10 text-white rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500/50">
                             <option value="general">General Inquiry</option>
+                            <option value="founding">Founding Member Access</option>
                             <option value="support">Technical Support</option>
-                            <option value="sales">Sales & Demos</option>
                             <option value="billing">Billing Question</option>
+                            <option value="agency">Agency / Scale Tier</option>
                         </select>
                     </div>
                     <div className="space-y-2">
@@ -129,7 +129,7 @@ function ContactPage() {
                         <Textarea name="message" value={formData.message} onChange={handleInputChange} required rows={5} className="bg-white/5 border-white/10 text-white rounded-xl focus:ring-indigo-500/50" />
                     </div>
                     <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 py-6 rounded-xl font-bold text-lg shadow-xl shadow-indigo-500/20">
-                        {isSubmitting ? 'Sending...' : 'Transmit Message'}
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
                     </Button>
                 </form>
             </motion.div>
@@ -137,26 +137,27 @@ function ContactPage() {
             <div className="space-y-8 text-zinc-400 font-light leading-relaxed">
                 <div>
                     <h4 className="text-white font-bold font-heading text-lg mb-4 flex items-center gap-2">
-                        <MapPin size={20} className="text-indigo-400" /> Headquarters
+                        <MapPin size={20} className="text-indigo-400" /> Based In
                     </h4>
-                    <p>Guild AI / Arno Adaptive Holdings</p>
-                    <p>Cape Town, South Africa 8001</p>
+                    <p>Guild AI / The AI Crucible</p>
+                    <p>Cape Town, South Africa</p>
                 </div>
                 <div>
                     <h4 className="text-white font-bold font-heading text-lg mb-4 flex items-center gap-2">
-                        <Clock size={20} className="text-indigo-400" /> Business Operations
+                        <Clock size={20} className="text-indigo-400" /> Hours
                     </h4>
-                    <p>Monday - Friday: 9am - 6pm SAST</p>
-                    <p>Saturday: 10am - 2pm SAST</p>
-                    <p>Agents: Operational 24/7/365</p>
+                    <p>Monday – Friday: 9am – 6pm SAST</p>
+                    <p>Saturday: 10am – 2pm SAST</p>
+                    <p className="text-indigo-400/70 text-sm mt-1">Guild's agents run 24/7 — your business doesn't stop, and neither does the platform.</p>
                 </div>
                 <div className="p-8 glass-panel rounded-2xl border-indigo-500/10">
                     <h4 className="text-white font-bold font-heading mb-4 flex items-center gap-2">
-                        <HelpCircle size={18} className="text-indigo-400" /> FAQ Snapshot
+                        <HelpCircle size={18} className="text-indigo-400" /> Quick Answers
                     </h4>
                     <div className="space-y-4 text-sm">
-                        <p><strong>Demos:</strong> We offer guided walkthroughs for Growth and Scale tiers.</p>
-                        <p><strong>Support:</strong> Priority response is included for Professional plans.</p>
+                        <p><strong className="text-zinc-300">Founding member access:</strong> Use the contact form with subject "Founding Member Access" and we'll respond within 24 hours.</p>
+                        <p><strong className="text-zinc-300">Agencies and Scale tier:</strong> Reach out directly — custom onboarding is included and we'll walk through your specific setup.</p>
+                        <p><strong className="text-zinc-300">Technical issues:</strong> Priority support is included on Growth and Scale plans.</p>
                     </div>
                 </div>
             </div>

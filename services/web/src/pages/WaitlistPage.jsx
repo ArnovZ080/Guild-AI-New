@@ -2,13 +2,16 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Sparkles, ArrowLeft, Send, CheckCircle2 } from 'lucide-react'
+import { Lock, ArrowLeft, Send, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+
+// Update this number manually as spots fill
+const TOTAL_SPOTS = 50
+const SPOTS_CLAIMED = 12
 
 function WaitlistPage() {
     const [email, setEmail] = useState('')
     const [submitted, setSubmitted] = useState(false)
-    const [position, setPosition] = useState(0)
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e) => {
@@ -17,7 +20,6 @@ function WaitlistPage() {
         setLoading(true)
 
         try {
-            // Reaching out to the actual waitlist endpoint
             const response = await fetch('/api/waitlist/join', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -25,21 +27,18 @@ function WaitlistPage() {
             })
             
             if (response.ok) {
-                const data = await response.json()
-                setPosition(data.position || 2408)
                 setSubmitted(true)
             } else {
-                // If backend isn't ready, simulate success for demo
                 setSubmitted(true)
-                setPosition(2408)
             }
         } catch (error) {
             console.error('Waitlist Join Error:', error)
             setSubmitted(true)
-            setPosition(2408)
         }
         setLoading(false)
     }
+
+    const spotsRemaining = TOTAL_SPOTS - SPOTS_CLAIMED
 
     return (
         <div className="min-h-screen bg-transparent flex items-center justify-center p-6">
@@ -62,18 +61,47 @@ function WaitlistPage() {
                         >
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50" />
                             
+                            {/* Icon */}
                             <div className="flex justify-center mb-8">
                                 <div className="w-20 h-20 gradient-cobalt rounded-3xl flex items-center justify-center shadow-lg shadow-indigo-500/20 rotate-3">
-                                    <Sparkles className="text-white w-10 h-10" strokeWidth={1.5} />
+                                    <Lock className="text-white w-10 h-10" strokeWidth={1.5} />
                                 </div>
                             </div>
 
-                            <h1 className="text-4xl md:text-6xl font-black font-heading tracking-tight mb-6">
-                                Join the <span className="text-gradient-cobalt">Elite Batch.</span>
+                            {/* Headline */}
+                            <h1 className="text-4xl md:text-6xl font-black font-heading tracking-tight mb-4">
+                                Lock In Your <span className="text-gradient-cobalt">Founding Rate.</span>
                             </h1>
+
+                            {/* Seats counter */}
+                            <div className="flex items-center justify-center gap-2 mb-6">
+                                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                                <span className="text-indigo-300 text-sm font-bold uppercase tracking-widest">
+                                    {SPOTS_CLAIMED} of {TOTAL_SPOTS} founding spots claimed
+                                </span>
+                            </div>
+
                             <p className="text-zinc-400 text-lg mb-12 font-light leading-relaxed max-w-md mx-auto">
-                                We're rolling out access in controlled cohorts to ensure 1-on-1 white-glove onboarding for every business.
+                                Founding members get Guild's Growth rate permanently locked in — before public launch raises the price. Beta opens July 2026. You'll be first in.
                             </p>
+
+                            {/* What you're locking in */}
+                            <div className="mb-10 p-6 rounded-2xl border border-white/5 bg-white/3 text-left space-y-3 max-w-sm mx-auto">
+                                <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] mb-4">What you're locking in</p>
+                                {[
+                                    '$119/mo Growth rate — never increases',
+                                    'Full flywheel: content → leads → customers',
+                                    'Direct setup call before you go live',
+                                    'Priority access when beta opens'
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-center gap-3 text-sm text-zinc-300">
+                                        <div className="w-4 h-4 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                                        </div>
+                                        {item}
+                                    </div>
+                                ))}
+                            </div>
 
                             <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
                                 <div className="relative group">
@@ -91,23 +119,14 @@ function WaitlistPage() {
                                     className="w-full h-16 rounded-2xl gradient-cobalt font-bold text-xl hover:shadow-glow transition-all disabled:opacity-50"
                                     disabled={loading}
                                 >
-                                    {loading ? 'Securing Spot...' : 'Claim Early Access'}
+                                    {loading ? 'Securing Your Spot...' : 'Lock In My Founding Rate'}
                                     <Send className="ml-3 w-5 h-5" strokeWidth={1.5} />
                                 </Button>
                             </form>
 
-                            <div className="mt-12 flex items-center justify-center gap-6">
-                                <div className="flex -space-x-3">
-                                    {[1,2,3,4].map(i => (
-                                        <div key={i} className="w-8 h-8 rounded-full border-2 border-zinc-900 bg-zinc-800 flex items-center justify-center overflow-hidden grayscale">
-                                            <div className="w-full h-full gradient-cobalt opacity-20" />
-                                        </div>
-                                    ))}
-                                </div>
-                                <span className="text-zinc-600 text-xs font-bold tracking-widest uppercase">
-                                    2,408 Business Owners Waitlisted
-                                </span>
-                            </div>
+                            <p className="mt-8 text-zinc-600 text-xs">
+                                No credit card required. We'll email you one week before your cohort opens.
+                            </p>
                         </motion.div>
                     ) : (
                         <motion.div
@@ -116,18 +135,46 @@ function WaitlistPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             className="glass-panel p-12 md:p-20 rounded-3xl border border-white/10 shadow-glow text-center"
                         >
+                            {/* Success icon */}
                             <div className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-10 border border-emerald-500/50 shadow-glow-sm">
                                 <CheckCircle2 className="text-emerald-400 w-12 h-12" strokeWidth={1.5} />
                             </div>
-                            <h2 className="text-4xl md:text-5xl font-black font-heading mb-6 tracking-tight">You're in the queue.</h2>
-                            <p className="text-zinc-400 text-xl mb-12 font-light">
-                                Your priority position is <span className="text-indigo-400 font-bold font-heading">#{position}</span>.<br />
-                                We'll reach out to your inbox as soon as a slot opens for your niche.
+
+                            <h2 className="text-4xl md:text-5xl font-black font-heading mb-4 tracking-tight">You're in.</h2>
+                            <p className="text-zinc-400 text-lg mb-12 font-light">
+                                Your founding rate is secured. Here's exactly what that means.
                             </p>
                             
-                            <div className="p-8 bg-white/5 rounded-3xl border border-white/10 mb-12 max-w-sm mx-auto">
-                                <p className="text-xs font-black text-indigo-400 mb-2 uppercase tracking-[0.2em]">Priority Jump</p>
-                                <p className="text-zinc-400 text-sm font-light leading-relaxed">Refer 1 founder to Guild AI and skip exactly <span className="text-white font-bold">500 spots</span> instantly.</p>
+                            {/* What they've secured */}
+                            <div className="p-8 bg-white/5 rounded-3xl border border-white/10 mb-12 text-left max-w-sm mx-auto space-y-4">
+                                <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] mb-4 text-center">What you've secured</p>
+                                {[
+                                    { label: 'Founding rate', value: '$119/mo — locked permanently' },
+                                    { label: 'Regular price', value: '$149/mo (what others pay)' },
+                                    { label: 'Beta access', value: "July 2026 — you're first in" },
+                                    { label: 'Setup call', value: 'Direct with Arno before go-live' },
+                                ].map((item, i) => (
+                                    <div key={i} className="flex justify-between items-center text-sm border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                                        <span className="text-zinc-500">{item.label}</span>
+                                        <span className="text-zinc-200 font-medium text-right max-w-[180px]">{item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* What happens next */}
+                            <div className="mb-12 text-left max-w-sm mx-auto">
+                                <p className="text-xs font-black text-zinc-500 uppercase tracking-[0.2em] mb-4 text-center">What happens next</p>
+                                <p className="text-zinc-400 text-sm leading-relaxed text-center">
+                                    We'll email you one week before your cohort opens in July 2026. You'll get a direct link to set up your account and book your onboarding call with Arno before your first piece of content goes live.
+                                </p>
+                            </div>
+
+                            {/* Referral mechanic */}
+                            <div className="p-6 bg-white/3 rounded-2xl border border-white/5 mb-12 max-w-sm mx-auto">
+                                <p className="text-xs font-black text-indigo-400 mb-2 uppercase tracking-[0.2em]">Move Up the Queue</p>
+                                <p className="text-zinc-400 text-sm font-light leading-relaxed">
+                                    Refer one founder to Guild and move to the next available cohort slot — getting access sooner when beta opens.
+                                </p>
                             </div>
 
                             <Link to="/landing">

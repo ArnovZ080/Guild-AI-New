@@ -13,7 +13,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = 'a1b2c3d4e5f6'
-down_revision: Union[str, None] = 'dd9d9f191e3c'
+down_revision: Union[str, None] = 'cde52fb3a4ea'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -22,7 +22,7 @@ def upgrade() -> None:
     op.create_table(
         'media_assets',
         sa.Column('id', sa.String(), nullable=False),
-        sa.Column('user_id', sa.String(), nullable=False),
+        sa.Column('user_accounts.id', sa.String(), nullable=False),
 
         # File info
         sa.Column('filename', sa.String(), nullable=False),
@@ -51,10 +51,10 @@ def upgrade() -> None:
         sa.Column('created_at', sa.DateTime(), nullable=True),
         sa.Column('updated_at', sa.DateTime(), nullable=True),
 
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+        sa.ForeignKeyConstraint(['user_accounts.id'], ['user_accounts.id'], ),
         sa.PrimaryKeyConstraint('id'),
     )
-    op.create_index('ix_media_assets_user_id', 'media_assets', ['user_id'])
+    op.create_index('ix_media_assets_user_id', 'media_assets', ['user_accounts.id'])
 
 
 def downgrade() -> None:

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { 
   ArrowLeft, Lightbulb, Heart, Shield, Zap, Sparkles
@@ -7,29 +7,31 @@ import { motion } from 'framer-motion'
 import guildLogo from '@/assets/guild-logo.png'
 
 function AboutUsPage() {
+  const navigate = useNavigate()
+
   const values = [
     {
         icon: <Shield />,
-        title: 'Quality You Can Trust',
-        description: 'Every piece of content is checked for brand voice, accuracy, and quality before you see it. You approve everything  -  nothing goes live without your say.',
+        title: 'Quality Before You See It',
+        description: 'Every piece of content passes through an automated quality layer before it reaches you — checked against your brand voice, your ideal customer, and your accuracy standards. You only review what\'s already worth approving.',
         color: 'from-blue-500 to-indigo-500'
     },
     {
         icon: <Lightbulb />,
         title: 'You Stay in Control',
-        description: 'Guild shows you what it\'s doing and why. You can see every decision, approve every piece of content, and adjust the strategy at any time.',
+        description: 'Guild shows you what it\'s doing and why. Every decision is visible, every piece of content requires your approval, and you can adjust the strategy at any time. Automation without blind trust.',
         color: 'from-indigo-500 to-purple-500'
     },
     {
         icon: <Heart />,
-        title: 'Built for Small Business',
-        description: 'Not for enterprises. Not for developers. For the solopreneur, the small team, the founder who does everything and needs one less thing to worry about.',
+        title: 'Built for the Founder, Not the Enterprise',
+        description: 'Not for corporate marketing teams. Not for developers. For the business owner who does everything and needs the one tool that actually closes the loop — from content all the way to customers.',
         color: 'from-purple-500 to-pink-500'
     },
     {
         icon: <Zap />,
-        title: 'It Actually Works',
-        description: 'Not a chatbot you have to prompt 50 times. Tell Guild what you want to achieve, and it plans, creates, and executes  -  then reports back on what happened.',
+        title: 'The Whole Loop, Not Half of It',
+        description: 'Any tool can create content. Guild creates it, publishes it, captures every lead who engages, and nurtures them to purchase — as one connected system that gets smarter every cycle.',
         color: 'from-pink-500 to-rose-500'
     }
   ]
@@ -37,18 +39,18 @@ function AboutUsPage() {
   const milestones = [
     {
         year: '2025',
-        title: 'The Problem',
-        description: 'We watched small business owners juggle 6-8 separate marketing tools and spend 10+ hours a week on content that wasn\'t growing their business. We knew AI could do better.'
+        title: 'The Frustration',
+        description: 'We watched smart business owners juggle 6–8 separate marketing tools, spend 10+ hours a week on content, and still struggle to turn any of it into customers. The tools weren\'t the problem. The gap between content and conversion was.'
     },
     {
         year: 'EARLY 2026',
         title: 'The Rebuild',
-        description: 'We scrapped our first attempt and started over with a focused vision: one system that handles the complete journey from content to customer. No bloat. No shortcuts.'
+        description: 'We scrapped the first attempt and started over with a focused vision: one system that handles the complete journey from content to customer. No bloat. No shortcuts. Every component connected to the next.'
     },
     {
         year: 'MID 2026',
         title: 'The Launch',
-        description: 'Guild opens to beta users  -  a complete growth engine that creates content, publishes it, captures leads, and nurtures them to sale. All on-brand. All in one place.'
+        description: 'Guild opens to its founding cohort — 50 business owners who lock in their rate before public launch. A complete growth engine: content created, quality-checked, published, leads captured, nurtured to sale. All on-brand. All in one place.'
     }
   ]
 
@@ -76,10 +78,10 @@ function AboutUsPage() {
           </div>
           <h1 className="text-5xl md:text-7xl font-bold font-heading tracking-tight mb-8">
             Built for Business Owners, <br />
-            <span className="text-gradient-cobalt">Not Developers</span>
+            <span className="text-gradient-cobalt">Not Marketing Teams</span>
           </h1>
           <p className="text-xl text-zinc-400 max-w-3xl mx-auto leading-relaxed font-light">
-            Guild was built because small business owners deserve the same marketing power as big companies  -  without hiring a team, learning complicated tools, or spending hours on content every week.
+            Guild exists because small business owners deserve the same growth power as companies with full marketing teams — without the headcount, the tool sprawl, or the hours of manual work every week.
           </p>
         </motion.div>
       </section>
@@ -90,17 +92,23 @@ function AboutUsPage() {
           <div className="absolute top-0 right-0 p-8 opacity-10">
             <Sparkles size={80} className="text-indigo-400" />
           </div>
-          <h2 className="text-3xl font-bold font-heading mb-8">Our Story</h2>
+          <h2 className="text-3xl font-bold font-heading mb-8">Why Guild Exists</h2>
           <div className="space-y-6 text-zinc-400 leading-relaxed text-lg font-light">
             <p>
-              Guild started with a frustration every small business owner knows: you're told AI will save you time, but every tool you try needs you to write the prompts, check the output, copy it to another app, schedule it manually, and track the results in a spreadsheet. The 'automation' still takes 10 hours a week.
+              I built Guild out of a specific frustration. After 25 years working with businesses across strategy, operations, and growth, I kept seeing the same pattern: smart founders spending 10+ hours a week on marketing that wasn't converting. Not because they lacked talent or effort — but because every tool they used handled one piece of the job and left the rest to them.
             </p>
             <p>
-              We asked a different question: what if one system could handle everything  -  create the content, check that it sounds like you, publish it at the right time, and follow up with the people who engage? Not as separate features, but as one connected process that gets smarter the longer you use it.
+              Create content in one tool. Schedule it in another. Capture leads somewhere else. Follow up manually. Track results in a spreadsheet. The "automation" still required constant attention. The loop was never closed.
             </p>
             <p>
-              That's what we built. Guild learns your business, creates your content, publishes it, captures leads, and nurtures them  -  all on-brand, all connected, all in one place. And it gets better every week because it learns what works for your specific business.
+              Guild closes the loop. It learns your business through a guided conversation, creates content that genuinely sounds like you, checks it before you ever see it, publishes it at the right time, captures every person who engages, and nurtures them toward purchase — as one connected system that gets smarter every cycle.
             </p>
+            <p className="text-zinc-300 font-medium not-italic">
+              That's the only question we asked when we built it: what would it take to make the whole thing work, end to end, without the founder being the glue?
+            </p>
+          </div>
+          <div className="mt-10 pt-8 border-t border-white/5">
+            <p className="text-sm text-zinc-500 font-medium">— Arno, Founder of Guild AI</p>
           </div>
         </div>
       </section>
@@ -108,8 +116,8 @@ function AboutUsPage() {
       {/* Values */}
       <section className="container mx-auto max-w-6xl mb-32">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold font-heading mb-4 tracking-tight">Core Values</h2>
-          <p className="text-zinc-400">The principles that guide every line of code we write.</p>
+          <h2 className="text-4xl font-bold font-heading mb-4 tracking-tight">What We Actually Believe</h2>
+          <p className="text-zinc-400">The principles behind every decision we make.</p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {values.map((v, i) => (
@@ -127,7 +135,7 @@ function AboutUsPage() {
       {/* Milestones */}
       <section className="container mx-auto max-w-5xl mb-32">
         <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold font-heading mb-4 tracking-tight">Our Journey</h2>
+            <h2 className="text-4xl font-bold font-heading mb-4 tracking-tight">How We Got Here</h2>
         </div>
         <div className="space-y-8 relative before:absolute before:inset-0 before:ml-10 before:-z-10 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-indigo-500 before:to-transparent">
           {milestones.map((m, i) => (
@@ -148,13 +156,16 @@ function AboutUsPage() {
       <section className="container mx-auto max-w-4xl">
         <div className="glass-panel p-16 rounded-3xl text-center border border-indigo-500/20 shadow-glow relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
-          <h2 className="text-4xl font-bold font-heading mb-6 tracking-tight">Ready to Let Guild Handle Your Marketing?</h2>
-          <p className="text-zinc-400 mb-10 text-lg font-light">Start your free trial today. No credit card required.</p>
-          <Link to="/signup">
-            <Button size="lg" className="bg-white text-black hover:bg-zinc-200 rounded-full px-12 py-8 text-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-2xl">
-              Start Your Free Trial
-            </Button>
-          </Link>
+          <h2 className="text-4xl font-bold font-heading mb-6 tracking-tight">Join the Founding Cohort</h2>
+          <p className="text-zinc-400 mb-3 text-lg font-light">50 spots. Your rate locked in before public launch. Beta opens July 2026.</p>
+          <p className="text-zinc-600 text-sm mb-10">Your data is yours. Cancel anytime. No lock-in contracts.</p>
+          <Button
+            size="lg"
+            className="bg-white text-black hover:bg-zinc-200 rounded-full px-12 py-8 text-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-2xl"
+            onClick={() => navigate('/waitlist')}
+          >
+            Claim Your Founding Rate
+          </Button>
         </div>
       </section>
     </div>

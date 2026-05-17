@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Sparkles, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 
@@ -34,47 +34,85 @@ function SignupPage() {
     }
   };
 
+  const planLabels = {
+    starter: { label: 'Starter', foundingPrice: '$39/mo', regularPrice: '$49/mo' },
+    growth: { label: 'Growth', foundingPrice: '$119/mo', regularPrice: '$149/mo' },
+    scale: { label: 'Scale', foundingPrice: '$239/mo', regularPrice: '$299/mo' },
+  };
+
+  const currentPlan = planLabels[selectedPlan] || planLabels.growth;
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full grid md:grid-cols-2 glass-panel rounded-3xl overflow-hidden">
-        {/* Left panel - value prop */}
+
+        {/* Left panel — founding member context */}
         <div className="p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-indigo-500/10 to-emerald-500/5 border-r border-white/[0.06]">
           <div>
             <div className="flex items-center gap-2 mb-10">
               <div className="w-10 h-10 gradient-cobalt rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">G</div>
               <span className="text-xl font-heading font-bold text-gradient-cobalt">Guild AI</span>
             </div>
-            <h2 className="text-3xl font-heading font-bold text-zinc-200 mb-6 leading-tight">
-              Start Growing<br />Your Business Today.
+            <h2 className="text-3xl font-heading font-bold text-zinc-200 mb-3 leading-tight">
+              You're locking in<br />your founding rate.
             </h2>
+            <p className="text-zinc-400 text-sm mb-8 font-light leading-relaxed">
+              Complete your account and your {currentPlan.label} rate is secured permanently — it never increases, even when public pricing does.
+            </p>
+
+            {/* Plan rate summary */}
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-8">
+              <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-2">{currentPlan.label} — Founding Rate</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-black text-white">{currentPlan.foundingPrice}</span>
+                <span className="text-zinc-600 text-sm line-through">{currentPlan.regularPrice}</span>
+              </div>
+              <p className="text-zinc-600 text-xs mt-1">Locked permanently from today</p>
+            </div>
+
             <div className="space-y-5">
               <div className="flex items-start gap-3">
-                <div className="bg-indigo-500/20 p-2 rounded-lg flex-shrink-0"><Sparkles className="text-indigo-400" size={18} strokeWidth={1.5} /></div>
+                <div className="bg-indigo-500/20 p-2 rounded-lg flex-shrink-0">
+                  <Sparkles className="text-indigo-400" size={18} strokeWidth={1.5} />
+                </div>
                 <div>
-                  <p className="font-medium text-zinc-200 text-sm">AI Growth Engine</p>
-                  <p className="text-xs text-zinc-400">Create → Publish → Capture → Nurture → Convert. Automatically.</p>
+                  <p className="font-medium text-zinc-200 text-sm">The Full Loop</p>
+                  <p className="text-xs text-zinc-400">Content created → published → leads captured → nurtured to purchase. Automatically.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-emerald-500/20 p-2 rounded-lg flex-shrink-0"><ShieldCheck className="text-emerald-400" size={18} strokeWidth={1.5} /></div>
+                <div className="bg-emerald-500/20 p-2 rounded-lg flex-shrink-0">
+                  <ShieldCheck className="text-emerald-400" size={18} strokeWidth={1.5} />
+                </div>
                 <div>
-                  <p className="font-medium text-zinc-200 text-sm">Quality Assurance System</p>
-                  <p className="text-xs text-zinc-400">Every piece of content is evaluated before publishing.</p>
+                  <p className="font-medium text-zinc-200 text-sm">Quality Checked Before You See It</p>
+                  <p className="text-xs text-zinc-400">Every piece checked against your brand voice and ideal customer before it reaches your queue.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="bg-purple-500/20 p-2 rounded-lg flex-shrink-0">
+                  <Lock className="text-purple-400" size={18} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="font-medium text-zinc-200 text-sm">Your Data Is Yours</p>
+                  <p className="text-xs text-zinc-400">Never shared. Never used to train public models. Export everything. Cancel anytime.</p>
                 </div>
               </div>
             </div>
           </div>
+
           <div className="pt-8 border-t border-white/[0.06] mt-8">
-            <p className="text-xs text-zinc-500 italic">"The only platform that doesn't just give you tools, but a growth engine."</p>
+            <p className="text-xs text-zinc-600">After signup, you'll complete a short business conversation with Guild — your first week of content will be ready for review the same day.</p>
           </div>
         </div>
 
-        {/* Right panel - form */}
+        {/* Right panel — form */}
         <div className="p-8 md:p-12">
           <div className="mb-6">
-            <h1 className="text-2xl font-heading font-bold text-zinc-200 mb-1">Create Account</h1>
+            <h1 className="text-2xl font-heading font-bold text-zinc-200 mb-1">Create Your Account</h1>
             <p className="text-sm text-zinc-400">
-              Plan: <span className="text-indigo-400 font-medium capitalize">{selectedPlan}</span>
+              Plan: <span className="text-indigo-400 font-medium capitalize">{currentPlan.label}</span>
+              <span className="text-zinc-600 ml-2">· {currentPlan.foundingPrice} founding rate</span>
             </p>
           </div>
 
@@ -98,7 +136,7 @@ function SignupPage() {
             ))}
 
             <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-600 disabled:opacity-40 transition-colors mt-2">
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <>Create My Account <ArrowRight size={16} strokeWidth={1.5} /></>}
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <>Lock In My Founding Rate <ArrowRight size={16} strokeWidth={1.5} /></>}
             </button>
           </form>
 
@@ -113,7 +151,11 @@ function SignupPage() {
           </button>
 
           <p className="text-center text-sm text-zinc-400 mt-4">
-            Already have an account? <Link to="/login" className="text-indigo-400 font-medium hover:text-indigo-300">Login</Link>
+            Already have an account? <Link to="/login" className="text-indigo-400 font-medium hover:text-indigo-300">Log In</Link>
+          </p>
+
+          <p className="text-center text-xs text-zinc-600 mt-4 leading-relaxed">
+            By creating an account you agree to our <Link to="/terms" className="underline hover:text-zinc-400">Terms</Link> and <Link to="/privacy" className="underline hover:text-zinc-400">Privacy Policy</Link>.
           </p>
         </div>
       </div>
