@@ -4,13 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Lock, ArrowLeft, Send, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-// TODO before launch: wire SPOTS_CLAIMED to the actual waitlist API count
-// GET /api/waitlist/count → { count: number }
-// Update SPOTS_CLAIMED dynamically so the counter stays accurate.
-// A hardcoded number that goes stale destroys trust - this is your strongest trust signal.
-const TOTAL_SPOTS = 50
-const SPOTS_CLAIMED = 12 // ← replace with API call before launch
+import { useWaitlistStatus } from '@/hooks/useWaitlistStatus'
 
 function WaitlistPage() {
     const [email, setEmail] = useState('')
@@ -41,7 +35,7 @@ function WaitlistPage() {
         setLoading(false)
     }
 
-    const spotsRemaining = TOTAL_SPOTS - SPOTS_CLAIMED
+    const { spotsClaimed, totalSpots, loading: statusLoading } = useWaitlistStatus()
 
     return (
         <div className="min-h-screen bg-transparent flex items-center justify-center p-6">
@@ -80,7 +74,7 @@ function WaitlistPage() {
                             <div className="flex items-center justify-center gap-2 mb-6">
                                 <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
                                 <span className="text-indigo-300 text-sm font-bold uppercase tracking-widest">
-                                    {SPOTS_CLAIMED} of {TOTAL_SPOTS} founding spots claimed
+                                    {statusLoading ? '--' : spotsClaimed} of {totalSpots} founding spots claimed
                                 </span>
                             </div>
 

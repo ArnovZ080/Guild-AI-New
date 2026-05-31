@@ -11,9 +11,11 @@ import {
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import guildLogo from '@/assets/guild-logo.png'
+import { useWaitlistStatus } from '@/hooks/useWaitlistStatus'
 
 function LandingPage() {
     const navigate = useNavigate();
+    const { spotsRemaining, totalSpots, loading } = useWaitlistStatus();
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -148,7 +150,7 @@ function LandingPage() {
                         <div className="mt-10 flex items-center justify-center gap-3">
                             <div className="flex items-center gap-2 px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm">
                                 <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-                                <span className="text-zinc-400 font-medium">Founding cohort open - <span className="text-indigo-300 font-bold">38 of 50 spots</span> remaining</span>
+                                <span className="text-zinc-400 font-medium">Founding cohort open - <span className="text-indigo-300 font-bold">{loading ? '--' : spotsRemaining} of {totalSpots} spots</span> remaining</span>
                             </div>
                         </div>
                     </motion.div>
