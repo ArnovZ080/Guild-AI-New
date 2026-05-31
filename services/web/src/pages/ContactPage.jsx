@@ -32,8 +32,8 @@ function ContactPage() {
     {
       icon: <MessageSquare className="w-6 h-6" />,
       title: 'Live Chat',
-      description: 'Human support — not a bot',
-      contact: 'Available 9am–6pm SAST',
+      description: 'Human support - not a bot',
+      contact: 'Available 9am–6pm SAST · Email support answered within 24 hours worldwide',
       color: 'from-indigo-500 to-purple-500'
     },
     {
@@ -77,7 +77,7 @@ function ContactPage() {
                 Get in <span className="text-gradient-cobalt">Touch</span>
             </h1>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto font-light leading-relaxed">
-                Questions about founding member access, how Guild works, or whether it's right for your business — we're here and we respond personally.
+                Questions about founding member access, how Guild works, or whether it's right for your business - we're here and we respond personally.
             </p>
           </motion.div>
         </section>
@@ -85,7 +85,7 @@ function ContactPage() {
         <div className="grid lg:grid-cols-3 gap-8 mb-20">
             {contactMethods.map((method, i) => (
                 <div key={i} className="glass-panel p-8 rounded-2xl group transition-all">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${method.color} flex items-center justify-center text-white mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+                    <div className={`w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-6 shadow-glow-sm group-hover:scale-110 transition-transform`}>
                         {method.icon}
                     </div>
                     <h3 className="text-xl font-bold font-heading mb-2">{method.title}</h3>
@@ -148,7 +148,7 @@ function ContactPage() {
                     </h4>
                     <p>Monday – Friday: 9am – 6pm SAST</p>
                     <p>Saturday: 10am – 2pm SAST</p>
-                    <p className="text-indigo-400/70 text-sm mt-1">Guild's agents run 24/7 — your business doesn't stop, and neither does the platform.</p>
+                    <p className="text-indigo-400/70 text-sm mt-1">Guild's agents run 24/7 - your business doesn't stop, and neither does the platform.</p>
                 </div>
                 <div className="p-8 glass-panel rounded-2xl border-indigo-500/10">
                     <h4 className="text-white font-bold font-heading mb-4 flex items-center gap-2">
@@ -156,7 +156,7 @@ function ContactPage() {
                     </h4>
                     <div className="space-y-4 text-sm">
                         <p><strong className="text-zinc-300">Founding member access:</strong> Use the contact form with subject "Founding Member Access" and we'll respond within 24 hours.</p>
-                        <p><strong className="text-zinc-300">Agencies and Scale tier:</strong> Reach out directly — custom onboarding is included and we'll walk through your specific setup.</p>
+                        <p><strong className="text-zinc-300">Agencies and Scale tier:</strong> Reach out directly - custom onboarding is included and we'll walk through your specific setup.</p>
                         <p><strong className="text-zinc-300">Technical issues:</strong> Priority support is included on Growth and Scale plans.</p>
                     </div>
                 </div>

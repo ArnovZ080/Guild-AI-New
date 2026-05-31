@@ -132,7 +132,7 @@ function IntegrationsTab() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {connectors.map((c, i) => (
             <div key={c.platform || i} className="glass-panel rounded-xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 text-xs font-bold">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 text-xs font-bold">
                 {(c.platform || 'INT')[0].toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
@@ -188,7 +188,7 @@ function SubscriptionTab() {
             <ul className="space-y-1">
               {plan.features.map((f) => (
                 <li key={f} className="flex items-center gap-1.5 text-xs text-zinc-400">
-                  <Check size={10} className="text-emerald-400" /> {f}
+                  <Check className="text-indigo-400" /> {f}
                 </li>
               ))}
             </ul>
@@ -370,8 +370,8 @@ function MediaLibraryTab() {
               <Upload size={22} className="text-indigo-400" strokeWidth={1.5} />
             </div>
             <p className="text-sm text-zinc-300 font-medium">Drop images & videos here</p>
-            <p className="text-xs text-zinc-500 mt-1">JPEG, PNG, WebP, GIF, MP4 — up to 25MB each</p>
-            <label className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/10 text-sm text-indigo-400 hover:bg-indigo-500/20 cursor-pointer transition-colors font-medium">
+            <p className="text-xs text-zinc-500 mt-1">JPEG, PNG, WebP, GIF, MP4 - up to 25MB each</p>
+            <label className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm text-sm text-indigo-400 hover:bg-indigo-500/20 cursor-pointer transition-colors font-medium">
               <Upload size={14} /> Browse files
               <input
                 ref={fileInputRef}
@@ -681,7 +681,7 @@ function AssetDetailModal({ asset, onClose, onDelete, onUpdate }) {
             {/* Actions */}
             <div className="flex gap-2 pt-2">
               <button
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-medium hover:bg-indigo-500/20 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm text-indigo-400 text-xs font-medium hover:bg-indigo-500/20 transition-colors"
               >
                 <Sparkles size={12} /> Enhance
               </button>
@@ -722,7 +722,7 @@ function PreferencesTab() {
           <p className="text-xs text-zinc-400">Content scoring above 90% will be auto-approved</p>
         </div>
         <button onClick={() => setAutoApprove(!autoApprove)} className="text-zinc-400">
-          {autoApprove ? <ToggleRight size={24} className="text-emerald-400" /> : <ToggleLeft size={24} />}
+          {autoApprove ? <ToggleRight className="text-indigo-400" /> : <ToggleLeft size={24} />}
         </button>
       </div>
     </div>

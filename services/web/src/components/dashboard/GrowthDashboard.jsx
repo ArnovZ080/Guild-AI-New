@@ -79,7 +79,7 @@ function LeadRow({ lead }) {
   const score = lead.icp_score || lead.health_score || 0;
   return (
     <div className="flex items-center gap-3 py-2 border-b border-white/[0.03] last:border-0">
-      <div className="w-8 h-8 rounded-full bg-indigo-500/15 flex items-center justify-center text-indigo-400 text-xs font-bold flex-shrink-0">
+      <div className="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 text-xs font-bold flex-shrink-0">
         {(lead.name || lead.email || '?')[0].toUpperCase()}
       </div>
       <div className="flex-1 min-w-0">
@@ -185,10 +185,10 @@ export default function GrowthDashboard() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard icon={FileText} label="Content" value={stats.content} change={12} color="bg-blue-500/15 text-blue-400" />
-        <StatCard icon={Users} label="Leads" value={stats.leads} change={34} color="bg-emerald-500/15 text-emerald-400" />
-        <StatCard icon={TrendingUp} label="Pipeline" value={stats.pipeline} color="bg-amber-500/15 text-amber-400" />
-        <StatCard icon={DollarSign} label="Revenue" value={`$${(stats.revenue / 1000).toFixed(1)}k`} change={8} color="bg-purple-500/15 text-purple-400" />
+        <StatCard icon={FileText} label="Content" value={stats.content} change={12} color="bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm text-indigo-400" />
+        <StatCard icon={Users} label="Leads" value={stats.leads} change={34} color="bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm text-indigo-400" />
+        <StatCard icon={TrendingUp} label="Pipeline" value={stats.pipeline} color="bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm text-indigo-400" />
+        <StatCard icon={DollarSign} label="Revenue" value={`$${(stats.revenue / 1000).toFixed(1)}k`} change={8} color="bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm text-indigo-400" />
       </div>
 
       {/* What's Working */}

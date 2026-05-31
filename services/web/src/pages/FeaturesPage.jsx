@@ -34,7 +34,7 @@ function FeaturesPage() {
                     Every Feature Exists <br /> <span className="text-gradient-cobalt">to Get You Customers.</span>
                 </h1>
                 <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-                    Not to impress you on a features page. Every capability in Guild connects to the next — from learning your business, to creating content, to capturing leads, to closing sales. One loop. No gaps.
+                    Not to impress you on a features page. Every capability in Guild connects to the next - from learning your business, to creating content, to capturing leads, to closing sales. One loop. No gaps.
                 </p>
             </motion.div>
         </section>
@@ -42,7 +42,7 @@ function FeaturesPage() {
         {/* Core Pillars */}
         <div className="grid md:grid-cols-2 gap-8 mb-32">
             <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white mb-8 shadow-glow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
                     <Shield className="w-6 h-6" />
                 </div>
                 <h3 className="text-3xl font-bold font-heading mb-4">Content That Checks Itself Before You See It</h3>
@@ -50,7 +50,7 @@ function FeaturesPage() {
                 <div className="space-y-3">
                     <div className="flex gap-3 items-center text-sm">
                         <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">No generic AI output — ever</span>
+                        <span className="text-zinc-400">No generic AI output - ever</span>
                     </div>
                     <div className="flex gap-3 items-center text-sm">
                         <CheckCircle2 size={16} className="text-indigo-500" />
@@ -63,11 +63,11 @@ function FeaturesPage() {
                 </div>
             </div>
             <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white mb-8 shadow-glow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
                     <TrendingUp className="w-6 h-6" />
                 </div>
                 <h3 className="text-3xl font-bold font-heading mb-4">Gets Smarter the Longer You Use It</h3>
-                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Content that performs well shapes the next campaign. Leads that convert refine who gets targeted next. Guild builds a compounding understanding of your business — making it more valuable every month, and making switching feel pointless.</p>
+                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Content that performs well shapes the next campaign. Leads that convert refine who gets targeted next. Guild builds a compounding understanding of your business - making it more valuable every month, and making switching feel pointless.</p>
                 <div className="space-y-3">
                     <div className="flex gap-3 items-center text-sm">
                         <CheckCircle2 size={16} className="text-indigo-500" />
@@ -84,15 +84,15 @@ function FeaturesPage() {
                 </div>
             </div>
             <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white mb-8 shadow-glow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
                     <Layers className="w-6 h-6" />
                 </div>
                 <h3 className="text-3xl font-bold font-heading mb-4">Every Content Format. One System.</h3>
-                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Blog posts, social updates, Instagram reels, carousels, email newsletters, ad creatives, and AI-generated video — all from one system that knows your brand deeply. No switching tools. No reformatting. No re-briefing a designer.</p>
+                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Blog posts, social updates, Instagram reels, carousels, email newsletters, ad creatives, and AI-generated video - all from one system that knows your brand deeply. No switching tools. No reformatting. No re-briefing a designer.</p>
                 <div className="space-y-3">
                     <div className="flex gap-3 items-center text-sm">
                         <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Text, images, and AI video — all on-brand</span>
+                        <span className="text-zinc-400">Text, images, and AI video - all on-brand</span>
                     </div>
                     <div className="flex gap-3 items-center text-sm">
                         <CheckCircle2 size={16} className="text-indigo-500" />
@@ -105,11 +105,11 @@ function FeaturesPage() {
                 </div>
             </div>
             <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white mb-8 shadow-glow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
                     <Brain className="w-6 h-6" />
                 </div>
                 <h3 className="text-3xl font-bold font-heading mb-4">Knows Your Business. Not Just Your Industry.</h3>
-                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Guild learns through conversation and from every document you upload — product details, brand guidelines, customer profiles, past campaigns, even competitor research. Every piece of context makes every future output sharper.</p>
+                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Guild learns through conversation and from every document you upload - product details, brand guidelines, customer profiles, past campaigns, even competitor research. Every piece of context makes every future output sharper.</p>
                 <div className="space-y-3">
                     <div className="flex gap-3 items-center text-sm">
                         <CheckCircle2 size={16} className="text-indigo-500" />
@@ -135,56 +135,56 @@ function FeaturesPage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <Workflow />
                     </div>
                     <h4 className="font-bold text-sm mb-1">Full Transparency</h4>
                     <p className="text-sm text-zinc-400 leading-normal font-light">Watch your content pipeline work in real-time. See every decision, every check, every output.</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <Globe />
                     </div>
-                    <h4 className="font-bold text-sm mb-1">60+ Integrations</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Instagram, LinkedIn, Mailchimp, HubSpot, Shopify, Google Ads, and more — connected from day one.</p>
+                    <h4 className="font-bold text-sm mb-1">21 Integrations at Launch</h4>
+                    <p className="text-sm text-zinc-400 leading-normal font-light">Instagram, LinkedIn, Mailchimp, HubSpot, Shopify, Google Ads, and more - connected from day one. More added regularly.</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <Lock />
                     </div>
                     <h4 className="font-bold text-sm mb-1">Your Data Is Private</h4>
                     <p className="text-sm text-zinc-400 leading-normal font-light">Your business data is never shared, never sold, and never used to train public models.</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <Sparkles />
                     </div>
                     <h4 className="font-bold text-sm mb-1">AI Video & Images</h4>
                     <p className="text-sm text-zinc-400 leading-normal font-light">Professional graphics and short-form video, generated in minutes and checked for brand alignment before you see them.</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <Search />
                     </div>
                     <h4 className="font-bold text-sm mb-1">Lead Capture Built In</h4>
                     <p className="text-sm text-zinc-400 leading-normal font-light">Anyone who engages with your content is captured and scored against your ideal customer profile. Automatically.</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <MessageSquare />
                     </div>
                     <h4 className="font-bold text-sm mb-1">Automated Nurture Sequences</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Personalised email sequences that move leads from first touch to purchase — written in your voice, sent at the right time.</p>
+                    <p className="text-sm text-zinc-400 leading-normal font-light">Personalised email sequences that move leads from first touch to purchase - written in your voice, sent at the right time.</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <Rocket />
                     </div>
                     <h4 className="font-bold text-sm mb-1">Live in 10 Minutes</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Complete your Business Identity conversation and your first week of content is ready for review the same day.</p>
+                    <p className="text-sm text-zinc-400 leading-normal font-light">Tell Guild about your business in a 10-minute conversation and your first week of content is ready for review the same day.</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
+                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
                         <Target />
                     </div>
                     <h4 className="font-bold text-sm mb-1">Goal-Driven Strategy</h4>
@@ -195,7 +195,7 @@ function FeaturesPage() {
 
         {/* CTA */}
         <section className="container mx-auto max-w-4xl">
-            <div className="glass-panel p-16 rounded-3xl text-center border border-indigo-500/20 shadow-glow overflow-hidden relative">
+            <div className="glass-panel p-16 rounded-3xl text-center border border-indigo-400/40 shadow-glow-sm shadow-glow overflow-hidden relative">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
                 <h2 className="text-4xl font-bold font-heading mb-6 tracking-tight">See It Working on Your Business</h2>
                 <p className="text-zinc-400 mb-3 text-lg font-light">Join the founding cohort and lock in your rate before public launch.</p>

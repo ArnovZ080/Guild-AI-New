@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import guildLogo from '@/assets/guild-logo.png'
+import ZARPrice from '@/components/ui/ZARPrice'
 
 function AffiliatesPage() {
   const [formData, setFormData] = useState({
@@ -27,19 +28,19 @@ function AffiliatesPage() {
     {
       icon: <DollarSign className="w-6 h-6" />,
       title: '30% Recurring Commission',
-      description: 'Earn 30% of every payment from customers you refer, for the entire life of their subscription. Not a one-time bounty — recurring revenue.',
+      description: 'Earn 30% of every payment from customers you refer, for the entire life of their subscription. Not a one-time bounty - recurring revenue.',
       color: 'from-emerald-500 to-teal-500'
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
       title: 'A Story That Converts',
-      description: 'Guild closes the full loop from content to customers — a clear, specific promise that\'s easy to explain and easy to believe.',
+      description: 'Guild closes the full loop from content to customers - a clear, specific promise that\'s easy to explain and easy to believe.',
       color: 'from-blue-500 to-indigo-500'
     },
     {
       icon: <Rocket className="w-6 h-6" />,
       title: 'Something Worth Promoting',
-      description: 'Refer your audience to a platform that actually delivers results — not another AI writing tool that stops at content creation.',
+      description: 'Refer your audience to a platform that actually delivers results - not another AI writing tool that stops at content creation.',
       color: 'from-purple-500 to-violet-500'
     },
     {
@@ -56,7 +57,9 @@ function AffiliatesPage() {
       price: '$39/mo',
       regularPrice: '$49/mo',
       commission: '$11.70/mo',
-      annual: '$140.40/yr'
+      annual: '$140.40/yr',
+      usd: 39,
+      commissionUsd: 11.70
     },
     {
       plan: 'Growth',
@@ -64,14 +67,18 @@ function AffiliatesPage() {
       regularPrice: '$149/mo',
       commission: '$35.70/mo',
       annual: '$428.40/yr',
-      popular: true
+      popular: true,
+      usd: 119,
+      commissionUsd: 35.70
     },
     {
       plan: 'Scale',
       price: '$239/mo',
       regularPrice: '$299/mo',
       commission: '$71.70/mo',
-      annual: '$860.40/yr'
+      annual: '$860.40/yr',
+      usd: 239,
+      commissionUsd: 71.70
     }
   ]
 
@@ -110,7 +117,7 @@ function AffiliatesPage() {
                     Earn While You <span className="text-gradient-cobalt">Refer</span>
                 </h1>
                 <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-                    Introduce small business owners to a platform that closes the full loop from content to customers — and earn <strong>30% recurring commission</strong> for every month they stay.
+                    Introduce small business owners to a platform that closes the full loop from content to customers - and earn <strong>30% recurring commission</strong> for every month they stay.
                 </p>
             </motion.div>
         </section>
@@ -119,7 +126,7 @@ function AffiliatesPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
             {benefits.map((b, i) => (
                 <div key={i} className="glass-panel p-8 rounded-2xl group transition-all">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${b.color} flex items-center justify-center text-white mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+                    <div className={`w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-6 shadow-glow-sm group-hover:scale-110 transition-transform`}>
                         {b.icon}
                     </div>
                     <h3 className="text-xl font-bold font-heading mb-3">{b.title}</h3>
@@ -139,8 +146,10 @@ function AffiliatesPage() {
                     <div key={i} className={`glass-panel p-10 rounded-3xl relative overflow-hidden ${t.popular ? 'border-indigo-500/30 ring-1 ring-indigo-500/20' : 'border-white/10'}`}>
                         {t.popular && <div className="absolute top-0 right-0 py-1 px-4 bg-indigo-500 text-xs font-black tracking-widest uppercase">Highest Volume</div>}
                         <h4 className="text-zinc-400 font-heading text-sm mb-1 uppercase tracking-widest">{t.plan} Referrals</h4>
-                        <p className="text-zinc-600 text-xs mb-4">Subscriber pays {t.price} <span className="line-through">{t.regularPrice}</span></p>
-                        <div className="text-4xl font-black mb-8 text-emerald-400">{t.commission} <span className="text-zinc-700 text-lg font-normal"> /mo</span></div>
+                        <p className="text-zinc-600 text-xs mb-1">Subscriber pays {t.price} <span className="line-through">{t.regularPrice}</span></p>
+                        <ZARPrice usd={t.usd} className="mb-4 text-zinc-300 text-xs" />
+                        <div className="text-4xl font-black mb-1 text-emerald-400">{t.commission} <span className="text-zinc-700 text-lg font-normal"> /mo</span></div>
+                        <ZARPrice usd={t.commissionUsd} className="mb-8 text-emerald-300 text-sm" />
                         <div className="space-y-4 pt-6 border-t border-white/5">
                             <div className="flex justify-between text-sm">
                                 <span className="text-zinc-600">Annual per referral</span>
@@ -150,7 +159,7 @@ function AffiliatesPage() {
                     </div>
                 ))}
             </div>
-            <p className="text-center text-zinc-600 text-xs mt-6">Commission calculated on founding member rates. Payouts bi-weekly via PayPal or bank transfer.</p>
+            <p className="text-center text-zinc-600 text-xs mt-6">Commission calculated on founding member rates (valid until public launch August 2026). Post-launch commissions calculated on standard pricing. Payouts bi-weekly via PayPal or bank transfer.</p>
         </section>
 
         {/* Form */}

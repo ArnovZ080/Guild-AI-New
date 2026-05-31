@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Sparkles, ArrowRight, ShieldCheck, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
+import ZARPrice from '@/components/ui/ZARPrice';
 
 function SignupPage() {
   const [params] = useSearchParams();
@@ -35,9 +36,9 @@ function SignupPage() {
   };
 
   const planLabels = {
-    starter: { label: 'Starter', foundingPrice: '$39/mo', regularPrice: '$49/mo' },
-    growth: { label: 'Growth', foundingPrice: '$119/mo', regularPrice: '$149/mo' },
-    scale: { label: 'Scale', foundingPrice: '$239/mo', regularPrice: '$299/mo' },
+    starter: { label: 'Starter', foundingPrice: '$39/mo', regularPrice: '$49/mo', usd: 39 },
+    growth: { label: 'Growth', foundingPrice: '$119/mo', regularPrice: '$149/mo', usd: 119 },
+    scale: { label: 'Scale', foundingPrice: '$239/mo', regularPrice: '$299/mo', usd: 239 },
   };
 
   const currentPlan = planLabels[selectedPlan] || planLabels.growth;
@@ -46,43 +47,44 @@ function SignupPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full grid md:grid-cols-2 glass-panel rounded-3xl overflow-hidden">
 
-        {/* Left panel — founding member context */}
+        {/* Left panel - founding member context */}
         <div className="p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-indigo-500/10 to-emerald-500/5 border-r border-white/[0.06]">
           <div>
             <div className="flex items-center gap-2 mb-10">
-              <div className="w-10 h-10 gradient-cobalt rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">G</div>
+              <div className="w-10 h-10 bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm rounded-lg flex items-center justify-center font-bold text-indigo-400">G</div>
               <span className="text-xl font-heading font-bold text-gradient-cobalt">Guild AI</span>
             </div>
             <h2 className="text-3xl font-heading font-bold text-zinc-200 mb-3 leading-tight">
               You're locking in<br />your founding rate.
             </h2>
             <p className="text-zinc-400 text-sm mb-8 font-light leading-relaxed">
-              Complete your account and your {currentPlan.label} rate is secured permanently — it never increases, even when public pricing does.
+              Complete your account and your {currentPlan.label} rate is secured permanently - it never increases, even when public pricing does.
             </p>
 
             {/* Plan rate summary */}
             <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-8">
-              <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-2">{currentPlan.label} — Founding Rate</p>
+              <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-2">{currentPlan.label} - Founding Rate</p>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-black text-white">{currentPlan.foundingPrice}</span>
                 <span className="text-zinc-600 text-sm line-through">{currentPlan.regularPrice}</span>
               </div>
+              <ZARPrice usd={currentPlan.usd} className="mb-1" />
               <p className="text-zinc-600 text-xs mt-1">Locked permanently from today</p>
             </div>
 
             <div className="space-y-5">
               <div className="flex items-start gap-3">
-                <div className="bg-indigo-500/20 p-2 rounded-lg flex-shrink-0">
+                <div className="border border-white/10 glass-panel shadow-glow-sm p-2 rounded-lg flex-shrink-0">
                   <Sparkles className="text-indigo-400" size={18} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="font-medium text-zinc-200 text-sm">The Full Loop</p>
-                  <p className="text-xs text-zinc-400">Content created → published → leads captured → nurtured to purchase. Automatically.</p>
+                  <p className="font-medium text-zinc-200 text-sm">Content That Finds You Customers</p>
+                  <p className="text-xs text-zinc-400">Created, published, leads captured, nurtured to purchase - without you doing any of it manually.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-emerald-500/20 p-2 rounded-lg flex-shrink-0">
-                  <ShieldCheck className="text-emerald-400" size={18} strokeWidth={1.5} />
+                <div className="border border-white/10 glass-panel shadow-glow-sm p-2 rounded-lg flex-shrink-0">
+                  <ShieldCheck className="text-indigo-400" size={18} strokeWidth={1.5} />
                 </div>
                 <div>
                   <p className="font-medium text-zinc-200 text-sm">Quality Checked Before You See It</p>
@@ -90,8 +92,8 @@ function SignupPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-purple-500/20 p-2 rounded-lg flex-shrink-0">
-                  <Lock className="text-purple-400" size={18} strokeWidth={1.5} />
+                <div className="border border-white/10 glass-panel shadow-glow-sm p-2 rounded-lg flex-shrink-0">
+                  <Lock className="text-indigo-400" size={18} strokeWidth={1.5} />
                 </div>
                 <div>
                   <p className="font-medium text-zinc-200 text-sm">Your Data Is Yours</p>
@@ -102,11 +104,11 @@ function SignupPage() {
           </div>
 
           <div className="pt-8 border-t border-white/[0.06] mt-8">
-            <p className="text-xs text-zinc-600">After signup, you'll complete a short business conversation with Guild — your first week of content will be ready for review the same day.</p>
+            <p className="text-xs text-zinc-600">After signup, you'll complete a short business conversation with Guild - your first week of content will be ready for review the same day.</p>
           </div>
         </div>
 
-        {/* Right panel — form */}
+        {/* Right panel - form */}
         <div className="p-8 md:p-12">
           <div className="mb-6">
             <h1 className="text-2xl font-heading font-bold text-zinc-200 mb-1">Create Your Account</h1>
@@ -120,9 +122,9 @@ function SignupPage() {
             {[
               { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Jane Smith' },
               { key: 'email', label: 'Business Email', type: 'email', placeholder: 'jane@company.com' },
-              { key: 'businessName', label: 'Business Name', type: 'text', placeholder: 'Acme Corp' },
+              { key: 'businessName', label: 'Business Name', type: 'text', placeholder: 'Acme Corp', hint: 'Used to personalise your onboarding' },
               { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••' },
-            ].map(({ key, label, type, placeholder }) => (
+            ].map(({ key, label, type, placeholder, hint }) => (
               <div key={key}>
                 <label className="text-xs text-zinc-400 mb-1 block">{label}</label>
                 <input
@@ -132,12 +134,14 @@ function SignupPage() {
                   onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
                   required={key !== 'businessName'}
                 />
+                {hint && <p className="text-xs text-zinc-600 mt-1">{hint}</p>}
               </div>
             ))}
 
             <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-600 disabled:opacity-40 transition-colors mt-2">
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <>Lock In My Founding Rate <ArrowRight size={16} strokeWidth={1.5} /></>}
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <>Create My Account <ArrowRight size={16} strokeWidth={1.5} /></>}
             </button>
+            <p className="text-center text-xs text-zinc-500 mt-2">Billing details on the next step - takes 60 seconds.</p>
           </form>
 
           <div className="relative my-4">

@@ -21,7 +21,7 @@ function PrivacyPolicyPage() {
            className="glass-panel p-12 rounded-3xl"
         >
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-xl gradient-cobalt flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400">
               <Shield size={24} />
             </div>
             <div>

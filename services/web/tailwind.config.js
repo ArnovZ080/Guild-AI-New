@@ -19,7 +19,7 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
-                heading: ['"Space Grotesk"', 'sans-serif'],
+                heading: ['Montserrat', 'sans-serif'],
             },
             colors: {
                 // Primary Accent — Cobalt Blue

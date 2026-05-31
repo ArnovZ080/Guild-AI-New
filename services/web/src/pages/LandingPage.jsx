@@ -23,10 +23,10 @@ function LandingPage() {
     }, []);
 
     const growthSteps = [
-        { title: 'LEARN', description: 'Tell Guild about your business in a natural conversation. It remembers your voice, your audience, your goals — and gets smarter every cycle.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CREATE', description: 'Blog posts, social content, reels, emails, and ad creatives — written and designed in your exact brand voice. Quality-checked before you see them.', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'LEARN', description: 'Tell Guild about your business in a natural conversation. It remembers your voice, your audience, your goals - and gets smarter every cycle.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CREATE', description: 'Blog posts, social content, reels, emails, and ad creatives - written and designed in your exact brand voice. Quality-checked before you see them.', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
         { title: 'PUBLISH', description: 'Your content goes live at the optimal time on every connected platform. Automatically. Every week. Without you scheduling a single post.', icon: <Layout />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'ATTRACT', description: 'People discover your business through content Guild creates — across social, search, and email. You show up consistently without lifting a finger.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'ATTRACT', description: 'People discover your business through content Guild creates - across social, search, and email. You show up consistently without lifting a finger.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
         { title: 'CAPTURE', description: 'When someone engages, Guild adds them to your CRM and scores how likely they are to buy. No lead falls through the cracks.', icon: <Users />, color: 'from-blue-600 to-indigo-600' },
         { title: 'NURTURE', description: 'Personalised follow-up sequences keep the conversation going until they are ready to buy. Written in your voice. Sent at the right moment.', icon: <MessageSquare />, color: 'from-blue-600 to-indigo-600' },
         { title: 'CONVERT', description: 'Guild tracks what content drives real sales and does more of it. Every cycle, the system gets smarter about your business and your buyers.', icon: <Rocket />, color: 'from-blue-600 to-indigo-600' },
@@ -37,7 +37,7 @@ function LandingPage() {
             name: 'Starter',
             price: '$39',
             regularPrice: '$49',
-            description: 'Start your growth engine. Content created, published, and on-brand — without the agency fee.',
+            description: 'Content created, published, and on-brand - without the agency fee.',
             features: [
                 'Personalised business onboarding',
                 '50 content pieces per month',
@@ -53,7 +53,7 @@ function LandingPage() {
             name: 'Growth',
             price: '$119',
             regularPrice: '$149',
-            description: 'The full loop. Create, publish, capture leads, and nurture them to purchase — automatically.',
+            description: 'Create content, capture every lead who engages, and nurture them to purchase - without doing any of it manually.',
             features: [
                 'Everything in Starter',
                 '200 content pieces per month',
@@ -121,20 +121,20 @@ function LandingPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
                     >
-                        <Badge className="mb-6 bg-white/5 text-indigo-300 border border-white/10 px-4 py-1 flex items-center gap-2 w-fit mx-auto backdrop-blur-sm">
-                            <Sparkles size={14} className="animate-pulse" />
-                            Founding Member Access — 50 spots. First come, first locked.
-                        </Badge>
-                        <h1 className="text-6xl md:text-8xl font-bold font-heading leading-[1.1] tracking-tight mb-8">
+                        <p className="text-lg text-zinc-300 font-semibold mb-6 tracking-tight">
+                            You're paying for 6 different tools. And still doing all the work yourself.
+                        </p>
+                        <h1 className="text-6xl md:text-8xl font-bold font-heading leading-[1.1] tracking-tight mb-6">
                             Guild knows your business, <br />
                             <span className="text-gradient-cobalt">finds your customers,</span> <br />
                             and turns them into buyers.
                         </h1>
-                        <p className="text-xl text-zinc-400 max-w-3xl mx-auto mb-3 leading-relaxed font-light font-bold">
-                            You're paying for 6 different tools. And still doing all the work yourself.
-                        </p>
+                        <Badge className="mb-6 bg-white/5 text-indigo-300 border border-white/10 px-4 py-1 flex items-center gap-2 w-fit mx-auto backdrop-blur-sm">
+                            <Sparkles size={14} className="animate-pulse" />
+                            Founding Member Access - 50 spots. First come, first locked.
+                        </Badge>
                         <p className="text-xl text-zinc-400 max-w-3xl mx-auto mb-10 leading-relaxed font-light">
-                            Guild replaces them with one system that creates your content, publishes it at the right time, captures every lead who engages, and nurtures them into customers — without you doing any of it manually.
+                            Guild replaces them with one system that creates your content, publishes it at the right time, captures every lead who engages, and nurtures them into customers - without you doing any of it manually.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Button size="lg" className="bg-white text-black hover:bg-zinc-200 rounded-full px-10 py-7 text-lg font-bold transition-all hover:scale-105 active:scale-95" onClick={() => navigate('/waitlist')}>
@@ -143,6 +143,13 @@ function LandingPage() {
                             <Button size="lg" variant="ghost" className="text-zinc-400 hover:text-indigo-400 rounded-full px-8 py-7 text-lg group">
                                 <Play className="mr-2 fill-indigo-400/50 group-hover:fill-indigo-400 transition-all shadow-glow-sm" size={18} /> See How It Works
                             </Button>
+                        </div>
+                        {/* Social proof strip */}
+                        <div className="mt-10 flex items-center justify-center gap-3">
+                            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full glass-panel border border-white/10 text-sm">
+                                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                                <span className="text-zinc-400 font-medium">Founding cohort open - <span className="text-indigo-300 font-bold">38 of 50 spots</span> remaining</span>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -180,7 +187,7 @@ function LandingPage() {
                     <div className="text-center mb-20">
                         <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">The Only Platform That Closes the Full Loop</h2>
                         <p className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed">
-                            Most tools help you create content and leave the rest to you. Guild creates it, publishes it, captures everyone who engages, and turns them into paying customers — as one connected system.
+                            Most tools help you create content and leave the rest to you. Guild creates it, publishes it, captures everyone who engages, and turns them into paying customers - as one connected system.
                         </p>
                     </div>
 
@@ -191,7 +198,7 @@ function LandingPage() {
                                 whileHover={{ y: -5 }}
                                 className="glass-panel p-6 rounded-2xl flex flex-col items-center text-center group cursor-default"
                             >
-                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-500/10 group-hover:scale-110 transition-transform`}>
+                                <div className={`w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-6 shadow-glow-sm group-hover:scale-110 transition-transform`}>
                                     {step.icon}
                                 </div>
                                 <h3 className="text-sm font-bold font-heading tracking-[0.2em] mb-3 text-zinc-100 uppercase">{step.title}</h3>
@@ -202,17 +209,17 @@ function LandingPage() {
                     
                     {/* Trust signal */}
                     <div className="mt-16 text-center">
-                        <p className="text-sm font-bold uppercase tracking-[0.2em] text-indigo-400/70">Beta cohort now open — founding member spots filling fast</p>
+                        <p className="text-sm font-bold uppercase tracking-[0.2em] text-indigo-400/70">Beta cohort now open - founding member spots filling fast</p>
                     </div>
 
-                    <div className="mt-10 flex justify-center gap-8 items-center flex-wrap opacity-60 hover:opacity-100 transition-all duration-700">
-                        <span className="text-xs font-bold uppercase tracking-[0.3em] text-indigo-500/50 block w-full text-center mb-8">Connects with the tools you already use</span>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Instagram</div>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">LinkedIn</div>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Facebook</div>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Mailchimp</div>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Shopify</div>
-                        <div className="px-8 py-2 border border-indigo-500/10 rounded-full text-zinc-400 font-heading hover:border-indigo-500/30 transition-colors">Google Ads</div>
+                    <div className="mt-16 flex justify-center gap-6 items-center flex-wrap transition-all duration-700">
+                        <span className="text-sm font-bold uppercase tracking-[0.3em] text-indigo-300 block w-full text-center mb-8">Connects with the tools you already use</span>
+                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Instagram</div>
+                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">LinkedIn</div>
+                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Facebook</div>
+                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Mailchimp</div>
+                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Shopify</div>
+                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Google Ads</div>
                     </div>
                 </div>
             </section>
@@ -228,7 +235,7 @@ function LandingPage() {
                             </h2>
                             <div className="space-y-8 relative">
                                 <div className="flex gap-6">
-                                    <div className="w-12 h-12 rounded-xl border border-white/10 glass-panel flex items-center justify-center shrink-0 text-indigo-400 shadow-glow-sm">
+                                    <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0 text-indigo-400">
                                         <Shield size={22} strokeWidth={1.5} />
                                     </div>
                                     <div>
@@ -237,7 +244,7 @@ function LandingPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
-                                    <div className="w-12 h-12 rounded-xl border border-white/10 glass-panel flex items-center justify-center shrink-0 text-indigo-400 shadow-glow-sm">
+                                    <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0 text-indigo-400">
                                         <Layout size={22} strokeWidth={1.5} />
                                     </div>
                                     <div>
@@ -246,12 +253,12 @@ function LandingPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
-                                    <div className="w-12 h-12 rounded-xl border border-white/10 glass-panel flex items-center justify-center shrink-0 text-indigo-400 shadow-glow-sm">
+                                    <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0 text-indigo-400">
                                         <Award size={22} strokeWidth={1.5} />
                                     </div>
                                     <div>
                                         <h4 className="text-xl font-bold mb-2 font-heading">Gets Smarter the Longer You Use It</h4>
-                                        <p className="text-base text-zinc-400 leading-relaxed font-light">Content that performs well shapes the next campaign. Leads that convert refine who gets targeted next. Guild builds a deep understanding of your business over time — making it more valuable every month, and making switching feel pointless.</p>
+                                        <p className="text-base text-zinc-400 leading-relaxed font-light">Content that performs well shapes the next campaign. Leads that convert refine who gets targeted next. Guild builds a deep understanding of your business over time - making it more valuable every month, and making switching feel pointless.</p>
                                     </div>
                                 </div>
                             </div>
@@ -287,15 +294,16 @@ function LandingPage() {
                                     <span className="text-zinc-400 font-bold uppercase tracking-[0.2em] text-xs">Your current marketing stack</span>
                                     <div className="text-right">
                                         <span className="text-2xl font-bold text-red-500">$504/mo</span>
-                                        <ZARPrice usd={504} className="text-red-400/50 text-xs" />
+                                        <ZARPrice usd={504} className="text-red-300 text-xs" />
                                     </div>
                                 </div>
                                 <p className="text-xs text-zinc-600 italic mt-2">(and you still do all the work yourself)</p>
+                                <p className="text-lg md:text-xl text-white font-heading font-bold mt-6 leading-relaxed">This replaces Buffer + Canva + Mailchimp + HubSpot + a freelance writer + a video editor - and does the work for you.</p>
                             </div>
                             <div className="p-8 gradient-cobalt rounded-xl text-center shadow-3xl">
-                                <span className="text-xs uppercase tracking-[0.3em] font-bold text-white/70">Guild AI — Founding Member Rate</span>
+                                <span className="text-xs uppercase tracking-[0.3em] font-bold text-white/70">Guild AI - Founding Member Rate</span>
                                 <div className="text-5xl font-black mt-2">$119/mo</div>
-                                <ZARPrice usd={119} className="text-white/50 text-sm" />
+                                <ZARPrice usd={119} className="text-white/80 text-sm" />
                                 <p className="text-xs mt-1 font-medium text-white/40 line-through tracking-tighter">Regular price $149/mo</p>
                                 <p className="text-xs mt-3 font-medium text-white/60 tracking-tighter italic">Founding rate locked in permanently</p>
                             </div>
@@ -309,13 +317,13 @@ function LandingPage() {
                 <div className="container mx-auto max-w-6xl">
                     <div className="text-center mb-6">
                         <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Founding Member Pricing.</h2>
-                        <p className="text-zinc-400 max-w-xl mx-auto">Lock in your rate before public launch. One system replaces 6+ tools — and does the work for you.</p>
+                        <p className="text-zinc-400 max-w-xl mx-auto">Lock in your rate before public launch. One system replaces 6+ tools - and does the work for you.</p>
                     </div>
 
                     {/* Founding member banner */}
                     <div className="mb-10 p-4 rounded-2xl border border-indigo-500/30 bg-indigo-500/5 flex items-center justify-center gap-3 text-sm max-w-2xl mx-auto">
                         <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse shrink-0" />
-                        <span className="text-indigo-300 font-medium">Founding members lock in today's rate permanently — it never increases, even when public pricing does.</span>
+                        <span className="text-indigo-300 font-medium">Founding members lock in today's rate permanently - it never increases, even when public pricing does.</span>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
@@ -329,7 +337,7 @@ function LandingPage() {
                                     <span className="text-zinc-600 text-sm line-through">{p.regularPrice}</span>
                                 </div>
                                 <ZARPrice usd={parseInt(p.price.replace('$', ''))} className="mb-1" />
-                                <p className="text-xs text-indigo-400/70 font-medium mb-5 uppercase tracking-widest">Founding rate — locked for life</p>
+                                <p className="text-xs text-indigo-400/70 font-medium mb-5 uppercase tracking-widest">Founding rate - locked for life</p>
                                 <p className="text-zinc-400 text-sm mb-8">{p.description}</p>
                                 <Button 
                                     className={`w-full py-7 rounded-2xl mb-10 text-lg font-bold ${p.popular ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-500/20 active:scale-95' : 'bg-white/5 hover:bg-white/10 text-white'}`} 
@@ -340,7 +348,7 @@ function LandingPage() {
                                 <ul className="space-y-4 flex-1">
                                     {p.features.map((f, fi) => (
                                         <li key={fi} className="flex items-center text-sm text-zinc-400 gap-3">
-                                            <div className="w-5 h-5 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                            <div className="w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0">
                                                 <Check size={12} className="text-indigo-400" strokeWidth={3} />
                                             </div>
                                             {f}
@@ -372,10 +380,10 @@ function LandingPage() {
                             viewport={{ once: true }}
                         >
                             <h2 className="text-5xl md:text-6xl font-black font-heading tracking-tight mb-8">
-                                Your content-to-customer <br /> <span className="text-indigo-400 underline decoration-indigo-500/30">engine is ready.</span>
+                                Your content is finding <br /> <span className="text-indigo-400 underline decoration-indigo-500/30">customers right now.</span>
                             </h2>
                             <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-4 leading-relaxed">
-                                Guild creates your content, publishes it automatically, captures every lead who engages, and nurtures them into buyers. You approve and watch your business grow.
+                                Guild creates your content, publishes it automatically, captures every lead who engages, and nurtures them into buyers. You approve. Your business grows.
                             </p>
                             <p className="text-sm text-indigo-300/70 mb-12 font-medium">
                                 Founding members lock in today's rate permanently. 50 spots. Rate increases at public launch.
@@ -385,7 +393,7 @@ function LandingPage() {
                                     Claim Your Founding Rate →
                                 </Button>
                             </div>
-                            <p className="mt-8 text-zinc-400 text-sm italic">Your data is yours. Cancel anytime. No lock-in contracts.</p>
+                            <p className="mt-8 text-zinc-300 text-lg md:text-xl font-medium">Your data is yours. Cancel anytime. No lock-in contracts.</p>
                         </motion.div>
                     </div>
                 </div>
@@ -401,7 +409,7 @@ function LandingPage() {
                                 <span className="font-bold tracking-tight text-white/50 underline decoration-white/10 uppercase text-sm">Guild AI</span>
                             </div>
                             <p className="text-zinc-600 text-sm leading-relaxed">
-                                The only platform that turns content into customers — automatically.
+                                The only platform that turns content into customers - automatically.
                             </p>
                         </div>
                         <div>
@@ -447,15 +455,15 @@ function LandingPage() {
 function AgentSimulatedLogs() {
     const logs = [
         { agent: 'GUILD', msg: 'Learning your brand voice from onboarding conversation...', status: 'active' },
-        { agent: 'WRITER', msg: 'Drafting 3 LinkedIn posts for this week — checking against brand voice...', status: 'active' },
-        { agent: 'QUALITY', msg: 'Checking ICP alignment on "Post_01" — passed ✓', status: 'success' },
-        { agent: 'DESIGNER', msg: 'Creating Instagram carousel — applying brand colours and typography...', status: 'active' },
+        { agent: 'WRITER', msg: 'Drafting 3 LinkedIn posts for this week - checking against brand voice...', status: 'active' },
+        { agent: 'QUALITY', msg: 'Checking ICP alignment on "Post_01" - passed ✓', status: 'success' },
+        { agent: 'DESIGNER', msg: 'Creating Instagram carousel - applying brand colours and typography...', status: 'active' },
         { agent: 'VIDEO', msg: 'Generating 15-second product showcase reel...', status: 'pending' },
-        { agent: 'QUALITY', msg: 'Checking brand voice on "Carousel_01" — passed ✓', status: 'success' },
-        { agent: 'SCHEDULER', msg: 'LinkedIn post queued for Tuesday 12:30pm — peak engagement window...', status: 'active' },
-        { agent: 'CRM', msg: 'New lead captured: Sarah M. via Instagram comment — ICP score 92%...', status: 'success' },
+        { agent: 'QUALITY', msg: 'Checking brand voice on "Carousel_01" - passed ✓', status: 'success' },
+        { agent: 'SCHEDULER', msg: 'LinkedIn post queued for Tuesday 12:30pm - peak engagement window...', status: 'active' },
+        { agent: 'CRM', msg: 'New lead captured: Sarah M. via Instagram comment - ICP score 92%...', status: 'success' },
         { agent: 'NURTURE', msg: 'Sending personalised welcome sequence to 3 new contacts...', status: 'active' },
-        { agent: 'GROWTH', msg: 'Reels posted at 6pm getting 2.5× more saves — adjusting schedule...', status: 'active' },
+        { agent: 'GROWTH', msg: 'Reels posted at 6pm getting 2.5× more saves - adjusting schedule...', status: 'active' },
     ];
 
     const [visibleLogs, setVisibleLogs] = useState([]);

@@ -42,7 +42,7 @@ function MessageBubble({ message }) {
       animate={{ opacity: 1, y: 0 }}
       className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}
     >
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isUser ? 'bg-indigo-500/20 text-indigo-400' : 'gradient-cobalt text-white'}`}>
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isUser ? 'bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm text-indigo-400' : 'gradient-cobalt text-indigo-400'}`}>
         {isUser ? <User size={14} strokeWidth={1.5} /> : <Bot size={14} strokeWidth={1.5} />}
       </div>
       <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? 'bg-indigo-500/15 text-zinc-200 rounded-tr-md' : 'glass-panel text-zinc-300 rounded-tl-md'}`}>
@@ -63,8 +63,8 @@ function AgentEvent({ event }) {
       animate={{ opacity: 1, scale: 1 }}
       className="mx-auto max-w-md glass-panel rounded-xl px-4 py-2.5 flex items-center gap-3 text-xs"
     >
-      <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
-        <Sparkles size={12} className="text-emerald-400" />
+      <div className="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center">
+        <Sparkles className="text-indigo-400" />
       </div>
       <div className="flex-1 min-w-0">
         <span className="text-zinc-400 font-medium">{event.agent || 'Agent'}</span>
@@ -114,7 +114,7 @@ function ThinkingIndicator({ agent }) {
       exit={{ opacity: 0 }}
       className="flex gap-3 items-center"
     >
-      <div className="w-8 h-8 rounded-full gradient-cobalt flex items-center justify-center ai-active-glow">
+      <div className="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center ai-active-glow">
         <Bot size={14} className="text-white" />
       </div>
       <div className="glass-panel rounded-2xl rounded-tl-md px-4 py-3 flex items-center gap-2 text-sm text-zinc-400">
@@ -265,7 +265,7 @@ export default function ChatInterface() {
             {sidebarOpen ? <PanelLeftClose size={18} strokeWidth={1.5} /> : <PanelLeft size={18} strokeWidth={1.5} />}
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full gradient-cobalt flex items-center justify-center">
+            <div className="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center">
               <Bot size={12} className="text-white" />
             </div>
             <h1 className="text-sm font-heading font-bold text-zinc-200">
@@ -278,7 +278,7 @@ export default function ChatInterface() {
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-4 py-20">
-              <div className="w-16 h-16 rounded-2xl gradient-cobalt flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center  shadow-blue-500/20">
                 <Sparkles size={28} className="text-white" />
               </div>
               <h2 className="text-xl font-heading font-bold text-zinc-200">

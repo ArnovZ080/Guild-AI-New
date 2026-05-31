@@ -15,7 +15,7 @@ function PricingPage() {
             regularPrice: '$49',
             foundingUsd: 39,
             period: '/mo',
-            description: 'Start your growth engine. Content created, published, and on-brand — without the agency fee.',
+            description: 'Content created, published, and on-brand - without the agency fee.',
             features: [
                 '50 content pieces per month',
                 'Blog posts, social media & images',
@@ -35,7 +35,7 @@ function PricingPage() {
             regularPrice: '$149',
             foundingUsd: 119,
             period: '/mo',
-            description: 'The full loop. Create, publish, capture leads, and nurture them to purchase — automatically.',
+            description: 'Create content, capture every lead who engages, and nurture them to purchase - without doing any of it manually.',
             features: [
                 '200 content pieces per month',
                 '10 AI-generated videos',
@@ -94,7 +94,7 @@ function PricingPage() {
                             Founding Member <span className="text-gradient-cobalt">Pricing</span>
                         </h1>
                         <p className="text-xl text-zinc-400 max-w-2xl mx-auto font-light leading-relaxed">
-                            One system replaces 6+ separate tools — and does the work for you. Lock in your rate before public launch and it never changes.
+                            One system replaces 6+ separate tools - and does the work for you. Lock in your rate before public launch and it never changes.
                         </p>
                     </motion.div>
                 </section>
@@ -107,11 +107,11 @@ function PricingPage() {
                     className="mb-14 max-w-3xl mx-auto"
                 >
                     <div className="flex items-start gap-4 p-6 rounded-2xl border border-indigo-500/30 bg-indigo-500/5 backdrop-blur-sm">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/20">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0">
                             <Lock size={18} className="text-indigo-400" />
                         </div>
                         <div className="text-left">
-                            <p className="text-indigo-300 font-bold mb-1 text-sm uppercase tracking-widest">Founding Member Pricing — Locked For Life</p>
+                            <p className="text-indigo-300 font-bold mb-1 text-sm uppercase tracking-widest">Founding Member Pricing - Locked For Life</p>
                             <p className="text-zinc-400 text-sm leading-relaxed">
                                 Guild is in beta. The first 50 members lock in today's rate permanently. When Guild raises prices at public launch in August 2026, your founding rate never changes. You're buying in at the floor.
                             </p>
@@ -151,7 +151,7 @@ function PricingPage() {
                                     Regular price: {p.regularPrice}/mo
                                 </p>
                                 <p className="text-indigo-400/80 text-xs font-bold uppercase tracking-widest mt-1">
-                                    Founding rate — locked for life
+                                    Founding rate - locked for life
                                 </p>
 
                                 <p className="text-base text-zinc-400 mt-5 font-light leading-relaxed">{p.description}</p>
@@ -167,7 +167,7 @@ function PricingPage() {
                             <div className="space-y-4 mt-auto">
                                 {p.features.map((f, j) => (
                                     <div key={j} className="flex gap-3 items-center text-sm">
-                                        <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center shrink-0`}>
+                                        <div className={`w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0`}>
                                             <Check size={12} strokeWidth={3} className="text-white" />
                                         </div>
                                         <span className="text-zinc-400 font-light">{f}</span>
@@ -199,24 +199,31 @@ function PricingPage() {
                         <div className="text-left">
                             <p className="text-white font-bold mb-2">30-Day Guarantee</p>
                             <p className="text-zinc-400 text-sm leading-relaxed">
-                                Publish a full month of content and capture your first leads. If you don't, your first month is refunded in full — no forms, no questions. Email Arno directly.
+                                Publish a full month of content and capture your first leads. If you don't, your first month is refunded in full - no forms, no questions. Email Arno directly.
                             </p>
                         </div>
                     </div>
                 </motion.div>
 
-                {/* Trust signals */}
-                <div className="mt-10 text-center space-y-2">
-                    <p className="text-zinc-600 text-xs">Your data is yours. Cancel anytime. No lock-in contracts.</p>
+                {/* Tool replacement anchor */}
+                <div className="mt-16 text-center">
+                    <p className="text-zinc-200 text-2xl md:text-3xl font-heading font-bold max-w-4xl mx-auto leading-relaxed">
+                        This replaces Buffer + Canva + Mailchimp + HubSpot + a freelance writer + a video editor - and does the work for you.
+                    </p>
                 </div>
 
-                {/* Contact section — replacing "Enterprise Grade Support" */}
+                {/* Trust signals */}
+                <div className="mt-8 text-center space-y-2">
+                    <p className="text-zinc-400 text-xl md:text-2xl font-medium">Your data is yours. Cancel anytime. No lock-in contracts.</p>
+                </div>
+
+                {/* Contact section - replacing "Enterprise Grade Support" */}
                 <div className="mt-24 glass-panel p-12 rounded-3xl border border-white/10">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div>
                             <h3 className="text-3xl font-bold font-heading mb-4">Need Something Specific?</h3>
                             <p className="text-zinc-400 text-lg font-light leading-relaxed">
-                                Every founding member gets a direct onboarding call. For agencies, multiple brand profiles, or custom requirements — talk to Arno directly.
+                                Every founding member gets a direct onboarding call. For agencies, multiple brand profiles, or custom requirements - talk to Arno directly.
                             </p>
                         </div>
                         <div className="flex justify-center md:justify-end">

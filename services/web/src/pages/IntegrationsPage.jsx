@@ -38,7 +38,7 @@ function IntegrationsPage() {
     // Email & CRM
     { name: 'HubSpot', category: 'email_crm', description: 'Sync contacts, track deals, and automate your sales process.', icon: <Database size={18} />, color: 'from-orange-500 to-orange-600' },
     { name: 'Pipedrive', category: 'email_crm', description: 'Manage your sales pipeline and log every customer interaction.', icon: <Briefcase size={18} />, color: 'from-zinc-800 to-zinc-900' },
-    { name: 'Built-in CRM', category: 'email_crm', description: 'Guild\'s own contact manager — captures leads from content engagement automatically, no setup required.', icon: <Check size={18} />, color: 'from-indigo-600 to-blue-600' },
+    { name: 'Built-in CRM', category: 'email_crm', description: 'Guild\'s own contact manager - captures leads from content engagement automatically, no setup required.', icon: <Check size={18} />, color: 'from-indigo-600 to-blue-600' },
     { name: 'SendGrid', category: 'email_crm', description: 'Send transactional emails and automated nurture sequences.', icon: <Mail size={18} />, color: 'from-blue-400 to-blue-500' },
     { name: 'Mailchimp', category: 'email_crm', description: 'Manage email lists and send newsletters to your subscribers.', icon: <MessageSquare size={18} />, color: 'from-yellow-500 to-yellow-600' },
     { name: 'ConvertKit', category: 'email_crm', description: 'Advanced email sequences for creators and course sellers.', icon: <Folder size={18} />, color: 'from-indigo-400 to-indigo-500' },
@@ -83,7 +83,7 @@ function IntegrationsPage() {
                     Connect the Tools <br /> <span className="text-gradient-cobalt">You Already Use</span>
                 </h1>
                 <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-                    Guild plugs into the platforms where your audience already is and the tools you already pay for. Connect in one click — no code, no developer, no setup fee.
+                    Guild plugs into the platforms where your audience already is and the tools you already pay for. Connect in one click - no code, no developer, no setup fee.
                 </p>
             </motion.div>
         </section>
@@ -105,7 +105,7 @@ function IntegrationsPage() {
                         <button
                             key={c.id}
                             onClick={() => setSelectedCategory(c.id)}
-                            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${selectedCategory === c.id ? 'glass-panel border-indigo-500/50 text-white shadow-glow-sm' : 'text-zinc-400 hover:text-zinc-300'}`}
+                            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${selectedCategory === c.id ? 'glass-panel border-indigo-500/50 text-indigo-400 shadow-glow-sm' : 'text-zinc-400 hover:text-zinc-300'}`}
                         >
                             <span className="text-indigo-400">{c.icon}</span> {c.name}
                         </button>
@@ -122,7 +122,7 @@ function IntegrationsPage() {
                         transition={{ delay: i * 0.05 }}
                         className="glass-panel p-8 rounded-2xl group transition-all border-white/10"
                     >
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white mb-6 shadow-lg group-hover:scale-110 transition-transform shadow-indigo-500/20">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-6 group-hover:scale-110 transition-transform shadow-indigo-500/20">
                             {it.icon || <Zap size={20} />}
                         </div>
                         <div className="flex justify-between items-center mb-3">
@@ -135,17 +135,17 @@ function IntegrationsPage() {
             
             <div className="mt-20 text-center">
                 <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-white/10 text-xs font-bold text-zinc-500 uppercase tracking-widest">
-                    More integrations coming soon — request one via contact page →
+                    More integrations coming soon - request one via contact page →
                 </div>
             </div>
         </section>
 
         {/* CTA */}
         <section className="container mx-auto max-w-4xl">
-            <div className="glass-panel p-16 rounded-3xl text-center border border-indigo-500/20 shadow-glow">
-                <h2 className="text-4xl font-bold font-heading mb-6 tracking-tight">Connect Your Tools in One Click</h2>
-                <p className="text-zinc-400 mb-3 text-lg font-light">No code. No setup fees. Just connect and go.</p>
-                <p className="text-zinc-600 text-sm mb-10">Founding members lock in their rate permanently — 50 spots before public launch.</p>
+            <div className="glass-panel p-16 rounded-3xl text-center border border-indigo-400/40 shadow-glow-sm shadow-glow">
+                <h2 className="text-4xl font-bold font-heading mb-6 tracking-tight">Ready to Start Your Growth Engine?</h2>
+                <p className="text-zinc-400 mb-3 text-lg font-light">Join the founding cohort and connect your tools from day one.</p>
+                <p className="text-zinc-600 text-sm mb-10">Founding members lock in their rate permanently - 50 spots before public launch.</p>
                 <Button
                     size="lg"
                     className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-full px-12 py-8 text-xl font-bold border-t border-white/20"

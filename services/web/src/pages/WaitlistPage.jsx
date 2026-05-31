@@ -5,9 +5,12 @@ import { Input } from '@/components/ui/input'
 import { Lock, ArrowLeft, Send, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-// Update this number manually as spots fill
+// TODO before launch: wire SPOTS_CLAIMED to the actual waitlist API count
+// GET /api/waitlist/count → { count: number }
+// Update SPOTS_CLAIMED dynamically so the counter stays accurate.
+// A hardcoded number that goes stale destroys trust - this is your strongest trust signal.
 const TOTAL_SPOTS = 50
-const SPOTS_CLAIMED = 12
+const SPOTS_CLAIMED = 12 // ← replace with API call before launch
 
 function WaitlistPage() {
     const [email, setEmail] = useState('')
@@ -63,8 +66,8 @@ function WaitlistPage() {
                             
                             {/* Icon */}
                             <div className="flex justify-center mb-8">
-                                <div className="w-20 h-20 gradient-cobalt rounded-3xl flex items-center justify-center shadow-lg shadow-indigo-500/20 rotate-3">
-                                    <Lock className="text-white w-10 h-10" strokeWidth={1.5} />
+                                <div className="w-20 h-20 bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm rounded-3xl flex items-center justify-center rotate-3">
+                                    <Lock className="text-indigo-400 w-10 h-10" strokeWidth={1.5} />
                                 </div>
                             </div>
 
@@ -82,20 +85,20 @@ function WaitlistPage() {
                             </div>
 
                             <p className="text-zinc-400 text-lg mb-12 font-light leading-relaxed max-w-md mx-auto">
-                                Founding members get Guild's Growth rate permanently locked in — before public launch raises the price. Beta opens July 2026. You'll be first in.
+                                Founding members get Guild's Growth rate permanently locked in - before public launch raises the price. Beta opens July 2026. You'll be first in.
                             </p>
 
                             {/* What you're locking in */}
                             <div className="mb-10 p-6 rounded-2xl border border-white/5 bg-white/3 text-left space-y-3 max-w-sm mx-auto">
                                 <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] mb-4">What you're locking in</p>
                                 {[
-                                    '$119/mo Growth rate — never increases',
-                                    'Full flywheel: content → leads → customers',
+                                    '$119/mo Growth rate - never increases',
+                                    'Content created, leads captured, and nurtured to purchase - automatically',
                                     'Direct setup call before you go live',
                                     'Priority access when beta opens'
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-center gap-3 text-sm text-zinc-300">
-                                        <div className="w-4 h-4 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
+                                        <div className="w-4 h-4 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0">
                                             <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
                                         </div>
                                         {item}
@@ -136,8 +139,8 @@ function WaitlistPage() {
                             className="glass-panel p-12 md:p-20 rounded-3xl border border-white/10 shadow-glow text-center"
                         >
                             {/* Success icon */}
-                            <div className="w-24 h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-10 border border-emerald-500/50 shadow-glow-sm">
-                                <CheckCircle2 className="text-emerald-400 w-12 h-12" strokeWidth={1.5} />
+                            <div className="w-24 h-24 bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm rounded-full flex items-center justify-center mx-auto mb-10 border-emerald-500/50">
+                                <CheckCircle2 className="text-indigo-400 w-12 h-12" strokeWidth={1.5} />
                             </div>
 
                             <h2 className="text-4xl md:text-5xl font-black font-heading mb-4 tracking-tight">You're in.</h2>
@@ -149,9 +152,9 @@ function WaitlistPage() {
                             <div className="p-8 bg-white/5 rounded-3xl border border-white/10 mb-12 text-left max-w-sm mx-auto space-y-4">
                                 <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] mb-4 text-center">What you've secured</p>
                                 {[
-                                    { label: 'Founding rate', value: '$119/mo — locked permanently' },
+                                    { label: 'Founding rate', value: '$119/mo - locked permanently' },
                                     { label: 'Regular price', value: '$149/mo (what others pay)' },
-                                    { label: 'Beta access', value: "July 2026 — you're first in" },
+                                    { label: 'Beta access', value: "July 2026 - you're first in" },
                                     { label: 'Setup call', value: 'Direct with Arno before go-live' },
                                 ].map((item, i) => (
                                     <div key={i} className="flex justify-between items-center text-sm border-b border-white/5 pb-3 last:border-0 last:pb-0">
@@ -169,12 +172,15 @@ function WaitlistPage() {
                                 </p>
                             </div>
 
-                            {/* Referral mechanic */}
+                            {/* Referral mechanic - only show when referral link is wired up */}
+                            {/* TODO: generate referral link per user and display here */}
+                            {/* Until wired: remove this block entirely rather than show a broken mechanic */}
                             <div className="p-6 bg-white/3 rounded-2xl border border-white/5 mb-12 max-w-sm mx-auto">
-                                <p className="text-xs font-black text-indigo-400 mb-2 uppercase tracking-[0.2em]">Move Up the Queue</p>
+                                <p className="text-xs font-black text-indigo-400 mb-2 uppercase tracking-[0.2em]">Know a founder who'd benefit?</p>
                                 <p className="text-zinc-400 text-sm font-light leading-relaxed">
-                                    Refer one founder to Guild and move to the next available cohort slot — getting access sooner when beta opens.
+                                    Refer one founder and move to the next available cohort slot - getting access sooner when beta opens in July.
                                 </p>
+                                <p className="text-zinc-600 text-xs mt-3 italic">Referral link coming soon - we'll include it in your confirmation email.</p>
                             </div>
 
                             <Link to="/landing">

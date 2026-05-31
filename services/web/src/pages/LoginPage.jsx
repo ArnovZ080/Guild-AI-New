@@ -35,7 +35,7 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="w-12 h-12 gradient-cobalt rounded-xl flex items-center justify-center font-bold text-white text-lg mx-auto mb-4 shadow-lg shadow-blue-500/20">
+          <div className="w-12 h-12 bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm rounded-xl flex items-center justify-center font-bold text-indigo-400 text-lg mx-auto mb-4">
             G
           </div>
           <h1 className="text-3xl font-heading font-bold text-zinc-200">Welcome Back</h1>
