@@ -133,7 +133,7 @@ export default function RadialOrbitalTimeline({ timelineData }) {
               <div
                 key={item.id}
                 ref={(el) => (nodeRefs.current[item.id] = el)}
-                className="absolute transition-all duration-700 cursor-pointer"
+                className="absolute transition-all duration-700 cursor-pointer group"
                 style={{
                   transform: `translate(${position.x}px, ${position.y}px)`,
                   zIndex: isExpanded ? 200 : position.zIndex,
@@ -153,25 +153,34 @@ export default function RadialOrbitalTimeline({ timelineData }) {
                   }}
                 />
 
-                {/* Node button */}
+                {/* Node button — icon zooms on hover as click affordance */}
                 <div className={`
                   w-10 h-10 rounded-full flex items-center justify-center
                   border-2 transition-all duration-300
                   ${isExpanded
-                    ? "bg-indigo-500 text-white border-indigo-400 shadow-lg"
+                    ? "bg-indigo-500 text-white border-indigo-400 shadow-lg shadow-indigo-500/40"
                     : isRelated
                     ? "bg-indigo-500/30 text-white border-indigo-400 animate-pulse"
-                    : "bg-zinc-900 text-zinc-300 border-white/20"}
-                  ${isExpanded ? "scale-150" : ""}
+                    : "bg-zinc-900 text-zinc-300 border-white/20 group-hover:border-indigo-400/60 group-hover:bg-indigo-500/10"}
+                  ${isExpanded ? "scale-150" : "group-hover:scale-110"}
                 `}>
-                  <Icon size={16} />
+                  <span className="transition-transform duration-200 group-hover:scale-125 inline-flex">
+                    <Icon size={16} />
+                  </span>
                 </div>
+
+                {/* "Click" hint — shows on hover when not expanded */}
+                {!isExpanded && (
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    <span className="text-[9px] text-indigo-400/80 whitespace-nowrap font-medium tracking-wide">click</span>
+                  </div>
+                )}
 
                 {/* Node label */}
                 <div className={`
                   absolute top-12 whitespace-nowrap text-xs font-semibold tracking-wider
                   transition-all duration-300 text-center
-                  ${isExpanded ? "text-white scale-125" : "text-zinc-400"}
+                  ${isExpanded ? "text-white scale-125" : "text-zinc-400 group-hover:text-zinc-200"}
                 `}
                   style={{ left: "50%", transform: isExpanded ? "translateX(-50%) scale(1.25)" : "translateX(-50%)" }}
                 >

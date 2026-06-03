@@ -363,7 +363,7 @@ function LandingPage() {
                     initial="hidden"
                     whileInView="visible"
                     viewport={viewportOnce}
-                    className="container mx-auto max-w-4xl text-center"
+                    className="container mx-auto max-w-6xl text-center"
                 >
                     <p className="label-eyebrow text-indigo-400/70 mb-6">The system in one sentence</p>
                     <p className="text-zinc-500 text-sm mb-10 tracking-wide">Hover to reveal ↓</p>
@@ -371,7 +371,7 @@ function LandingPage() {
                         <MagicTextReveal
                             text="Guild does the work."
                             color="rgba(165, 180, 252, 1)"
-                            fontSize={typeof window !== 'undefined' && window.innerWidth < 768 ? 42 : 80}
+                            fontSize={typeof window !== 'undefined' ? (window.innerWidth < 640 ? 36 : window.innerWidth < 1024 ? 52 : 64) : 64}
                             fontFamily="Inter, sans-serif"
                             fontWeight={800}
                             spread={70}
