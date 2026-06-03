@@ -1,20 +1,30 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import ZARPrice from '@/components/ui/ZARPrice'
 import { Button } from '@/components/ui/button'
+import { ShinyButton } from '@/components/ui/shiny-button'
+import { MagicTextReveal } from '@/components/ui/magic-text-reveal'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Check, ArrowRight, Sparkles, Shield, TrendingUp, 
-  Users, Zap, Brain, Target, Award, Calculator, 
-  GitBranch, MessageSquare, Play, Layout, Rocket
+import {
+  Check, ArrowRight, Sparkles, Shield, TrendingUp,
+  Users, Zap, Brain, Target, Award, Calculator,
+  GitBranch, MessageSquare, Play, Layout, Rocket,
+  Menu, X
 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import guildLogo from '@/assets/guild-logo.png'
 import { useWaitlistStatus } from '@/hooks/useWaitlistStatus'
+import {
+  fadeUp, fadeIn, scaleIn, slideInLeft, slideInRight,
+  staggerContainer, viewportOnce, springTransition
+} from '@/lib/transitions'
+import { TiltCard } from '@/components/ui/tilt-card'
+import Footer from '@/components/Footer'
 
 function LandingPage() {
     const navigate = useNavigate();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { spotsRemaining, totalSpots, loading } = useWaitlistStatus();
     const [scrolled, setScrolled] = useState(false);
 
@@ -25,13 +35,13 @@ function LandingPage() {
     }, []);
 
     const growthSteps = [
-        { title: 'LEARN', description: 'Tell Guild about your business in a natural conversation. It remembers your voice, your audience, your goals - and gets smarter every cycle.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CREATE', description: 'Blog posts, social content, reels, emails, and ad creatives - written and designed in your exact brand voice. Quality-checked before you see them.', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'PUBLISH', description: 'Your content goes live at the optimal time on every connected platform. Automatically. Every week. Without you scheduling a single post.', icon: <Layout />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'ATTRACT', description: 'People discover your business through content Guild creates - across social, search, and email. You show up consistently without lifting a finger.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CAPTURE', description: 'When someone engages, Guild adds them to your CRM and scores how likely they are to buy. No lead falls through the cracks.', icon: <Users />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'NURTURE', description: 'Personalised follow-up sequences keep the conversation going until they are ready to buy. Written in your voice. Sent at the right moment.', icon: <MessageSquare />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CONVERT', description: 'Guild tracks what content drives real sales and does more of it. Every cycle, the system gets smarter about your business and your buyers.', icon: <Rocket />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'LEARN', description: 'Tell Guild about your business once. It learns your voice, audience, and goals — and gets smarter every cycle.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CREATE', description: 'Blog posts, social content, reels, and emails — written in your brand voice and quality-checked before you see them.', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'PUBLISH', description: 'Content goes live at the optimal time on every platform. Automatically. Every week. Zero scheduling.', icon: <Layout />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'ATTRACT', description: 'People find your business through content Guild creates — across social, search, and email. You show up consistently.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CAPTURE', description: 'Every engagement becomes a scored lead in your CRM. No spreadsheets. No manual tracking. No lead lost.', icon: <Users />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'NURTURE', description: 'Personalised sequences go out automatically — in your voice, at the right moment — until they\'re ready to buy.', icon: <MessageSquare />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CONVERT', description: 'Guild tracks what drives sales and does more of it. Every cycle, it gets sharper on your business and your buyers.', icon: <Rocket />, color: 'from-blue-600 to-indigo-600' },
     ];
 
     const plans = [
@@ -94,26 +104,93 @@ function LandingPage() {
     return (
         <div className="min-h-screen bg-transparent text-white selection:bg-indigo-500/30">
             {/* Nav */}
-            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'py-3 backdrop-blur-md bg-zinc-950/50 border-b border-white/5' : 'py-6'}`}>
+            <motion.nav
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="fixed top-0 left-0 right-0 z-50"
+                style={{
+                    backdropFilter: scrolled || mobileMenuOpen ? 'blur(20px) saturate(1.6)' : 'blur(0px)',
+                    WebkitBackdropFilter: scrolled || mobileMenuOpen ? 'blur(20px) saturate(1.6)' : 'blur(0px)',
+                    background: scrolled || mobileMenuOpen ? 'rgba(2,2,3,0.90)' : 'transparent',
+                    borderBottom: scrolled || mobileMenuOpen ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
+                    transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
+                    padding: scrolled ? '12px 0' : '24px 0',
+                }}
+            >
                 <div className="container mx-auto px-6 flex items-center justify-between max-w-7xl">
-                    <div className="flex items-center gap-3">
+                    <motion.div
+                        animate={{ scale: scrolled ? 0.9 : 1 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        className="flex items-center gap-3"
+                    >
                         <img src={guildLogo} alt="Guild" className="w-9 h-9 border border-white/10 rounded-lg shadow-2xl" />
-                        <span className="text-xl font-bold tracking-tight font-heading">Guild <span className="text-indigo-400">AI</span></span>
-                    </div>
+                        <span className="text-xl font-bold tracking-tight">Guild <span className="text-indigo-400">AI</span></span>
+                    </motion.div>
+
+                    {/* Desktop links */}
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-                        <Link to="/how-it-works" className="hover:text-white transition-colors">How It Works</Link>
-                        <Link to="/features" className="hover:text-white transition-colors">Features</Link>
-                        <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-                        <Link to="/about" className="hover:text-white transition-colors">About</Link>
+                        <Link to="/how-it-works" className="hover:text-white transition-colors duration-200">How It Works</Link>
+                        <Link to="/features" className="hover:text-white transition-colors duration-200">Features</Link>
+                        <Link to="/pricing" className="hover:text-white transition-colors duration-200">Pricing</Link>
+                        <Link to="/about" className="hover:text-white transition-colors duration-200">About</Link>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <Link to="/login" className="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2">Login</Link>
-                        <Button className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-full px-6 shadow-xl shadow-indigo-500/20 border-t border-white/20" onClick={() => navigate('/waitlist')}>
+
+                    {/* Desktop CTAs */}
+                    <div className="hidden md:flex items-center gap-4">
+                        <Link to="/login" className="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 transition-colors duration-200">Login</Link>
+                        <ShinyButton onClick={() => navigate('/waitlist')} className="text-sm px-5 py-2.5">
                             Claim Founding Access
-                        </Button>
+                        </ShinyButton>
+                    </div>
+
+                    {/* Mobile: hamburger + CTA */}
+                    <div className="flex md:hidden items-center gap-3">
+                        <ShinyButton onClick={() => navigate('/waitlist')} className="text-xs px-4 py-2">
+                            Get Access
+                        </ShinyButton>
+                        <button
+                            onClick={() => setMobileMenuOpen(o => !o)}
+                            className="p-2 text-zinc-400 hover:text-white transition-colors"
+                            aria-label="Toggle menu"
+                        >
+                            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                        </button>
                     </div>
                 </div>
-            </nav>
+
+                {/* Mobile dropdown menu */}
+                <AnimatePresence>
+                    {mobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                            className="md:hidden overflow-hidden border-t border-white/6"
+                        >
+                            <div className="container mx-auto px-6 py-4 flex flex-col gap-1">
+                                {[
+                                    { to: '/how-it-works', label: 'How It Works' },
+                                    { to: '/features', label: 'Features' },
+                                    { to: '/pricing', label: 'Pricing' },
+                                    { to: '/about', label: 'About' },
+                                    { to: '/login', label: 'Login' },
+                                ].map(({ to, label }) => (
+                                    <Link
+                                        key={to}
+                                        to={to}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="py-3 px-2 text-sm font-medium text-zinc-400 hover:text-white border-b border-white/5 last:border-0 transition-colors"
+                                    >
+                                        {label}
+                                    </Link>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.nav>
 
             {/* Hero */}
             <section className="pt-44 pb-24 px-6 relative overflow-hidden">
@@ -139,12 +216,15 @@ function LandingPage() {
                             Guild replaces them with one system that creates your content, publishes it at the right time, captures every lead who engages, and nurtures them into customers - without you doing any of it manually.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Button size="lg" className="bg-white text-black hover:bg-zinc-200 rounded-full px-10 py-7 text-lg font-bold transition-all hover:scale-105 active:scale-95" onClick={() => navigate('/waitlist')}>
-                                Claim Founding Access <ArrowRight className="ml-2 text-indigo-600" />
-                            </Button>
-                            <Button size="lg" variant="ghost" className="text-zinc-400 hover:text-indigo-400 rounded-full px-8 py-7 text-lg group">
-                                <Play className="mr-2 fill-indigo-400/50 group-hover:fill-indigo-400 transition-all shadow-glow-sm" size={18} /> See How It Works
-                            </Button>
+                            <ShinyButton onClick={() => navigate('/waitlist')} className="text-lg px-10 py-5">
+                                Claim Founding Access
+                            </ShinyButton>
+                            <Link to="/how-it-works">
+                                <button className="flex items-center gap-2 text-zinc-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full px-8 py-4 text-base transition-all duration-200 group">
+                                    <Play className="fill-indigo-400/60 group-hover:fill-indigo-400 transition-all" size={14} />
+                                    See How It Works
+                                </button>
+                            </Link>
                         </div>
                         {/* Social proof strip */}
                         <div className="mt-10 flex items-center justify-center gap-3">
@@ -186,56 +266,154 @@ function LandingPage() {
             {/* How It Works Section */}
             <section className="py-24 px-6 border-y border-white/5 relative overflow-hidden">
                 <div className="container mx-auto max-w-7xl relative z-10">
-                    <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">The Only Platform That Closes the Full Loop</h2>
-                        <p className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                    <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={viewportOnce}
+                        className="text-center mb-20"
+                    >
+                        <motion.h2 variants={fadeUp} className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">The Only Platform That Closes the Full Loop</motion.h2>
+                        <motion.p variants={fadeUp} className="text-zinc-400 max-w-2xl mx-auto text-lg leading-relaxed">
                             Most tools help you create content and leave the rest to you. Guild creates it, publishes it, captures everyone who engages, and turns them into paying customers - as one connected system.
-                        </p>
-                    </div>
+                        </motion.p>
+                    </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+                    {/* Glass step cards */}
+                    <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={viewportOnce}
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+                    >
                         {growthSteps.map((step, i) => (
-                            <motion.div 
+                            <motion.div
                                 key={i}
-                                whileHover={{ y: -5 }}
-                                className="glass-panel p-6 rounded-2xl flex flex-col items-center text-center group cursor-default"
+                                variants={fadeUp}
+                                whileHover={{ y: -4, transition: { duration: 0.25, ease: [0.16,1,0.3,1] } }}
+                                className="relative overflow-hidden rounded-2xl cursor-default group"
+                                style={{
+                                    background: 'rgba(255,255,255,0.055)',
+                                    border: '1px solid rgba(255,255,255,0.10)',
+                                }}
                             >
-                                <div className={`w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-6 shadow-glow-sm group-hover:scale-110 transition-transform`}>
-                                    {step.icon}
+                                {/* Top accent line */}
+                                <div className="absolute top-0 left-0 right-0 h-[1px]"
+                                    style={{ background: 'linear-gradient(90deg, transparent, rgba(94,106,210,0.6) 50%, transparent)' }} />
+
+                                {/* Large decorative step number — sits behind content */}
+                                <div className="absolute -bottom-3 -right-2 text-[80px] font-black leading-none select-none pointer-events-none"
+                                    style={{ color: 'rgba(94,106,210,0.08)', letterSpacing: '-4px' }}>
+                                    {String(i + 1).padStart(2, '0')}
                                 </div>
-                                <h3 className="text-sm font-bold font-heading tracking-[0.2em] mb-3 text-zinc-100 uppercase">{step.title}</h3>
-                                <p className="text-sm text-zinc-400 leading-relaxed font-light">{step.description}</p>
+
+                                {/* Hover glow */}
+                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                                    style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(94,106,210,0.10) 0%, transparent 70%)' }} />
+
+                                <div className="relative z-10 p-6">
+                                    {/* Icon + step number pill */}
+                                    <div className="flex items-center justify-between mb-5">
+                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-indigo-300"
+                                            style={{ background: 'rgba(94,106,210,0.12)', border: '1px solid rgba(94,106,210,0.2)' }}>
+                                            {step.icon}
+                                        </div>
+                                        <span className="label-eyebrow text-indigo-500/50">{String(i + 1).padStart(2, '0')}</span>
+                                    </div>
+
+                                    {/* Title */}
+                                    <h3 className="label-eyebrow text-indigo-300 mb-2">{step.title}</h3>
+
+                                    {/* Description — short, readable */}
+                                    <p className="text-sm text-zinc-300 leading-relaxed font-light">{step.description}</p>
+                                </div>
                             </motion.div>
                         ))}
-                    </div>
-                    
-                    {/* Trust signal */}
-                    <div className="mt-16 text-center">
-                        <p className="text-sm font-bold uppercase tracking-[0.2em] text-indigo-400/70">Beta cohort now open - founding member spots filling fast</p>
-                    </div>
+                    </motion.div>
 
-                    <div className="mt-16 flex justify-center gap-6 items-center flex-wrap transition-all duration-700">
-                        <span className="text-sm font-bold uppercase tracking-[0.3em] text-indigo-300 block w-full text-center mb-8">Connects with the tools you already use</span>
-                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Instagram</div>
-                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">LinkedIn</div>
-                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Facebook</div>
-                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Mailchimp</div>
-                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Shopify</div>
-                        <div className="px-8 py-3 border border-indigo-400/40 shadow-glow-sm rounded-full text-zinc-200 text-lg font-heading hover:border-indigo-400/60 transition-colors bg-indigo-500/5">Google Ads</div>
+                    {/* Integration pills with brand colours */}
+                    <div className="mt-16">
+                        <p className="label-eyebrow text-zinc-600 text-center mb-8">Connects with the tools you already use</p>
+                        <div className="flex justify-center gap-3 items-center flex-wrap">
+                            {[
+                                { name: 'Instagram', dot: '#E1306C' },
+                                { name: 'LinkedIn', dot: '#0A66C2' },
+                                { name: 'Facebook', dot: '#1877F2' },
+                                { name: 'Mailchimp', dot: '#FFE01B' },
+                                { name: 'Shopify', dot: '#96BF48' },
+                                { name: 'Google Ads', dot: '#4285F4' },
+                            ].map(({ name, dot }) => (
+                                <div key={name} className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/8 bg-white/3 hover:border-white/15 transition-colors">
+                                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: dot }} />
+                                    <span className="text-sm text-zinc-400">{name}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <hr className="section-divider" />
+            {/* Magic Text Interactive Section */}
+            <section className="py-24 px-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-950/10 to-transparent pointer-events-none" />
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={viewportOnce}
+                    className="container mx-auto max-w-4xl text-center"
+                >
+                    <p className="label-eyebrow text-indigo-400/70 mb-6">The system in one sentence</p>
+                    <p className="text-zinc-500 text-sm mb-10 tracking-wide">Hover to reveal ↓</p>
+                    <div className="flex justify-center">
+                        <MagicTextReveal
+                            text="Guild does the work."
+                            color="rgba(165, 180, 252, 1)"
+                            fontSize={typeof window !== 'undefined' && window.innerWidth < 768 ? 42 : 80}
+                            fontFamily="Inter, sans-serif"
+                            fontWeight={800}
+                            spread={70}
+                            speed={0.5}
+                            density={3}
+                            resetOnMouseLeave={true}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                backdropFilter: 'none',
+                            }}
+                        />
+                    </div>
+                    <p className="text-zinc-600 text-sm mt-10 max-w-sm mx-auto leading-relaxed">
+                        Content created, published, leads captured and nurtured — without you lifting a finger.
+                    </p>
+                </motion.div>
+            </section>
+
+            <hr className="section-divider" />
             {/* Differentiators */}
             <section className="py-32 px-6">
                 <div className="container mx-auto max-w-6xl">
                     <div className="grid lg:grid-cols-2 gap-20 items-center">
-                        <div className="relative">
+                        <motion.div
+                            variants={slideInLeft}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={viewportOnce}
+                            className="relative"
+                        >
                             <div className="absolute -inset-20 bg-indigo-500/5 blur-[100px] rounded-full" />
                             <h2 className="text-4xl md:text-5xl font-bold font-heading mb-8 relative">
                                 What Makes <br /> <span className="text-indigo-400">Guild Different</span>
                             </h2>
-                            <div className="space-y-8 relative">
+                            <motion.div
+                                variants={staggerContainer}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={viewportOnce}
+                                className="space-y-8 relative"
+                            >
                                 <div className="flex gap-6">
                                     <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0 text-indigo-400">
                                         <Shield size={22} strokeWidth={1.5} />
@@ -263,9 +441,15 @@ function LandingPage() {
                                         <p className="text-base text-zinc-400 leading-relaxed font-light">Content that performs well shapes the next campaign. Leads that convert refine who gets targeted next. Guild builds a deep understanding of your business over time - making it more valuable every month, and making switching feel pointless.</p>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className="glass-panel p-10 rounded-2xl relative border border-white/10">
+                            </motion.div>
+                        </motion.div>
+                        <motion.div
+                            variants={slideInRight}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={viewportOnce}
+                            className="glass-panel p-10 rounded-2xl relative border border-white/10"
+                        >
                             <h3 className="text-2xl font-bold font-heading mb-8">The Math Is Simple</h3>
                             <div className="space-y-6 mb-10">
                                 <div className="flex justify-between items-center text-sm">
@@ -309,18 +493,25 @@ function LandingPage() {
                                 <p className="text-xs mt-1 font-medium text-white/40 line-through tracking-tighter">Regular price $149/mo</p>
                                 <p className="text-xs mt-3 font-medium text-white/60 tracking-tighter italic">Founding rate locked in permanently</p>
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
             </section>
 
+            <hr className="section-divider" />
             {/* Pricing */}
             <section className="py-24 px-6">
                 <div className="container mx-auto max-w-6xl">
-                    <div className="text-center mb-6">
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={viewportOnce}
+                        className="text-center mb-6"
+                    >
                         <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Founding Member Pricing.</h2>
                         <p className="text-zinc-400 max-w-xl mx-auto">Lock in your rate before public launch. One system replaces 6+ tools - and does the work for you.</p>
-                    </div>
+                    </motion.div>
 
                     {/* Founding member banner */}
                     <div className="mb-10 p-4 rounded-2xl border border-indigo-500/30 bg-indigo-500/5 flex items-center justify-center gap-3 text-sm max-w-2xl mx-auto">
@@ -328,9 +519,19 @@ function LandingPage() {
                         <span className="text-indigo-300 font-medium">Founding members lock in today's rate permanently - it never increases, even when public pricing does.</span>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={viewportOnce}
+                        className="grid md:grid-cols-3 gap-8"
+                    >
                         {plans.map((p, i) => (
-                            <div key={i} className={`glass-panel p-10 rounded-3xl relative flex flex-col ${p.popular ? 'border-indigo-500/50 scale-105 z-10 shadow-2xl shadow-indigo-500/10' : 'border-white/10'}`}>
+                            <motion.div key={i} variants={scaleIn}>
+                            <TiltCard
+                                className={`glass-panel p-10 rounded-3xl relative flex flex-col h-full ${p.popular ? 'border-indigo-500/50 shadow-2xl shadow-indigo-500/10' : 'border-white/10'}`}
+                                glowColor={p.popular ? 'rgba(99,102,241,0.18)' : 'rgba(94,106,210,0.10)'}
+                            >
                                 {p.popular && <Badge className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white font-bold border-none">MOST POPULAR</Badge>}
                                 <h3 className="text-2xl font-bold font-heading mb-1">{p.name}</h3>
                                 <div className="flex items-baseline gap-2 mb-1">
@@ -341,12 +542,12 @@ function LandingPage() {
                                 <ZARPrice usd={parseInt(p.price.replace('$', ''))} className="mb-1" />
                                 <p className="text-xs text-indigo-400/70 font-medium mb-5 uppercase tracking-widest">Founding rate - locked for life</p>
                                 <p className="text-zinc-400 text-sm mb-8">{p.description}</p>
-                                <Button 
-                                    className={`w-full py-7 rounded-2xl mb-10 text-lg font-bold ${p.popular ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-500/20 active:scale-95' : 'bg-white/5 hover:bg-white/10 text-white'}`} 
+                                <ShinyButton
+                                    className="w-full mb-10 text-base justify-center"
                                     onClick={() => p.name === 'Scale' ? navigate('/contact') : navigate('/waitlist')}
                                 >
                                     {p.cta}
-                                </Button>
+                                </ShinyButton>
                                 <ul className="space-y-4 flex-1">
                                     {p.features.map((f, fi) => (
                                         <li key={fi} className="flex items-center text-sm text-zinc-400 gap-3">
@@ -357,9 +558,10 @@ function LandingPage() {
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
+                            </TiltCard>
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
 
                     {/* Guarantee */}
                     <div className="mt-12 text-center">
@@ -391,9 +593,9 @@ function LandingPage() {
                                 Founding members lock in today's rate permanently. 50 spots. Rate increases at public launch.
                             </p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                                <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-full px-12 py-8 text-xl font-bold shadow-2xl shadow-indigo-500/20" onClick={() => navigate('/waitlist')}>
-                                    Claim Your Founding Rate →
-                                </Button>
+                                <ShinyButton onClick={() => navigate('/waitlist')} className="text-lg px-12 py-5">
+                                    Claim Your Founding Rate
+                                </ShinyButton>
                             </div>
                             <p className="mt-8 text-zinc-300 text-lg md:text-xl font-medium">Your data is yours. Cancel anytime. No lock-in contracts.</p>
                         </motion.div>
@@ -401,55 +603,7 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="py-20 px-6 border-t border-white/5 bg-zinc-950/20 backdrop-blur-3xl">
-                <div className="container mx-auto max-w-7xl">
-                    <div className="grid md:grid-cols-4 gap-12 mb-16">
-                        <div className="col-span-1 md:col-span-1">
-                            <div className="flex items-center gap-3 mb-6">
-                                <img src={guildLogo} alt="Guild" className="w-8 h-8 rounded-md grayscale opacity-50" />
-                                <span className="font-bold tracking-tight text-white/50 underline decoration-white/10 uppercase text-sm">Guild AI</span>
-                            </div>
-                            <p className="text-zinc-600 text-sm leading-relaxed">
-                                The only platform that turns content into customers - automatically.
-                            </p>
-                        </div>
-                        <div>
-                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-400 mb-8">Product</h4>
-                            <ul className="space-y-4 text-sm font-medium text-zinc-400">
-                                <li><Link to="/features" className="hover:text-indigo-400 transition-colors">Features</Link></li>
-                                <li><Link to="/how-it-works" className="hover:text-indigo-400 transition-colors">How It Works</Link></li>
-                                <li><Link to="/integrations" className="hover:text-indigo-400 transition-colors">Integrations</Link></li>
-                                <li><Link to="/pricing" className="hover:text-indigo-400 transition-colors">Pricing</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-400 mb-8">Company</h4>
-                            <ul className="space-y-4 text-sm font-medium text-zinc-400">
-                                <li><Link to="/about" className="hover:text-white transition-colors">Our Vision</Link></li>
-                                <li><Link to="/affiliates" className="hover:text-white transition-colors">Affiliate Program</Link></li>
-                                <li><Link to="/contact" className="hover:text-white transition-colors">Support & Contact</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-heading font-black text-xs tracking-widest uppercase text-zinc-400 mb-8">Legal</h4>
-                            <ul className="space-y-4 text-sm font-medium text-zinc-400">
-                                <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-                                <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-                                <li><Link to="/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-                     <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs uppercase tracking-[0.2em] font-bold text-zinc-700">
-                        <p>© 2026 GUILD AI • ALL RIGHTS RESERVED</p>
-                        <div className="flex gap-8 mt-4 md:mt-0">
-                            <span className="hover:text-indigo-400 cursor-pointer transition-colors uppercase">Twitter/X</span>
-                            <span className="hover:text-indigo-400 cursor-pointer transition-colors uppercase">LinkedIn</span>
-                            <span className="hover:text-indigo-400 cursor-pointer transition-colors uppercase">Instagram</span>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     )
 }

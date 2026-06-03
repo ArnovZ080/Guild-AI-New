@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import Footer from '@/components/Footer'
 import { Button } from '@/components/ui/button'
 import {
   ArrowLeft, Lightbulb, Heart, Shield, Zap, Sparkles
@@ -96,7 +97,7 @@ function AboutUsPage() {
           <p className="text-indigo-300 text-lg font-medium mb-8 leading-relaxed border-l-2 border-indigo-500/40 pl-4">
             "What would it take to make the whole thing work, end to end, without the founder being the glue?" - that's the only question Guild was built to answer.
           </p>
-          <div className="space-y-6 text-zinc-400 leading-relaxed text-lg font-light">
+          <div className="space-y-6 text-zinc-400 leading-relaxed text-base font-light max-w-prose">
             <p>
               I built Guild out of a specific frustration. After 25 years working with businesses across strategy, operations, and growth, I kept seeing the same pattern: smart founders spending 10+ hours a week on marketing that wasn't converting. Not because they lacked talent or effort - but because every tool they used handled one piece of the job and left the rest to them.
             </p>
@@ -171,6 +172,7 @@ function AboutUsPage() {
           </Button>
         </div>
       </section>
+      <Footer />
     </div>
   )
 }

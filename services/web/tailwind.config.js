@@ -19,24 +19,28 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
-                heading: ['Montserrat', 'sans-serif'],
+                heading: ['Inter', 'sans-serif'],
+                mono: ['JetBrains Mono', 'monospace'],
             },
             colors: {
-                // Primary Accent — Cobalt Blue
-                cobalt: {
-                    DEFAULT: '#1a6fff',
-                    light: '#4d8fff',
-                    dark: '#0f4fcc',
-                    glow: 'rgba(26, 111, 255, 0.15)',
+                // Cinema accent
+                accent: {
+                    DEFAULT: '#5E6AD2',
+                    light: '#818CF8',
+                    glow: 'rgba(94, 106, 210, 0.2)',
+                },
+                ember: {
+                    DEFAULT: '#F59E0B',
+                    glow: 'rgba(245, 158, 11, 0.3)',
                 },
 
-                // Dark Surfaces
+                // Dark Surfaces — Cinema system
                 surface: {
-                    base: '#03050a',
-                    raised: '#070b14',
-                    card: '#0d1628',
-                    overlay: '#111b2e',
-                    border: 'rgba(255, 255, 255, 0.08)',
+                    deep:    '#020203',
+                    base:    '#050506',
+                    elevated:'#0a0a0c',
+                    card:    'rgba(255,255,255,0.04)',
+                    border:  'rgba(255,255,255,0.08)',
                 },
 
                 // Functional Colors (muted for dark mode)

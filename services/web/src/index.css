@@ -7,38 +7,51 @@
      Near-black base for ember + glass effect
      ========================================== */
   :root {
-    --background: 222 47% 4%;
-    --foreground: 210 20% 95%;
-    --card: 222 47% 6%;
-    --card-foreground: 210 20% 95%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217 33% 15%;
-    --secondary-foreground: 210 20% 95%;
-    --muted: 217 33% 15%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 217 33% 15%;
-    --accent-foreground: 210 20% 95%;
+    /* ── Modern Dark Cinema token set ── */
+    --background: 240 50% 2%;
+    --foreground: 240 5% 93%;
+    --card: 240 20% 4%;
+    --card-foreground: 240 5% 93%;
+    --primary: 234 89% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 8%;
+    --secondary-foreground: 240 5% 93%;
+    --muted: 240 10% 8%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 234 89% 60%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 63% 51%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 217 91% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 8% 10%;
+    --input: 240 8% 10%;
+    --ring: 234 89% 60%;
     --radius: 1rem;
-    --popover: 222 47% 6%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 240 20% 4%;
+    --popover-foreground: 240 5% 93%;
 
-    /* Surface system */
-    --surface-base: #090a0f;
-    --surface-raised: #0f1118;
-    --surface-overlay: rgba(9, 10, 15, 0.85);
-    --surface-glass: rgba(255, 255, 255, 0.12);
-    --surface-glass-border: rgba(255, 255, 255, 0.16);
-    --surface-glass-hover: rgba(255, 255, 255, 0.15);
+    /* ── Cinema surface system ── */
+    --bg-deep:    #020203;
+    --bg-base:    #050506;
+    --bg-elevated:#0a0a0c;
+    --surface:    rgba(255, 255, 255, 0.04);
+    --surface-glass: rgba(255, 255, 255, 0.06);
+    --surface-glass-border: rgba(255, 255, 255, 0.08);
+    --surface-glass-hover: rgba(255, 255, 255, 0.10);
+    --surface-overlay: rgba(2, 2, 3, 0.85);
 
-    /* Text contrast boost */
-    --text-secondary: #a1a1aa;   /* zinc-400 */
-    --text-muted: #71717a;       /* zinc-500 */
+    /* ── Accent ── */
+    --accent-color: #5E6AD2;
+    --accent-glow:  rgba(94, 106, 210, 0.2);
+    --ember-amber:  #F59E0B;
+
+    /* ── Typography ── */
+    --fg-primary:   #EDEDEF;
+    --fg-muted:     #A1A1AA;   /* zinc-400 — WCAG AA compliant on dark bg */
+    --fg-subtle:    #71717A;   /* zinc-500 — use only for placeholder/hints */
+
+    /* ── Easing ── */
+    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out:    cubic-bezier(0.0, 0, 0.2, 1);
   }
 
   * {
@@ -47,70 +60,109 @@
 
   html {
     font-size: 16px;
+    scroll-behavior: smooth;
+    color-scheme: dark;
   }
 
   body {
-    background-color: var(--surface-base);
-    color: hsl(var(--foreground));
+    background: linear-gradient(180deg, #0a0a0f 0%, #020203 100%);
+    background-attachment: fixed;
+    color: var(--fg-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: 'Inter', sans-serif;
     line-height: 1.7;
+    overflow-x: hidden;
   }
 
-  /* Space Grotesk for headings */
-  h1, h2, h3, h4, .font-heading {
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: -0.03em;
+  /* ── Inter Cinema Typography System ── */
+  /* Display / H1: tight, heavy */
+  h1, .font-heading {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+
+  /* H2: slightly lighter */
+  h2 {
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  /* H3/H4 */
+  h3, h4 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  /* Eyebrow labels */
+  .label-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 }
 
 /* ==========================================
-   Glass Panel - Frosted glass with shimmer
+   Glass Panel — Modern Dark Cinema surface
+   Deep, dark glass that lets ShinyButtons
+   and glowing accents pop naturally.
    ========================================== */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 12px;
-  backdrop-filter: blur(8px) saturate(1.4);
-  -webkit-backdrop-filter: blur(8px) saturate(1.4);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
   position: relative;
   overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  transition:
+    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow   0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    transform    0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Subtle gradient highlight across top (simulates light hitting glass) */
+/* Top-edge light catch — simulates a light source above the card */
 .glass-panel::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
   background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.01) 40%,
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.12) 70%,
     transparent 100%
   );
+  border-radius: inherit;
+  pointer-events: none;
   z-index: 1;
 }
 
-/* Shimmer sweep on hover (light moving across glass) */
+/* Shimmer sweep on hover */
 .glass-panel::after {
   content: '';
   position: absolute;
   top: -60%;
   left: -60%;
-  width: 60%;
+  width: 55%;
   height: 240%;
   background: linear-gradient(
     105deg,
     transparent 30%,
-    rgba(99, 102, 241, 0) 40%,
-    rgba(130, 160, 255, 0.22) 48%,
-    rgba(200, 220, 255, 0.14) 50%,
-    rgba(99, 102, 241, 0) 58%,
+    rgba(94, 106, 210, 0) 40%,
+    rgba(94, 106, 210, 0.08) 48%,
+    rgba(165, 180, 252, 0.06) 50%,
+    rgba(94, 106, 210, 0) 58%,
     transparent 70%
   );
   transform: translateX(-100%);
@@ -120,22 +172,45 @@
 }
 
 .glass-panel:hover::after {
-  transform: translateX(320%);
-  transition: transform 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(340%);
+  transition: transform 1.0s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(94, 106, 210, 0.22);
   box-shadow:
-    0 0 0 1px rgba(99, 102, 241, 0.15),
-    0 20px 50px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(99, 102, 241, 0.15);
-  transform: translateY(-2px);
+    0 0 0 1px rgba(94, 106, 210, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 24px rgba(94, 106, 210, 0.06);
 }
 
-/* Ensure content inside the panel sits above the pseudo-elements */
+/* Ensure content sits above pseudo-elements */
 .glass-panel > * {
+  position: relative;
+  z-index: 3;
+}
+
+/* Elevated variant — slightly more prominent, for hero/featured cards */
+.glass-panel-elevated {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel-elevated::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22) 50%, transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-panel-elevated > * {
   position: relative;
   z-index: 3;
 }
@@ -143,6 +218,14 @@
 /* ==========================================
    Component Utilities
    ========================================== */
+
+/* Section divider — subtle gradient rule between major sections */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(94,106,210,0.15) 30%, rgba(94,106,210,0.15) 70%, transparent 100%);
+  margin: 0;
+  border: none;
+}
 
 /* AI accent gradient */
 .gradient-cobalt {
@@ -220,4 +303,176 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.12);
+}
+
+/* ==========================================
+   Shiny Button
+   ========================================== */
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-angle-offset {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-percent {
+  syntax: "<percentage>";
+  initial-value: 5%;
+  inherits: false;
+}
+
+@property --gradient-shine {
+  syntax: "<color>";
+  initial-value: white;
+  inherits: false;
+}
+
+.shiny-cta {
+  --shiny-cta-bg: #0a0a0f;
+  --shiny-cta-bg-subtle: #1a1828;
+  --shiny-cta-fg: #ffffff;
+  --shiny-cta-highlight: #6366f1;
+  --shiny-cta-highlight-subtle: #a5b4fc;
+  --animation: gradient-angle linear infinite;
+  --duration: 3s;
+  --shadow-size: 2px;
+  --transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  outline-offset: 4px;
+  padding: 1rem 2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 360px;
+  color: var(--shiny-cta-fg);
+  background:
+    linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg)) padding-box,
+    conic-gradient(
+      from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+      transparent,
+      var(--shiny-cta-highlight) var(--gradient-percent),
+      var(--gradient-shine) calc(var(--gradient-percent) * 2),
+      var(--shiny-cta-highlight) calc(var(--gradient-percent) * 3),
+      transparent calc(var(--gradient-percent) * 4)
+    ) border-box;
+  box-shadow: inset 0 0 0 1px var(--shiny-cta-bg-subtle);
+  transition: var(--transition);
+  transition-property: --gradient-angle-offset, --gradient-percent, --gradient-shine;
+}
+
+.shiny-cta::before,
+.shiny-cta::after,
+.shiny-cta span::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+}
+
+.shiny-cta:active {
+  translate: 0 1px;
+}
+
+.shiny-cta::before {
+  --size: calc(100% - var(--shadow-size) * 3);
+  --position: 2px;
+  --space: calc(var(--position) * 2);
+  width: var(--size);
+  height: var(--size);
+  background: radial-gradient(
+    circle at var(--position) var(--position),
+    white calc(var(--position) / 4),
+    transparent 0
+  ) padding-box;
+  background-size: var(--space) var(--space);
+  background-repeat: space;
+  mask-image: conic-gradient(
+    from calc(var(--gradient-angle) + 45deg),
+    black,
+    transparent 10% 90%,
+    black
+  );
+  border-radius: inherit;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.shiny-cta::after {
+  --animation: shimmer-spin linear infinite;
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    -50deg,
+    transparent,
+    var(--shiny-cta-highlight),
+    transparent
+  );
+  mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+  opacity: 0.6;
+}
+
+.shiny-cta span {
+  z-index: 1;
+}
+
+.shiny-cta span::before {
+  --size: calc(100% + 1rem);
+  width: var(--size);
+  height: var(--size);
+  box-shadow: inset 0 -1ex 2rem 4px var(--shiny-cta-highlight);
+  opacity: 0;
+  transition: opacity var(--transition);
+  animation: calc(var(--duration) * 1.5) breathe linear infinite;
+}
+
+.shiny-cta,
+.shiny-cta::before,
+.shiny-cta::after {
+  animation:
+    var(--animation) var(--duration),
+    var(--animation) calc(var(--duration) / 0.4) reverse paused;
+  animation-composition: add;
+}
+
+.shiny-cta:is(:hover, :focus-visible) {
+  --gradient-percent: 20%;
+  --gradient-angle-offset: 95deg;
+  --gradient-shine: var(--shiny-cta-highlight-subtle);
+}
+
+.shiny-cta:is(:hover, :focus-visible),
+.shiny-cta:is(:hover, :focus-visible)::before,
+.shiny-cta:is(:hover, :focus-visible)::after {
+  animation-play-state: running;
+}
+
+.shiny-cta:is(:hover, :focus-visible) span::before {
+  opacity: 1;
+}
+
+@keyframes gradient-angle {
+  to { --gradient-angle: 360deg; }
+}
+
+@keyframes shimmer-spin {
+  to { rotate: 360deg; }
+}
+
+@keyframes breathe {
+  from, to { scale: 1; }
+  50% { scale: 1.2; }
 }

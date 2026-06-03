@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare, FileText, Activity, TrendingUp, GitBranch, Settings as SettingsIcon,
   LogOut, ChevronLeft,
@@ -49,25 +50,54 @@ const ViewLoader = () => (
 
 
 /* ═══════════════════════════════════════════
-   Sidebar NavLink
+   Sidebar NavLink — magnetic active indicator
    ═══════════════════════════════════════════ */
 function NavLink({ to, icon: Icon, label, isActive, collapsed, badge }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <Link
       to={to}
-      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200
-        ${isActive
-          ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-          : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-300 border border-transparent'
-        }
+      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-colors duration-150
+        ${isActive ? 'text-indigo-300' : 'text-zinc-500 hover:text-zinc-300'}
         ${collapsed ? 'justify-center' : ''}
       `}
       title={collapsed ? label : undefined}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <Icon size={18} strokeWidth={1.5} />
-      {!collapsed && <span className="text-sm">{label}</span>}
+      {/* Magnetic active pill */}
+      {isActive && (
+        <motion.div
+          layoutId="nav-active-pill"
+          className="absolute inset-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20"
+          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+        />
+      )}
+
+      {/* Ghost hover indicator */}
+      {!isActive && hovered && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="absolute inset-0 rounded-xl bg-white/4"
+        />
+      )}
+
+      <motion.div
+        animate={{ scale: isActive ? 1.1 : hovered ? 1.08 : 1 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        className="relative z-10 flex-shrink-0"
+      >
+        <Icon size={18} strokeWidth={1.5} />
+      </motion.div>
+
+      {!collapsed && <span className="text-sm relative z-10">{label}</span>}
+
       {badge > 0 && (
-        <span className={`absolute ${collapsed ? '-top-1 -right-1' : 'right-2'} min-w-[18px] h-[18px] flex items-center justify-center text-xs font-bold rounded-full bg-indigo-500 text-white`}>
+        <span className={`absolute ${collapsed ? '-top-1 -right-1' : 'right-2'} min-w-[18px] h-[18px] flex items-center justify-center text-xs font-bold rounded-full bg-indigo-500 text-white z-10`}>
           {badge > 99 ? '99+' : badge}
         </span>
       )}
@@ -206,6 +236,15 @@ function AppContent() {
           ${!isPublicPage && user ? 'pb-16 md:pb-0' : ''}
         `}
       >
+        <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          style={{ minHeight: '100%' }}
+        >
         <Routes>
           {/* Public Routes */}
           <Route path="/landing" element={<LandingPage />} />
@@ -236,6 +275,8 @@ function AppContent() {
           {/* Catch-all → Chat */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </motion.div>
+        </AnimatePresence>
       </main>
 
       <ToastContainer

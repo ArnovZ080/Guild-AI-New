@@ -1,12 +1,175 @@
+import { useState } from 'react'
+import Footer from '@/components/Footer'
 import { Link, useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { 
-  ArrowLeft, Shield, TrendingUp, Zap, Brain, 
-  Target, Users, Workflow, BarChart3, FileCheck, Clock,
-  Database, Globe, Lock, Cpu, MessageSquare, CheckCircle2,
-  Sparkles, Layers, Search, Rocket
+import { ShinyButton } from '@/components/ui/shiny-button'
+import {
+  ArrowLeft, Shield, TrendingUp, Brain,
+  Target, Workflow, Globe, Lock,
+  Sparkles, Layers, Search, MessageSquare, Rocket,
+  CheckCircle2, Check
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { fadeUp, scaleIn, staggerContainer, viewportOnce } from '@/lib/transitions'
+
+// ── Mini animated previews shown on hover ──────────────────────────────
+
+function TypewriterPreview() {
+  const lines = [
+    { text: 'Checking brand voice…', done: true },
+    { text: 'SEO alignment…', done: true },
+    { text: 'Ideal customer fit…', done: true },
+    { text: 'Ready to review ✓', done: false, highlight: true },
+  ]
+  return (
+    <div className="font-mono text-xs space-y-1.5 p-3 rounded-lg bg-black/40 border border-white/8">
+      {lines.map((l, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.3, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className={`flex items-center gap-2 ${l.highlight ? 'text-emerald-400' : 'text-zinc-400'}`}
+        >
+          {l.done && <Check size={10} className="text-indigo-400 shrink-0" />}
+          {l.highlight && <Sparkles size={10} className="shrink-0" />}
+          {l.text}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+function BarChartPreview() {
+  const bars = [40, 55, 48, 70, 65, 85, 90]
+  return (
+    <div className="flex items-end gap-1.5 h-16 px-3">
+      {bars.map((h, i) => (
+        <motion.div
+          key={i}
+          initial={{ height: 0 }}
+          animate={{ height: `${h}%` }}
+          transition={{ delay: i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex-1 rounded-t-sm"
+          style={{ background: `rgba(94,106,210,${0.4 + i * 0.08})` }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function PlatformPreview() {
+  const platforms = ['IG', 'LI', '✉', 'FB', '▶', 'GA']
+  return (
+    <div className="flex flex-wrap gap-2 p-3">
+      {platforms.map((p, i) => (
+        <motion.div
+          key={i}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: i * 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-400/30 flex items-center justify-center text-xs font-bold text-indigo-300"
+        >
+          {p}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+function LeadPreview() {
+  const leads = [
+    { name: 'Sarah M.', score: 94, hot: true },
+    { name: 'James T.', score: 78, hot: true },
+    { name: 'Priya K.', score: 61, hot: false },
+  ]
+  return (
+    <div className="space-y-2 p-3">
+      {leads.map((l, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, x: 12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.15, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="flex items-center justify-between text-xs"
+        >
+          <span className="text-zinc-300 font-medium">{l.name}</span>
+          <div className="flex items-center gap-2">
+            <div className="w-16 h-1.5 rounded-full bg-white/10">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${l.score}%` }}
+                transition={{ delay: i * 0.15 + 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="h-full rounded-full"
+                style={{ background: l.hot ? '#5E6AD2' : '#52586A' }}
+              />
+            </div>
+            <span className={l.hot ? 'text-indigo-400 font-bold' : 'text-zinc-500'}>{l.score}</span>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+// ── Bento cell ──────────────────────────────────────────────────────────
+
+function BentoCell({ icon: Icon, title, description, checks, preview: Preview, span = '', accent = false }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <motion.div
+      variants={scaleIn}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`glass-panel rounded-2xl p-7 relative overflow-hidden flex flex-col gap-4 cursor-default
+        ${span}
+        ${accent ? 'border-indigo-500/30' : 'border-white/8'}
+        transition-all duration-300 hover:border-indigo-400/30`}
+    >
+      {/* Glow on hover */}
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="absolute inset-0 pointer-events-none rounded-2xl"
+        style={{ background: 'radial-gradient(ellipse at 30% 0%, rgba(94,106,210,0.12) 0%, transparent 70%)' }}
+      />
+
+      <div className="flex items-start justify-between gap-4">
+        <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-400/30 flex items-center justify-center text-indigo-400 shrink-0">
+          <Icon size={20} strokeWidth={1.5} />
+        </div>
+        {accent && (
+          <span className="label-eyebrow text-indigo-400/60 text-[9px]">Core feature</span>
+        )}
+      </div>
+
+      <div>
+        <h3 className="font-bold text-base leading-snug mb-2">{title}</h3>
+        <p className="text-sm text-zinc-500 leading-relaxed font-light">{description}</p>
+      </div>
+
+      {/* Hover preview */}
+      {Preview && (
+        <div className={`transition-all duration-300 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+          {hovered && <Preview />}
+        </div>
+      )}
+
+      {checks && !Preview && (
+        <ul className="space-y-2 mt-auto">
+          {checks.map((c, i) => (
+            <li key={i} className="flex items-center gap-2 text-xs text-zinc-500">
+              <CheckCircle2 size={12} className="text-indigo-500 shrink-0" />
+              {c}
+            </li>
+          ))}
+        </ul>
+      )}
+    </motion.div>
+  )
+}
+
+// ── Page ────────────────────────────────────────────────────────────────
 
 function FeaturesPage() {
   const navigate = useNavigate()
@@ -15,208 +178,143 @@ function FeaturesPage() {
     <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6">
       <div className="container mx-auto max-w-6xl">
         <Link to="/landing">
-          <Button variant="ghost" className="text-zinc-400 hover:text-white mb-12 group">
-            <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+          <button className="text-zinc-500 hover:text-white mb-12 flex items-center gap-2 text-sm transition-colors group">
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             Back to Landing
-          </Button>
+          </button>
         </Link>
 
         {/* Hero */}
-        <section className="text-center mb-32">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-            >
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-white/10 text-xs font-bold tracking-widest text-indigo-400 mb-8 uppercase">
-                    <Sparkles size={14} /> The only platform that closes the full loop
-                </div>
-                <h1 className="text-5xl md:text-8xl font-bold font-heading tracking-tight mb-8">
-                    Every Feature Exists <br /> <span className="text-gradient-cobalt">to Get You Customers.</span>
-                </h1>
-                <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
-                    Not to impress you on a features page. Every capability in Guild connects to the next - from learning your business, to creating content, to capturing leads, to closing sales. One loop. No gaps.
-                </p>
+        <section className="text-center mb-20">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-white/8 text-xs label-eyebrow text-indigo-400 mb-8">
+              <Sparkles size={12} /> The only platform that closes the full loop
             </motion.div>
+            <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight mb-6">
+              Every Feature Exists <br />
+              <span className="text-gradient-cobalt">to Get You Customers.</span>
+            </motion.h1>
+            <motion.p variants={fadeUp} className="text-lg text-zinc-500 max-w-2xl mx-auto font-light leading-relaxed">
+              Not to impress you on a features page. Every capability connects — from learning your business, to creating content, to capturing leads, to closing sales.
+            </motion.p>
+          </motion.div>
         </section>
 
-        {/* Core Pillars */}
-        <div className="grid md:grid-cols-2 gap-8 mb-32">
-            <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
-                    <Shield className="w-6 h-6" />
-                </div>
-                <h3 className="text-3xl font-bold font-heading mb-4">Content That Checks Itself Before You See It</h3>
-                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Before any piece of content reaches you, Guild's quality layer has already checked it against your brand voice, your ideal customer profile, your SEO requirements, and your factual accuracy standards. You only review what's already worth approving. No other platform does this.</p>
-                <div className="space-y-3">
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">No generic AI output - ever</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Consistent brand voice across every platform</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">You approve everything before it goes live</span>
-                    </div>
-                </div>
-            </div>
-            <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
-                    <TrendingUp className="w-6 h-6" />
-                </div>
-                <h3 className="text-3xl font-bold font-heading mb-4">Gets Smarter the Longer You Use It</h3>
-                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Content that performs well shapes the next campaign. Leads that convert refine who gets targeted next. Guild builds a compounding understanding of your business - making it more valuable every month, and making switching feel pointless.</p>
-                <div className="space-y-3">
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Learns what content drives sales for your business</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Strategy adjusts automatically based on real results</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Performance improves month over month, not week over week</span>
-                    </div>
-                </div>
-            </div>
-            <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
-                    <Layers className="w-6 h-6" />
-                </div>
-                <h3 className="text-3xl font-bold font-heading mb-4">Every Content Format. One System.</h3>
-                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Blog posts, social updates, Instagram reels, carousels, email newsletters, ad creatives, and AI-generated video - all from one system that knows your brand deeply. No switching tools. No reformatting. No re-briefing a designer.</p>
-                <div className="space-y-3">
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Text, images, and AI video - all on-brand</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Platform-specific formatting (LinkedIn ≠ Instagram)</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">A full week of content generated in minutes</span>
-                    </div>
-                </div>
-            </div>
-            <div className="glass-panel p-10 rounded-3xl group hover:border-indigo-500/20 transition-all">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-8">
-                    <Brain className="w-6 h-6" />
-                </div>
-                <h3 className="text-3xl font-bold font-heading mb-4">Knows Your Business. Not Just Your Industry.</h3>
-                <p className="text-zinc-400 mb-8 font-light leading-relaxed">Guild learns through conversation and from every document you upload - product details, brand guidelines, customer profiles, past campaigns, even competitor research. Every piece of context makes every future output sharper.</p>
-                <div className="space-y-3">
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Upload any document to make Guild smarter instantly</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Business context injected into every piece of content</span>
-                    </div>
-                    <div className="flex gap-3 items-center text-sm">
-                        <CheckCircle2 size={16} className="text-indigo-500" />
-                        <span className="text-zinc-400">Your competitive edge compounds over time</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {/* Bento Grid */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-20 auto-rows-auto"
+        >
+          {/* Hero cell — 2 cols */}
+          <BentoCell
+            icon={Shield}
+            title="Content That Checks Itself Before You See It"
+            description="Guild's quality layer checks every piece against your brand voice, ICP, SEO standards, and accuracy before it reaches you. You only review what's already worth approving."
+            preview={TypewriterPreview}
+            accent
+            span="md:col-span-2"
+          />
 
-        {/* Technical Capabilities */}
-        <section className="mb-32">
-            <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold font-heading tracking-tight mb-4">Everything Working Together</h2>
-                <p className="text-zinc-400">Every capability connects. No gaps in the loop.</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <Workflow />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">Full Transparency</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Watch your content pipeline work in real-time. See every decision, every check, every output.</p>
-                </div>
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <Globe />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">21 Integrations at Launch</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Instagram, LinkedIn, Mailchimp, HubSpot, Shopify, Google Ads, and more - connected from day one. More added regularly.</p>
-                </div>
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <Lock />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">Your Data Is Private</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Your business data is never shared, never sold, and never used to train public models.</p>
-                </div>
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <Sparkles />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">AI Video & Images</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Professional graphics and short-form video, generated in minutes and checked for brand alignment before you see them.</p>
-                </div>
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <Search />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">Lead Capture Built In</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Anyone who engages with your content is captured and scored against your ideal customer profile. Automatically.</p>
-                </div>
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <MessageSquare />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">Automated Nurture Sequences</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Personalised email sequences that move leads from first touch to purchase - written in your voice, sent at the right time.</p>
-                </div>
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <Rocket />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">Live in 10 Minutes</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Tell Guild about your business in a 10-minute conversation and your first week of content is ready for review the same day.</p>
-                </div>
-                <div className="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-colors text-center md:text-left">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 mb-4 mx-auto md:mx-0">
-                        <Target />
-                    </div>
-                    <h4 className="font-bold text-sm mb-1">Goal-Driven Strategy</h4>
-                    <p className="text-sm text-zinc-400 leading-normal font-light">Set your business goals. Guild tracks what's working, reports back, and automatically does more of what's converting.</p>
-                </div>
-            </div>
-        </section>
+          {/* Gets smarter */}
+          <BentoCell
+            icon={TrendingUp}
+            title="Gets Smarter Every Cycle"
+            description="Content that converts shapes the next campaign. Leads that buy refine targeting. Compounding value, month over month."
+            preview={BarChartPreview}
+          />
+
+          {/* Every format */}
+          <BentoCell
+            icon={Layers}
+            title="Every Format. One System."
+            description="Blog posts, reels, carousels, emails, ads — all on-brand, all formatted for each platform, all in minutes."
+            preview={PlatformPreview}
+          />
+
+          {/* Lead capture */}
+          <BentoCell
+            icon={Search}
+            title="Lead Capture Built In"
+            description="Every engagement becomes a scored lead in your CRM. No spreadsheets. No manual tracking."
+            preview={LeadPreview}
+          />
+
+          {/* Knows your business */}
+          <BentoCell
+            icon={Brain}
+            title="Knows Your Business, Not Just Your Industry"
+            description="Upload your brand guide, product docs, competitor research. Every future output reflects everything it learns."
+            checks={['Upload any document instantly', 'Context injected into every piece', 'Your edge compounds over time']}
+          />
+
+          {/* Integrations */}
+          <BentoCell
+            icon={Globe}
+            title="21 Integrations at Launch"
+            description="Instagram, LinkedIn, Mailchimp, HubSpot, Shopify, Google Ads — connected from day one."
+            checks={['No switching tools', 'More added regularly', 'One-click connect']}
+          />
+
+          {/* Privacy */}
+          <BentoCell
+            icon={Lock}
+            title="Your Data Is Private"
+            description="Never shared, never sold, never used to train public models. Your business context stays yours."
+            checks={['No third-party sharing', 'No public model training', 'You own everything']}
+          />
+
+          {/* Nurture */}
+          <BentoCell
+            icon={MessageSquare}
+            title="Automated Nurture Sequences"
+            description="Personalised email sequences written in your voice, sent at the right moment — from first touch to purchase."
+            checks={['Written in your voice', 'Pre-approved by you', 'Timed to engagement signals']}
+            span="md:col-span-2"
+          />
+
+          {/* Speed */}
+          <BentoCell
+            icon={Rocket}
+            title="Live in 10 Minutes"
+            description="Tell Guild about your business in a short conversation and your first week of content is ready the same day."
+            checks={['10-min onboarding', 'Same-day first batch', 'No technical setup']}
+          />
+        </motion.div>
 
         {/* CTA */}
-        <section className="container mx-auto max-w-4xl">
-            <div className="glass-panel p-16 rounded-3xl text-center border border-indigo-400/40 shadow-glow-sm shadow-glow overflow-hidden relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-                <h2 className="text-4xl font-bold font-heading mb-6 tracking-tight">See It Working on Your Business</h2>
-                <p className="text-zinc-400 mb-3 text-lg font-light">Join the founding cohort and lock in your rate before public launch.</p>
-                <p className="text-zinc-600 text-sm mb-10">50 spots. Beta opens July 2026. Rate locked permanently.</p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                        size="lg"
-                        className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-full px-12 py-8 text-xl font-bold border-t border-white/20 w-full sm:w-auto"
-                        onClick={() => navigate('/waitlist')}
-                    >
-                        Claim Founding Access
-                    </Button>
-                    <Link to="/how-it-works">
-                        <Button variant="outline" size="lg" className="rounded-full px-12 py-8 text-xl border-white/10 text-white w-full sm:w-auto">
-                            See How It Works
-                        </Button>
-                    </Link>
-                </div>
+        <section className="max-w-4xl mx-auto">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
+            className="glass-panel p-16 rounded-3xl text-center border border-indigo-400/30 relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+            <h2 className="text-4xl font-bold mb-6 tracking-tight">See It Working on Your Business</h2>
+            <p className="text-zinc-500 mb-3 text-lg font-light">Join the founding cohort and lock in your rate before public launch.</p>
+            <p className="text-zinc-600 text-sm mb-10">50 spots. Rate locked permanently.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <ShinyButton onClick={() => navigate('/waitlist')} className="text-base px-10 py-4">
+                Claim Founding Access
+              </ShinyButton>
+              <Link to="/how-it-works">
+                <button className="text-zinc-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full px-10 py-4 text-base transition-all">
+                  See How It Works
+                </button>
+              </Link>
             </div>
+          </motion.div>
         </section>
       </div>
+      <Footer />
     </div>
   )
 }
