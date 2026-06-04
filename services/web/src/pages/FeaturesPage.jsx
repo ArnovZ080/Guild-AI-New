@@ -121,21 +121,24 @@ function BentoCell({ icon: Icon, title, description, checks, preview: Preview, s
       variants={scaleIn}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      whileHover={{ y: -3, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } }}
       className={`glass-panel rounded-2xl p-7 relative overflow-hidden flex flex-col gap-4 cursor-default
         ${span}
-        ${accent ? 'border-indigo-500/30' : 'border-white/8'}
-        transition-all duration-300 hover:border-indigo-400/30`}
+        ${accent ? 'border-indigo-500/30' : ''}
+        transition-colors duration-300 hover:border-indigo-400/25`}
     >
-      {/* Glow on hover */}
-      <motion.div
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="absolute inset-0 pointer-events-none rounded-2xl"
-        style={{ background: 'radial-gradient(ellipse at 30% 0%, rgba(94,106,210,0.12) 0%, transparent 70%)' }}
+      {/* Permanent subtle top glow — more intense on hover */}
+      <div
+        className="absolute inset-0 pointer-events-none rounded-2xl transition-opacity duration-300"
+        style={{
+          background: 'radial-gradient(ellipse at 30% 0%, rgba(94,106,210,0.08) 0%, transparent 70%)',
+          opacity: hovered ? 2 : 1,
+        }}
       />
 
       <div className="flex items-start justify-between gap-4">
-        <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-400/30 flex items-center justify-center text-indigo-400 shrink-0">
+        <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-indigo-400 shrink-0 transition-all duration-300
+          ${hovered ? 'bg-indigo-500/20 border-indigo-400/50 scale-110' : 'bg-indigo-500/10 border border-indigo-400/30'}`}>
           <Icon size={20} strokeWidth={1.5} />
         </div>
         {accent && (
@@ -145,20 +148,26 @@ function BentoCell({ icon: Icon, title, description, checks, preview: Preview, s
 
       <div>
         <h3 className="font-bold text-base leading-snug mb-2">{title}</h3>
-        <p className="text-sm text-zinc-500 leading-relaxed font-light">{description}</p>
+        <p className="text-sm text-zinc-400 leading-relaxed font-light">{description}</p>
       </div>
 
-      {/* Hover preview */}
+      {/* Live preview — always visible, not just on hover */}
       {Preview && (
-        <div className={`transition-all duration-300 ${hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-          {hovered && <Preview />}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-auto"
+        >
+          <Preview />
+        </motion.div>
       )}
 
       {checks && !Preview && (
         <ul className="space-y-2 mt-auto">
           {checks.map((c, i) => (
-            <li key={i} className="flex items-center gap-2 text-xs text-zinc-500">
+            <li key={i} className="flex items-center gap-2 text-xs text-zinc-400">
               <CheckCircle2 size={12} className="text-indigo-500 shrink-0" />
               {c}
             </li>
