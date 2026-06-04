@@ -212,7 +212,7 @@ function WaitlistPage() {
                 >
                   <p className="label-eyebrow text-indigo-400/70 mb-4 text-center">What you're locking in</p>
                   {[
-                    '$119/mo Growth rate — never increases',
+                    '$119/mo Growth rate - never increases',
                     'Content created, leads captured, nurtured automatically',
                     'Direct setup call before you go live',
                     'Priority access when beta opens',
@@ -301,9 +301,9 @@ function WaitlistPage() {
               >
                 <p className="label-eyebrow text-indigo-400/70 mb-4 text-center">What you've secured</p>
                 {[
-                  { label: 'Founding rate', value: '$119/mo — locked permanently' },
+                  { label: 'Founding rate', value: '$119/mo - locked permanently' },
                   { label: 'Regular price', value: '$149/mo (what others pay)' },
-                  { label: 'Beta access', value: "July 2026 — you're first in" },
+                  { label: 'Beta access', value: "July 2026 - you're first in" },
                   { label: 'Setup call', value: 'Direct with Arno before go-live' },
                 ].map((item, i) => (
                   <div key={i} className="flex justify-between items-center text-sm border-b border-white/5 pb-3 last:border-0 last:pb-0">

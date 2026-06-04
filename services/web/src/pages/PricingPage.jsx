@@ -123,7 +123,7 @@ function PricingPage() {
                     </div>
                 </motion.div>
 
-                {/* Pricing cards — same treatment as landing page */}
+                {/* Pricing cards - same treatment as landing page */}
                 <motion.div
                     variants={staggerContainer}
                     initial="hidden"
@@ -157,7 +157,7 @@ function PricingPage() {
                                         Regular price: {p.regularPrice}/mo
                                     </p>
                                     <p className="label-eyebrow text-indigo-400/70 mt-2">
-                                        Founding rate — locked for life
+                                        Founding rate - locked for life
                                     </p>
 
                                     <p className="text-base text-zinc-400 mt-5 font-light leading-relaxed">{p.description}</p>

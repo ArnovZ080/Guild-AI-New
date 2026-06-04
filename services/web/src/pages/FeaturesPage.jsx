@@ -127,7 +127,7 @@ function BentoCell({ icon: Icon, title, description, checks, preview: Preview, s
         ${accent ? 'border-indigo-500/30' : ''}
         transition-colors duration-300 hover:border-indigo-400/25`}
     >
-      {/* Permanent subtle top glow — more intense on hover */}
+      {/* Permanent subtle top glow - more intense on hover */}
       <div
         className="absolute inset-0 pointer-events-none rounded-2xl transition-opacity duration-300"
         style={{
@@ -151,7 +151,7 @@ function BentoCell({ icon: Icon, title, description, checks, preview: Preview, s
         <p className="text-sm text-zinc-400 leading-relaxed font-light">{description}</p>
       </div>
 
-      {/* Live preview — always visible, not just on hover */}
+      {/* Live preview - always visible, not just on hover */}
       {Preview && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -208,7 +208,7 @@ function FeaturesPage() {
               <span className="text-gradient-cobalt">to Get You Customers.</span>
             </motion.h1>
             <motion.p variants={fadeUp} className="text-lg text-zinc-500 max-w-2xl mx-auto font-light leading-relaxed">
-              Not to impress you on a features page. Every capability connects — from learning your business, to creating content, to capturing leads, to closing sales.
+              Not to impress you on a features page. Every capability connects - from learning your business, to creating content, to capturing leads, to closing sales.
             </motion.p>
           </motion.div>
         </section>
@@ -217,11 +217,10 @@ function FeaturesPage() {
         <motion.div
           variants={staggerContainer}
           initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
+          animate="visible"
           className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-20 auto-rows-auto"
         >
-          {/* Hero cell — 2 cols */}
+          {/* Hero cell - 2 cols */}
           <BentoCell
             icon={Shield}
             title="Content That Checks Itself Before You See It"
@@ -243,7 +242,7 @@ function FeaturesPage() {
           <BentoCell
             icon={Layers}
             title="Every Format. One System."
-            description="Blog posts, reels, carousels, emails, ads — all on-brand, all formatted for each platform, all in minutes."
+            description="Blog posts, reels, carousels, emails, ads - all on-brand, all formatted for each platform, all in minutes."
             preview={PlatformPreview}
           />
 
@@ -267,7 +266,7 @@ function FeaturesPage() {
           <BentoCell
             icon={Globe}
             title="21 Integrations at Launch"
-            description="Instagram, LinkedIn, Mailchimp, HubSpot, Shopify, Google Ads — connected from day one."
+            description="Instagram, LinkedIn, Mailchimp, HubSpot, Shopify, Google Ads - connected from day one."
             checks={['No switching tools', 'More added regularly', 'One-click connect']}
           />
 
@@ -283,7 +282,7 @@ function FeaturesPage() {
           <BentoCell
             icon={MessageSquare}
             title="Automated Nurture Sequences"
-            description="Personalised email sequences written in your voice, sent at the right moment — from first touch to purchase."
+            description="Personalised email sequences written in your voice, sent at the right moment - from first touch to purchase."
             checks={['Written in your voice', 'Pre-approved by you', 'Timed to engagement signals']}
             span="md:col-span-2"
           />

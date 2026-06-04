@@ -14,7 +14,7 @@ const timelineData = [
     title: "LEARN",
     category: "Onboarding",
     date: "Step 1",
-    content: "Tell Guild about your business in a natural conversation — not a form. It learns your voice, your audience, your goals, and gets smarter every cycle.",
+    content: "Tell Guild about your business in a natural conversation - not a form. It learns your voice, your audience, your goals, and gets smarter every cycle.",
     icon: Brain,
     relatedIds: [2],
     status: "completed",
@@ -25,7 +25,7 @@ const timelineData = [
     title: "CREATE",
     category: "Content",
     date: "Step 2",
-    content: "Blog posts, social content, reels, emails, and ad creatives — written in your exact brand voice and quality-checked before you ever see them.",
+    content: "Blog posts, social content, reels, emails, and ad creatives - written in your exact brand voice and quality-checked before you ever see them.",
     icon: Sparkles,
     relatedIds: [1, 3],
     status: "completed",
@@ -69,7 +69,7 @@ const timelineData = [
     title: "NURTURE",
     category: "Automation",
     date: "Step 6",
-    content: "Personalised follow-up sequences go out automatically — in your voice, pre-approved by you. Guild handles the nurture. You handle the close.",
+    content: "Personalised follow-up sequences go out automatically - in your voice, pre-approved by you. Guild handles the nurture. You handle the close.",
     icon: Users,
     relatedIds: [5, 7],
     status: "pending",
@@ -138,7 +138,7 @@ function HowItWorksPage() {
         <section className="mb-32 text-center">
           <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass-panel border border-indigo-400/40 shadow-glow-sm text-sm">
             <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-            <span className="text-indigo-300 font-medium">Founding cohort open now — 50 spots before public launch in August 2026</span>
+            <span className="text-indigo-300 font-medium">Founding cohort open now - 50 spots before public launch in August 2026</span>
           </div>
         </section>
 

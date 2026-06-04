@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom'
 import ZARPrice from '@/components/ui/ZARPrice'
 import { Button } from '@/components/ui/button'
 import { ShinyButton } from '@/components/ui/shiny-button'
-import { MagicTextReveal } from '@/components/ui/magic-text-reveal'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -35,12 +34,12 @@ function LandingPage() {
     }, []);
 
     const growthSteps = [
-        { title: 'LEARN', description: 'Tell Guild about your business once. It learns your voice, audience, and goals — and gets smarter every cycle.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'CREATE', description: 'Blog posts, social content, reels, and emails — written in your brand voice and quality-checked before you see them.', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'LEARN', description: 'Tell Guild about your business once. It learns your voice, audience, and goals - and gets smarter every cycle.', icon: <Brain />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'CREATE', description: 'Blog posts, social content, reels, and emails - written in your brand voice and quality-checked before you see them.', icon: <Sparkles />, color: 'from-blue-600 to-indigo-600' },
         { title: 'PUBLISH', description: 'Content goes live at the optimal time on every platform. Automatically. Every week. Zero scheduling.', icon: <Layout />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'ATTRACT', description: 'People find your business through content Guild creates — across social, search, and email. You show up consistently.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'ATTRACT', description: 'People find your business through content Guild creates - across social, search, and email. You show up consistently.', icon: <Target />, color: 'from-blue-600 to-indigo-600' },
         { title: 'CAPTURE', description: 'Every engagement becomes a scored lead in your CRM. No spreadsheets. No manual tracking. No lead lost.', icon: <Users />, color: 'from-blue-600 to-indigo-600' },
-        { title: 'NURTURE', description: 'Personalised sequences go out automatically — in your voice, at the right moment — until they\'re ready to buy.', icon: <MessageSquare />, color: 'from-blue-600 to-indigo-600' },
+        { title: 'NURTURE', description: 'Personalised sequences go out automatically - in your voice, at the right moment - until they\'re ready to buy.', icon: <MessageSquare />, color: 'from-blue-600 to-indigo-600' },
         { title: 'CONVERT', description: 'Guild tracks what drives sales and does more of it. Every cycle, it gets sharper on your business and your buyers.', icon: <Rocket />, color: 'from-blue-600 to-indigo-600' },
     ];
 
@@ -302,7 +301,7 @@ function LandingPage() {
                                 <div className="absolute top-0 left-0 right-0 h-[1px]"
                                     style={{ background: 'linear-gradient(90deg, transparent, rgba(94,106,210,0.6) 50%, transparent)' }} />
 
-                                {/* Large decorative step number — sits behind content */}
+                                {/* Large decorative step number - sits behind content */}
                                 <div className="absolute -bottom-3 -right-2 text-[80px] font-black leading-none select-none pointer-events-none"
                                     style={{ color: 'rgba(94,106,210,0.08)', letterSpacing: '-4px' }}>
                                     {String(i + 1).padStart(2, '0')}
@@ -325,7 +324,7 @@ function LandingPage() {
                                     {/* Title */}
                                     <h3 className="label-eyebrow text-indigo-300 mb-2">{step.title}</h3>
 
-                                    {/* Description — short, readable */}
+                                    {/* Description - short, readable */}
                                     <p className="text-sm text-zinc-300 leading-relaxed font-light">{step.description}</p>
                                 </div>
                             </motion.div>
@@ -352,43 +351,6 @@ function LandingPage() {
                         </div>
                     </div>
                 </div>
-            </section>
-
-            <hr className="section-divider" />
-            {/* Magic Text Interactive Section */}
-            <section className="py-24 px-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-950/10 to-transparent pointer-events-none" />
-                <motion.div
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={viewportOnce}
-                    className="container mx-auto max-w-6xl text-center"
-                >
-                    <p className="label-eyebrow text-indigo-400/70 mb-6">The system in one sentence</p>
-                    <p className="text-zinc-500 text-sm mb-10 tracking-wide">Hover to reveal ↓</p>
-                    <div className="flex justify-center">
-                        <MagicTextReveal
-                            text="Guild does the work."
-                            color="rgba(165, 180, 252, 1)"
-                            fontSize={typeof window !== 'undefined' ? (window.innerWidth < 640 ? 36 : window.innerWidth < 1024 ? 52 : 64) : 64}
-                            fontFamily="Inter, sans-serif"
-                            fontWeight={800}
-                            spread={70}
-                            speed={0.5}
-                            density={3}
-                            resetOnMouseLeave={true}
-                            style={{
-                                background: 'transparent',
-                                border: 'none',
-                                backdropFilter: 'none',
-                            }}
-                        />
-                    </div>
-                    <p className="text-zinc-600 text-sm mt-10 max-w-sm mx-auto leading-relaxed">
-                        Content created, published, leads captured and nurtured — without you lifting a finger.
-                    </p>
-                </motion.div>
             </section>
 
             <hr className="section-divider" />

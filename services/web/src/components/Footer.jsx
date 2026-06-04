@@ -81,7 +81,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Guild AI. All rights reserved.
           </p>
           <p className="text-[11px] text-zinc-700">
-            Founding cohort open — <Link to="/waitlist" className="text-indigo-500/70 hover:text-indigo-400 transition-colors">claim your spot</Link>
+            Founding cohort open - <Link to="/waitlist" className="text-indigo-500/70 hover:text-indigo-400 transition-colors">claim your spot</Link>
           </p>
         </div>
       </div>
