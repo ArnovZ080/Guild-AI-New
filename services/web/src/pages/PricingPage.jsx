@@ -3,6 +3,9 @@ import Footer from '@/components/Footer'
 import { Link, useNavigate } from 'react-router-dom'
 import ZARPrice from '@/components/ui/ZARPrice'
 import { Button } from '@/components/ui/button'
+import { ShinyButton } from '@/components/ui/shiny-button'
+import { TiltCard } from '@/components/ui/tilt-card'
+import { scaleIn, staggerContainer, viewportOnce } from '@/lib/transitions'
 import { Check, Sparkles, Shield, ArrowLeft, Lock } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -120,64 +123,67 @@ function PricingPage() {
                     </div>
                 </motion.div>
 
-                {/* Pricing cards */}
-                <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {/* Pricing cards — same treatment as landing page */}
+                <motion.div
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={viewportOnce}
+                    className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+                >
                     {plans.map((p, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className={`glass-panel p-10 rounded-3xl flex flex-col relative group ${p.popular ? 'border-indigo-500/50 shadow-glow' : 'border-white/10'}`}
-                        >
-                            {p.popular && (
-                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
-                                    <Sparkles size={12} />
-                                    MOST POPULAR
-                                </div>
-                            )}
-
-                            <div className="mb-8">
-                                <h3 className="text-2xl font-bold font-heading mb-3">{p.name}</h3>
-
-                                {/* Founding price */}
-                                <div className="flex items-baseline gap-2 mb-1">
-                                    <span className="text-5xl font-bold font-heading">{p.foundingPrice}</span>
-                                    <span className="text-zinc-400">{p.period}</span>
-                                </div>
-                                <ZARPrice usd={p.foundingUsd} period={p.period} />
-
-                                {/* Regular price struck through */}
-                                <p className="text-zinc-600 text-sm mt-1 line-through">
-                                    Regular price: {p.regularPrice}/mo
-                                </p>
-                                <p className="text-indigo-400/80 text-xs font-bold uppercase tracking-widest mt-1">
-                                    Founding rate - locked for life
-                                </p>
-
-                                <p className="text-base text-zinc-400 mt-5 font-light leading-relaxed">{p.description}</p>
-                            </div>
-
-                            <Button
-                                className={`w-full py-7 rounded-2xl font-bold text-lg transition-all mb-10 ${p.popular ? 'bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'bg-white/5 border border-white/10 hover:bg-white/10 text-white'}`}
-                                onClick={() => p.buttonAction === 'contact' ? navigate('/contact') : navigate('/waitlist')}
+                        <motion.div key={i} variants={scaleIn}>
+                            <TiltCard
+                                className={`glass-panel p-10 rounded-3xl flex flex-col relative h-full ${p.popular ? 'border-indigo-500/50' : ''}`}
+                                glowColor={p.popular ? 'rgba(99,102,241,0.18)' : 'rgba(94,106,210,0.10)'}
                             >
-                                {p.buttonText}
-                            </Button>
-
-                            <div className="space-y-4 mt-auto">
-                                {p.features.map((f, j) => (
-                                    <div key={j} className="flex gap-3 items-center text-sm">
-                                        <div className={`w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center shrink-0`}>
-                                            <Check size={12} strokeWidth={3} className="text-white" />
-                                        </div>
-                                        <span className="text-zinc-400 font-light">{f}</span>
+                                {p.popular && (
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-indigo-500/20">
+                                        <Sparkles size={12} />
+                                        MOST POPULAR
                                     </div>
-                                ))}
-                            </div>
+                                )}
+
+                                <div className="mb-8">
+                                    <h3 className="text-2xl font-bold mb-3">{p.name}</h3>
+
+                                    <div className="flex items-baseline gap-2 mb-1">
+                                        <span className="text-5xl font-bold">{p.foundingPrice}</span>
+                                        <span className="text-zinc-400">{p.period}</span>
+                                    </div>
+                                    <ZARPrice usd={p.foundingUsd} period={p.period} />
+
+                                    <p className="text-zinc-600 text-sm mt-1 line-through">
+                                        Regular price: {p.regularPrice}/mo
+                                    </p>
+                                    <p className="label-eyebrow text-indigo-400/70 mt-2">
+                                        Founding rate — locked for life
+                                    </p>
+
+                                    <p className="text-base text-zinc-400 mt-5 font-light leading-relaxed">{p.description}</p>
+                                </div>
+
+                                <ShinyButton
+                                    className="w-full mb-10 text-base"
+                                    onClick={() => p.buttonAction === 'contact' ? navigate('/contact') : navigate('/waitlist')}
+                                >
+                                    {p.buttonText}
+                                </ShinyButton>
+
+                                <div className="space-y-4 mt-auto">
+                                    {p.features.map((f, j) => (
+                                        <div key={j} className="flex gap-3 items-center text-sm">
+                                            <div className="w-5 h-5 rounded-full bg-indigo-500/10 border border-indigo-400/40 flex items-center justify-center shrink-0">
+                                                <Check size={12} strokeWidth={3} className="text-indigo-400" />
+                                            </div>
+                                            <span className="text-zinc-400 font-light">{f}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </TiltCard>
                         </motion.div>
                     ))}
-                </div>
+                </motion.div>
 
                 {/* Add-ons */}
                 <div className="mt-12 text-center">

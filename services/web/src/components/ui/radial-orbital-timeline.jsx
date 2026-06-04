@@ -162,9 +162,9 @@ export default function RadialOrbitalTimeline({ timelineData }) {
                     : isRelated
                     ? "bg-indigo-500/30 text-white border-indigo-400 animate-pulse"
                     : "bg-zinc-900 text-zinc-300 border-white/20 group-hover:border-indigo-400/60 group-hover:bg-indigo-500/10"}
-                  ${isExpanded ? "scale-150" : "group-hover:scale-110"}
+                  ${isExpanded ? "scale-150" : "group-hover:scale-[1.5]"}
                 `}>
-                  <span className="transition-transform duration-200 group-hover:scale-125 inline-flex">
+                  <span className="transition-transform duration-200 group-hover:scale-[2.25] inline-flex">
                     <Icon size={16} />
                   </span>
                 </div>
