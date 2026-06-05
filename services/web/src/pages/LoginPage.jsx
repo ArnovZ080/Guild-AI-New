@@ -15,7 +15,7 @@ function LoginPage() {
     setLoading(true);
     try {
       await login(formData.email, formData.password);
-      navigate('/');
+      navigate('/chat');
     } catch (err) {
       toast.error(err.message || 'Login failed');
     }
@@ -25,7 +25,7 @@ function LoginPage() {
   const handleGoogle = async () => {
     try {
       await loginWithGoogle();
-      navigate('/');
+      navigate('/chat');
     } catch (err) {
       toast.error(err.message || 'Google login failed');
     }

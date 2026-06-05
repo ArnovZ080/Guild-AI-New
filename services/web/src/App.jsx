@@ -149,15 +149,15 @@ function AppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const publicPaths = [
-    '/landing', '/login', '/signup', '/waitlist', '/pricing', 
-    '/privacy', '/terms', '/refund', '/about', '/contact', 
+    '/', '/landing', '/login', '/signup', '/waitlist', '/pricing',
+    '/privacy', '/terms', '/refund', '/about', '/contact',
     '/affiliates', '/features', '/how-it-works', '/integrations'
   ];
 
   const isPublicPage = publicPaths.includes(location.pathname);
 
   const navItems = [
-    { to: '/', icon: MessageSquare, label: 'Chat', badge: 0 },
+    { to: '/chat', icon: MessageSquare, label: 'Chat', badge: 0 },
     { to: '/content', icon: FileText, label: 'Content', badge: 0 },
     { to: '/theater', icon: Activity, label: 'Theater', badge: 0 },
     { to: '/growth', icon: TrendingUp, label: 'Growth', badge: 0 },
@@ -237,45 +237,45 @@ function AppContent() {
         `}
       >
         <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          style={{ minHeight: '100%' }}
-        >
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/waitlist" element={<WaitlistPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/refund" element={<RefundPolicyPage />} />
-          <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/affiliates" element={<AffiliatesPage />} />
-          <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/integrations" element={<IntegrationsPage />} />
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{ minHeight: '100%' }}
+          >
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/waitlist" element={<WaitlistPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/refund" element={<RefundPolicyPage />} />
+              <Route path="/about" element={<AboutUsPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/affiliates" element={<AffiliatesPage />} />
+              <Route path="/features" element={<FeaturesPage />} />
+              <Route path="/how-it-works" element={<HowItWorksPage />} />
+              <Route path="/integrations" element={<IntegrationsPage />} />
 
 
-          {/* Protected Routes (lazy-loaded with ErrorBoundary) */}
-          <Route path="/" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><ChatInterface /></Suspense></ErrorBoundary></ProtectedRoute>} />
-          <Route path="/content" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><ContentQueue /></Suspense></ErrorBoundary></ProtectedRoute>} />
-          <Route path="/theater" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><AgentActivityTheater /></Suspense></ErrorBoundary></ProtectedRoute>} />
-          <Route path="/growth" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><GrowthDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
-          <Route path="/workflows" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><WorkflowBuilder /></Suspense></ErrorBoundary></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><SettingsPage /></Suspense></ErrorBoundary></ProtectedRoute>} />
-          <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div></Suspense></ErrorBoundary></ProtectedRoute>} />
+              {/* Protected Routes (lazy-loaded with ErrorBoundary) */}
+              <Route path="/chat" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><ChatInterface /></Suspense></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/content" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><ContentQueue /></Suspense></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/theater" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><AgentActivityTheater /></Suspense></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/growth" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><GrowthDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/workflows" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><WorkflowBuilder /></Suspense></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><SettingsPage /></Suspense></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div></Suspense></ErrorBoundary></ProtectedRoute>} />
 
-          {/* Catch-all → Chat */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        </motion.div>
+              {/* Catch-all → Chat */}
+              <Route path="*" element={<Navigate to="/chat" replace />} />
+            </Routes>
+          </motion.div>
         </AnimatePresence>
       </main>
 

@@ -59,7 +59,7 @@ function AboutUsPage() {
     <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6">
       {/* Nav Link */}
       <div className="container mx-auto max-w-6xl mb-12">
-        <Link to="/landing">
+        <Link to="/">
           <Button variant="ghost" className="text-zinc-400 hover:text-white group">
             <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Landing

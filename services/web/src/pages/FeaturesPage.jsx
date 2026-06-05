@@ -186,7 +186,7 @@ function FeaturesPage() {
   return (
     <div className="min-h-screen bg-transparent text-white pt-24 pb-20 px-6">
       <div className="container mx-auto max-w-6xl">
-        <Link to="/landing">
+        <Link to="/">
           <button className="text-zinc-500 hover:text-white mb-12 flex items-center gap-2 text-sm transition-colors group">
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             Back to Landing

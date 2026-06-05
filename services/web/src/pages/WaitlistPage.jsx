@@ -161,7 +161,7 @@ function WaitlistPage() {
       )}
 
       <div className="max-w-2xl w-full">
-        <Link to="/landing">
+        <Link to="/">
           <button className="text-zinc-500 hover:text-white mb-12 flex items-center gap-2 text-sm transition-colors group">
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             Back to Landing
@@ -322,7 +322,7 @@ function WaitlistPage() {
                 We'll email you one week before your cohort opens. You'll get a direct link to set up your account and book your onboarding call.
               </motion.p>
 
-              <Link to="/landing">
+              <Link to="/">
                 <button className="text-zinc-500 hover:text-white text-sm transition-colors">
                   ← Return to Home
                 </button>
