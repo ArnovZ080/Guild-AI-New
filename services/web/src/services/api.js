@@ -48,7 +48,7 @@ export const api = {
     register: (data) =>
       authFetch('/api/auth/register', { method: 'POST', body: JSON.stringify(data) }),
     verify: () =>
-      authFetch('/api/auth/verify', { method: 'POST' }),
+      authFetch('/api/auth/me'),
     me: () =>
       authFetch('/api/auth/me'),
   },

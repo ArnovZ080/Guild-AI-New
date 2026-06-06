@@ -99,10 +99,25 @@ async def get_current_user(
     user = result.scalars().first()
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found. Complete registration first.",
+        # Auto-register user if they exist in Firebase but not in Postgres
+        email = claims.get("email")
+        name = claims.get("name")
+        
+        # Make the founder an admin automatically upon registration
+        is_admin = False
+        if email and email.lower() in ["arnovzyl080@gmail.com", "arno@guildof1.com", "arno@example.com"]:
+            is_admin = True
+            
+        user = UserAccount(
+            firebase_uid=firebase_uid,
+            email=email or f"{firebase_uid}@placeholder.guildof1.com",
+            name=name,
+            subscription_tier="free",
+            is_admin=is_admin
         )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
 
     if not user.is_active:
         raise HTTPException(
