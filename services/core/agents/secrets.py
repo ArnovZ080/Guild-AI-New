@@ -17,7 +17,7 @@ class SecretManager:
     
     def __init__(self, data_dir: Optional[str] = None):
         if data_dir is None:
-            data_dir = os.getenv("GUILD_DATA_DIR", "/app/data")
+            data_dir = os.getenv("GUILD_DATA_DIR", "/tmp/guild_data")
         self.data_dir = Path(data_dir)
         self.secrets_file = self.data_dir / "secrets.json"
         self._secrets: Dict[str, Dict[str, Any]] = {}
