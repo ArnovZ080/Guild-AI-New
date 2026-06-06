@@ -262,22 +262,18 @@ export default function GrowthDashboard() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard icon={FileText} label="Content Published" value={stats.content} change={12}
+        <StatCard icon={FileText} label="Content Published" value={stats.content}
           color="bg-indigo-500/10 border border-indigo-400/40 text-indigo-400"
-          glowColor="rgba(94,106,210,0.25)"
-          sparkData={[18,24,22,30,28,35,stats.content||38]} />
-        <StatCard icon={Users} label="Leads Captured" value={stats.leads} change={34}
+          glowColor="rgba(94,106,210,0.25)" />
+        <StatCard icon={Users} label="Leads Captured" value={stats.leads}
           color="bg-emerald-500/10 border border-emerald-400/40 text-emerald-400"
-          glowColor="rgba(34,197,94,0.2)"
-          sparkData={[4,7,5,9,12,10,stats.leads||14]} />
+          glowColor="rgba(34,197,94,0.2)" />
         <StatCard icon={TrendingUp} label="Pipeline Active" value={stats.pipeline}
           color="bg-amber-500/10 border border-amber-400/40 text-amber-400"
-          glowColor="rgba(245,158,11,0.2)"
-          sparkData={[2,3,3,5,4,6,stats.pipeline||7]} />
-        <StatCard icon={DollarSign} label="Revenue Influenced" value={`$${(stats.revenue / 1000).toFixed(1)}k`} change={8}
+          glowColor="rgba(245,158,11,0.2)" />
+        <StatCard icon={DollarSign} label="Revenue Influenced" value={`$${(stats.revenue / 1000).toFixed(1)}k`}
           color="bg-indigo-500/10 border border-indigo-400/40 text-indigo-400"
-          glowColor="rgba(94,106,210,0.2)"
-          sparkData={[8,12,10,15,14,18,stats.revenue ? stats.revenue/1000 : 22]} />
+          glowColor="rgba(94,106,210,0.2)" />
       </div>
 
       {/* What's Working */}

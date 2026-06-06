@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Sparkles, ArrowRight, CheckCircle,
@@ -21,6 +21,13 @@ const OnboardingFlow = () => {
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0);
     const [isSaving, setIsSaving] = useState(false);
+    const scrollContainerRef = useRef(null);
+
+    useEffect(() => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTo(0, 0);
+        }
+    }, [currentStep]);
     
     const [identity, setIdentity] = useState({
         // Core
@@ -155,7 +162,7 @@ const OnboardingFlow = () => {
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-12 bg-slate-50">
+                <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-12 bg-slate-50">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={STEPS[currentStep].id}
@@ -443,7 +450,7 @@ const OnboardingFlow = () => {
                                             type="file"
                                             multiple
                                             onChange={handleFileUpload}
-                                            className="absolute inset-0 opacity-0 cursor-pointer"
+                                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
                                         />
                                         <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all">
                                             <Upload className="text-slate-400 group-hover:text-indigo-500" strokeWidth={1.5} />

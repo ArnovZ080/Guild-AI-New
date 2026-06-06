@@ -59,7 +59,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # ── Mount all routes ──
 from services.api.routes import (
     auth, onboarding, subscription, content, crm, calendar, goals, ws, dashboard, waitlist,
-    media, admin
+    media, admin, agents, identity, integrations
 )
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
@@ -73,6 +73,9 @@ app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"]
 app.include_router(waitlist.router, prefix="/api", tags=["Waitlist"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(media.router)
+app.include_router(agents.router, prefix="/api/v1")
+app.include_router(identity.router, prefix="/api/v1")
+app.include_router(integrations.router, prefix="/api/v1")
 
 app.include_router(ws.router, tags=["WebSocket"])
 
