@@ -79,7 +79,8 @@ export function AuthProvider({ children }) {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     // Register with backend
     try {
-      await api.auth.register({ email, firebase_uid: cred.user.uid });
+      const token = await cred.user.getIdToken();
+      await api.auth.register({ email, firebase_token: token });
     } catch { /* backend may already know this user */ }
     return cred;
   }, []);
@@ -88,7 +89,8 @@ export function AuthProvider({ children }) {
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
     try {
-      await api.auth.register({ email: cred.user.email, firebase_uid: cred.user.uid });
+      const token = await cred.user.getIdToken();
+      await api.auth.register({ email: cred.user.email, firebase_token: token });
     } catch { /* ok */ }
     return cred;
   }, []);

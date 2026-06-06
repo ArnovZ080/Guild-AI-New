@@ -407,11 +407,10 @@ const OnboardingFlow = () => {
                                             className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-900 shadow-sm appearance-none"
                                         >
                                             <option value="" disabled>Select focus...</option>
-                                            <option value="Marketing support (content, campaigns, ads)">Marketing support (content, campaigns, ads)</option>
-                                            <option value="Sales support (funnels, outreach, partnerships)">Sales support (funnels, outreach, partnerships)</option>
-                                            <option value="Operations support (project management, SOPs, automation)">Operations support (project management, SOPs, automation)</option>
-                                            <option value="Finance support (bookkeeping, pricing, planning)">Finance support (bookkeeping, pricing, planning)</option>
-                                            <option value="Strategy & planning (business model, growth planning)">Strategy & planning (business model, growth planning)</option>
+                                            <option value="Content creation and strategy">Content creation and strategy</option>
+                                            <option value="Marketing and campaigns">Marketing and campaigns</option>
+                                            <option value="Lead nurturing and automation">Lead nurturing and automation</option>
+                                            <option value="Closing sales and pipeline management">Closing sales and pipeline management</option>
                                             <option value="A bit of everything">A bit of everything</option>
                                         </select>
                                     </div>
