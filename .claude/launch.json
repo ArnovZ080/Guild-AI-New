@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "guild-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/services/web",
+      "port": 5173
+    }
+  ]
+}

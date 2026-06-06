@@ -59,6 +59,8 @@ export const api = {
       authFetch('/api/onboarding/chat', { method: 'POST', body: JSON.stringify({ message }) }),
     status: () =>
       authFetch('/api/onboarding/status'),
+    update: (data) =>
+      authFetch('/api/onboarding/update', { method: 'POST', body: JSON.stringify(data) }),
   },
 
   // ── Content Pipeline ──

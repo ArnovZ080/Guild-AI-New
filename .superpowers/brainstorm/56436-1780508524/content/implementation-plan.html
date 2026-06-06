@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guild — What We're Building</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #020203;
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 48px 28px 100px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .page-header { margin-bottom: 52px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: #a5b4fc; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
+    border-radius: 20px; padding: 4px 12px; margin-bottom: 14px;
+  }
+  h1 { font-size: 32px; font-weight: 800; color: #f8fafc; letter-spacing: -1px; line-height: 1.2; margin-bottom: 10px; }
+  .lead { font-size: 15px; color: #64748b; line-height: 1.7; max-width: 640px; }
+
+  /* Phase blocks */
+  .phase { margin-bottom: 52px; }
+  .phase-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .phase-num {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+  }
+  .phase-num.p1 { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .phase-num.p2 { background: rgba(245,158,11,0.15); color: #fcd34d; }
+  .phase-num.p3 { background: rgba(34,197,94,0.15); color: #86efac; }
+  .phase-num.p4 { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  .phase-title { font-size: 18px; font-weight: 700; color: #f8fafc; }
+  .phase-scope { font-size: 12px; color: #475569; margin-top: 2px; }
+
+  /* Item cards */
+  .items { display: flex; flex-direction: column; gap: 10px; }
+  .item {
+    border-radius: 12px; padding: 16px 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 12px; align-items: start;
+  }
+  .item.wow {
+    border-color: rgba(245,158,11,0.2);
+    background: rgba(245,158,11,0.04);
+  }
+  .item.foundation {
+    border-color: rgba(99,102,241,0.15);
+    background: rgba(99,102,241,0.03);
+  }
+  .item-title { font-size: 14px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .item-desc { font-size: 12px; color: #64748b; line-height: 1.6; }
+  .item-badges { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
+  .badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+  }
+  .badge.wow { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+  .badge.foundation { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+  .badge.perf { background: rgba(34,197,94,0.1); color: #86efac; border: 1px solid rgba(34,197,94,0.15); }
+  .badge.pages { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); font-size: 8px; }
+
+  /* Preview mockups inline */
+  .mockup {
+    margin-top: 10px; border-radius: 8px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: #0a0a0f;
+  }
+  .mockup-bar {
+    height: 24px; background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; padding: 0 10px; gap: 5px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* Wow label */
+  .wow-label {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    color: #f59e0b; margin-bottom: 28px; padding: 4px 12px;
+    background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 6px;
+  }
+
+  .section-divider {
+    height: 1px; background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent);
+    margin: 48px 0;
+  }
+
+  .files-affected {
+    margin-top: 6px;
+    font-size: 10px; color: #334155; font-family: monospace; line-height: 1.8;
+  }
+
+  /* Summary table */
+  .summary {
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .summary-row {
+    display: grid; grid-template-columns: 28px 1fr 80px 80px;
+    gap: 0; align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row > * { padding: 11px 14px; font-size: 12px; }
+  .summary-row.header { background: rgba(255,255,255,0.04); }
+  .summary-row.header > * { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #475569; }
+  .sr-num { color: #334155; font-weight: 700; font-size: 11px; padding-left: 14px; }
+  .sr-name { color: #e2e8f0; font-weight: 600; }
+  .sr-type { }
+  .sr-scope { color: #475569; font-size: 11px; }
+  .tick { color: #22c55e; }
+  .star { color: #f59e0b; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="tag">✦ Implementation Blueprint</div>
+  <h1>What we're building for Guild</h1>
+  <p class="lead">Four phases. Foundation first, then "wow" moments layered on top. Every change grounded in the UI/UX Pro Max skill recommendations and Modern Dark Cinema design system.</p>
+</div>
+
+<!-- PHASE 1 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num p1">P1</div>
+    <div>
+      <div class="phase-title">Design System Foundation</div>
+      <div class="phase-scope">index.css · tailwind.config.js · ThemeProvider — everything else inherits from this</div>
+    </div>
+  </div>
+  <div class="items">
+    <div class="item foundation">
+      <div>
+        <div class="item-title">OLED Gradient Background + CSS Token Overhaul</div>
+        <div class="item-desc">Replace flat <code>#090a0f</code> with a true OLED gradient body background (<code>#0a0a0f → #020203</code>). Rewrite all CSS custom properties to the Modern Dark Cinema token set: <code>--bg-deep, --bg-base, --bg-elevated, --surface, --accent, --accent-glow, --border, --easing</code>. This single change affects every page instantly.</div>
+        <div class="files-affected">index.css · tailwind.config.js</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Foundation</span><span class="badge pages">All pages</span></div>
+    </div>
+    <div class="item foundation">
+      <div>
+        <div class="item-title">Inter Cinema Typography System</div>
+        <div class="item-desc">Apply the skill's weight/tracking discipline globally: <code>font-weight: 800, letter-spacing: -1.5px</code> on display sizes; <code>600, -0.5px</code> on H2/H3; <code>500 + uppercase + 1.2px tracking</code> on all labels/eyebrows. Drop Space Grotesk — Inter owns this entire system.</div>
+        <div class="files-affected">index.css</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Foundation</span><span class="badge pages">All pages</span></div>
+    </div>
+    <div class="item foundation">
+      <div>
+        <div class="item-title">Spring Physics Animation Primitives</div>
+        <div class="item-desc">Create a shared <code>transitions.js</code> config exporting Framer Motion variants: <code>fadeUp</code>, <code>scaleIn</code>, <code>slideInLeft/Right</code>, <code>staggerContainer</code> — all using <code>cubic-bezier(0.16, 1, 0.3, 1)</code> easing with spring damping. Add <code>prefers-reduced-motion</code> media query wrapper. Every animated component imports from here.</div>
+        <div class="files-affected">src/lib/transitions.js (new)</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Foundation</span><span class="badge perf">Perf ✓</span></div>
+    </div>
+    <div class="item foundation">
+      <div>
+        <div class="item-title">Enhanced AmbientEmbers — Crucible Mode</div>
+        <div class="item-desc">Upgrade the existing ember canvas: add a subtle "crucible source" — embers accelerate from a low invisible heat point at the bottom centre, fanning outward as they rise. Increase the amber spark weight on page load for a dramatic first impression that settles into the ambient state. Add mouse-parallax: embers drift 4px toward cursor.</div>
+        <div class="files-affected">components/AmbientEmbers.jsx</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span><span class="badge pages">All pages</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- PHASE 2 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num p2">P2</div>
+    <div>
+      <div class="phase-title">Landing Page — Public WOW Moments</div>
+      <div class="phase-scope">LandingPage.jsx + shared nav/footer</div>
+    </div>
+  </div>
+  <div class="wow-label">★ Highest visitor impact</div>
+  <div class="items">
+    <div class="item wow">
+      <div>
+        <div class="item-title">Hero: Typewriter Headline with Ember Burst on Load</div>
+        <div class="item-desc">Headline types in word-by-word with a spring bounce per word. On the final keyword ("buyers"), an ember burst fires from the text — 12 particles radiate outward then fade. The CTA button slides up with a glow pulse. Sub-headline fades in 300ms after headline completes. Creates a micro-story in 1.2 seconds.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span></div>
+    </div>
+    <div class="item wow">
+      <div>
+        <div class="item-title">Scroll-Triggered Section Reveals with Depth Parallax</div>
+        <div class="item-desc">Each section uses Framer Motion <code>useInView</code> + <code>whileInView</code>: content slides up 40px + fades in as it enters viewport. Background accent orbs parallax at 0.3× scroll speed (CSS <code>transform: translateY</code> via scroll listener). No scroll-jacking — native scroll speed preserved, effects are purely cosmetic layers.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span><span class="badge perf">Perf ✓</span></div>
+    </div>
+    <div class="item wow">
+      <div>
+        <div class="item-title">Growth Steps: Horizontal Scroll Timeline (Desktop)</div>
+        <div class="item-desc">The 7-step LEARN→CONVERT flow becomes a sticky horizontal scroll track on desktop. As you scroll vertically, the active step advances left-to-right with a glowing progress line connecting them. Each step card flips/scales into focus. On mobile: vertical stacked reveals as before. This is the single biggest "we know what we're doing" moment.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span></div>
+    </div>
+    <div class="item wow">
+      <div>
+        <div class="item-title">Pricing Cards: 3D Tilt + Glow on Hover</div>
+        <div class="item-desc">Cards respond to mouse position with a subtle 3D tilt (<code>rotateX/Y</code> ±8°, <code>perspective: 800px</code>). The "popular" card has a persistent indigo glow border that brightens on hover. Price numbers count up from 0 when the section enters view (CountUp animation, 600ms).</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span></div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="item-title">Nav: Frosted Glass + Smart Shrink</div>
+        <div class="item-desc">On scroll: height compresses from 72px → 52px, backdrop-blur increases from 8px → 16px, border-bottom appears. Logo scales 1.0 → 0.85. Transition uses the spring easing. CTA button in nav gains a glow pulse every 8 seconds (draws eye without being annoying).</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Polish</span></div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="item-title">Social Proof Strip: Marquee Logos + Live Counter</div>
+        <div class="item-desc">Infinite horizontal marquee of integration logos. Waitlist counter animates up in real time. "Spots remaining" number glows amber when under 20.</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Polish</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- PHASE 3 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num p3">P3</div>
+    <div>
+      <div class="phase-title">Supporting Public Pages</div>
+      <div class="phase-scope">Features · HowItWorks · Pricing · About · Waitlist · Login · Signup</div>
+    </div>
+  </div>
+  <div class="items">
+    <div class="item wow">
+      <div>
+        <div class="item-title">Features Page: Bento Grid with Live Previews</div>
+        <div class="item-desc">Replace the current card list with an asymmetric bento grid — large feature takes 2×2, others 1×1 and 1×2. Each cell has a mini animated preview that plays on hover: content creation cell shows a typewriter effect; CRM cell shows a bar chart growing; publish cell shows a platform icon sequence popping in. Glass card surface with hairline borders.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span><span class="badge pages">FeaturesPage</span></div>
+    </div>
+    <div class="item wow">
+      <div>
+        <div class="item-title">Waitlist Page: Countdown + Urgency Animation</div>
+        <div class="item-desc">Remaining spots counter ticks down in real time (from Firestore). Progress bar depletes left-to-right with an amber glow. When spots < 10: bar pulses red. Form fields glow indigo on focus. Submit triggers a full-screen ember burst + "You're in" reveal animation.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span><span class="badge pages">WaitlistPage</span></div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="item-title">Login/Signup: Centered Glass Form</div>
+        <div class="item-desc">Single centred frosted-glass card on the ember background. Input fields have a glowing indigo underline on focus (not a border-box, just the bottom). Error states shake with a spring physics oscillation. Password field has a smooth show/hide toggle.</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Polish</span><span class="badge pages">Auth pages</span></div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="item-title">Pricing Page: Annual/Monthly Toggle with Morph Animation</div>
+        <div class="item-desc">Toggle switch morphs between states (pill slides, prices cross-fade with a counter animation). "You save X%" badge pops in with a spring bounce when Annual is selected. Feature comparison table rows reveal on scroll with stagger.</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Polish</span><span class="badge pages">PricingPage</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- PHASE 4 -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num p4">P4</div>
+    <div>
+      <div class="phase-title">Dashboard & Private Pages</div>
+      <div class="phase-scope">GrowthDashboard · ChatInterface · ContentQueue · Settings · AgentTheater · WorkflowBuilder</div>
+    </div>
+  </div>
+  <div class="items">
+    <div class="item wow">
+      <div>
+        <div class="item-title">Dashboard: Metric Cards with Animated Count-Up + Sparklines</div>
+        <div class="item-desc">On dashboard load, all metric numbers count up from 0 with spring easing. Each metric card has a mini sparkline (SVG path with a draw animation). Cards use the glass surface with a glow border in the metric's semantic colour (green = revenue, indigo = content, amber = leads). Hovering a card lifts it 4px with a shadow bloom.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span><span class="badge pages">Dashboard</span></div>
+    </div>
+    <div class="item wow">
+      <div>
+        <div class="item-title">Sidebar Navigation: Magnetic Active Indicator</div>
+        <div class="item-desc">The active nav item has a glowing indigo pill indicator that smoothly animates position as you navigate (Framer Motion layoutId). Hovering inactive items shows a ghost indicator trailing the cursor. Icons scale 1.0 → 1.15 on hover with a spring bounce. Collapsed state shows icon-only with tooltip.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span><span class="badge pages">Dashboard layout</span></div>
+    </div>
+    <div class="item wow">
+      <div>
+        <div class="item-title">Agent Activity Theater: Live Pulse Visualization</div>
+        <div class="item-desc">Each active agent gets a pulsing ring animation (scale 1.0 → 1.3, opacity 1 → 0, repeat). Task progress bars fill with an animated shimmer. Completed tasks check off with a spring-bounced checkmark. The overall "system heartbeat" pulses a faint ember glow on the page border.</div>
+      </div>
+      <div class="item-badges"><span class="badge wow">WOW ✦</span><span class="badge pages">AgentTheater</span></div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="item-title">Chat Interface: Streaming Message Animation</div>
+        <div class="item-desc">AI messages render word-by-word (streaming simulation if not already). User messages slide in from the right, AI from the left. Typing indicator uses three ember-coloured dots with a wave animation. Code blocks have a copy button that shows a "Copied ✓" confirmation with a spring pop.</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Polish</span><span class="badge pages">ChatInterface</span></div>
+    </div>
+    <div class="item">
+      <div>
+        <div class="item-title">Content Queue: Kanban Card Drag with Physics</div>
+        <div class="item-desc">Cards snap to grid with spring physics on drop. Dragging a card creates a ghost with a slight rotation and scale. Column headers show animated count badges that update on drop.</div>
+      </div>
+      <div class="item-badges"><span class="badge foundation">Polish</span><span class="badge pages">ContentQueue</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- Summary -->
+<div>
+  <div class="tag">Summary</div>
+  <div style="font-size:22px;font-weight:800;color:#f8fafc;letter-spacing:-0.8px;margin-bottom:6px">15 improvements. 6 WOW moments. 4 phases.</div>
+  <p style="font-size:13px;color:#64748b;margin-bottom:24px">Phases 1–2 deliver the biggest visible impact. Each phase is independently shippable.</p>
+
+  <div class="summary">
+    <div class="summary-row header">
+      <div></div>
+      <div>Item</div>
+      <div>Type</div>
+      <div>Phase</div>
+    </div>
+    <div class="summary-row"><div class="sr-num">1</div><div class="sr-name">OLED gradient + CSS token overhaul</div><div><span class="badge foundation" style="font-size:9px">Foundation</span></div><div class="sr-scope">P1</div></div>
+    <div class="summary-row"><div class="sr-num">2</div><div class="sr-name">Inter Cinema typography system</div><div><span class="badge foundation" style="font-size:9px">Foundation</span></div><div class="sr-scope">P1</div></div>
+    <div class="summary-row"><div class="sr-num">3</div><div class="sr-name">Spring physics animation primitives</div><div><span class="badge foundation" style="font-size:9px">Foundation</span></div><div class="sr-scope">P1</div></div>
+    <div class="summary-row"><div class="sr-num">4</div><div class="sr-name">AmbientEmbers Crucible Mode + mouse parallax</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P1</div></div>
+    <div class="summary-row"><div class="sr-num">5</div><div class="sr-name">Hero typewriter + ember burst on load</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P2</div></div>
+    <div class="summary-row"><div class="sr-num">6</div><div class="sr-name">Scroll-triggered reveals with depth parallax</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P2</div></div>
+    <div class="summary-row"><div class="sr-num">7</div><div class="sr-name">Growth steps horizontal scroll timeline</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P2</div></div>
+    <div class="summary-row"><div class="sr-num">8</div><div class="sr-name">Pricing cards: 3D tilt + CountUp prices</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P2</div></div>
+    <div class="summary-row"><div class="sr-num">9</div><div class="sr-name">Nav: frosted glass shrink + CTA glow pulse</div><div><span class="badge foundation" style="font-size:9px">Polish</span></div><div class="sr-scope">P2</div></div>
+    <div class="summary-row"><div class="sr-num">10</div><div class="sr-name">Features: bento grid with live hover previews</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P3</div></div>
+    <div class="summary-row"><div class="sr-num">11</div><div class="sr-name">Waitlist: countdown urgency + submit ember burst</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P3</div></div>
+    <div class="summary-row"><div class="sr-num">12</div><div class="sr-name">Login/Signup: glass form + spring error shake</div><div><span class="badge foundation" style="font-size:9px">Polish</span></div><div class="sr-scope">P3</div></div>
+    <div class="summary-row"><div class="sr-num">13</div><div class="sr-name">Dashboard: animated metrics + sparklines</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P4</div></div>
+    <div class="summary-row"><div class="sr-num">14</div><div class="sr-name">Sidebar: magnetic active indicator</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P4</div></div>
+    <div class="summary-row"><div class="sr-num">15</div><div class="sr-name">Agent Theater: live pulse visualization</div><div><span class="badge wow" style="font-size:9px">WOW ✦</span></div><div class="sr-scope">P4</div></div>
+  </div>
+</div>
+
+<div style="margin-top:32px;padding:20px;border-radius:14px;background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2)">
+  <div style="font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:6px">Ready to start implementing?</div>
+  <div style="font-size:13px;color:#64748b;line-height:1.7">
+    Say <strong style="color:#e2e8f0">"start Phase 1"</strong> to begin with the design system foundation — everything else inherits from it so it has the highest leverage per hour of work.
+    Or tell me which specific WOW moment you want to prioritise and we'll go there first.
+  </div>
+</div>
+
+</body>
+</html>

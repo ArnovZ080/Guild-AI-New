@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Lock, Mail, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
+import guildLogo from '../assets/guild-logo.png';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -35,8 +36,8 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="w-12 h-12 bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm rounded-xl flex items-center justify-center font-bold text-indigo-400 text-lg mx-auto mb-4">
-            G
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <img src={guildLogo} alt="Guild Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-heading font-bold text-zinc-200">Welcome Back</h1>
           <p className="text-zinc-400 mt-2">Log in to your Guild AI growth engine.</p>

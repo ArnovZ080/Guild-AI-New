@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guild — Cohesion Audit</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #020203; color: #e2e8f0; font-family: 'Inter', system-ui, sans-serif; padding: 40px 28px 80px; max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 24px; font-weight: 800; color: #f8fafc; letter-spacing: -0.8px; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #475569; margin-bottom: 40px; }
+
+  .tier { margin-bottom: 36px; }
+  .tier-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .tier-label::after { content: ''; flex: 1; height: 1px; background: currentColor; opacity: 0.15; }
+  .tier-label.high { color: #f87171; }
+  .tier-label.medium { color: #f59e0b; }
+  .tier-label.low { color: #5E6AD2; }
+
+  .items { display: flex; flex-direction: column; gap: 8px; }
+  .item {
+    border-radius: 10px; padding: 14px 16px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start;
+  }
+  .item-title { font-size: 13px; font-weight: 600; color: #f8fafc; margin-bottom: 3px; }
+  .item-desc { font-size: 11px; color: #64748b; line-height: 1.6; }
+  .item-where { font-size: 10px; color: #334155; font-family: monospace; margin-top: 4px; }
+  .badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 3px 7px; border-radius: 5px; white-space: nowrap; flex-shrink: 0;
+  }
+  .badge.quick { background: rgba(34,197,94,0.1); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+  .badge.medium { background: rgba(245,158,11,0.1); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+  .badge.rebuild { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 36px; }
+  .summary-card { border-radius: 10px; padding: 16px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); text-align: center; }
+  .summary-num { font-size: 32px; font-weight: 800; }
+  .summary-label { font-size: 11px; color: #475569; margin-top: 4px; }
+  .summary-card.red .summary-num { color: #f87171; }
+  .summary-card.amber .summary-num { color: #fcd34d; }
+  .summary-card.blue .summary-num { color: #818cf8; }
+</style>
+</head>
+<body>
+
+<h1>Guild — Cohesion Audit</h1>
+<p class="subtitle">Cross-page visual audit. 17 issues found across all pages and components.</p>
+
+<div class="summary-grid">
+  <div class="summary-card red"><div class="summary-num">6</div><div class="summary-label">High priority</div></div>
+  <div class="summary-card amber"><div class="summary-num">7</div><div class="summary-label">Medium priority</div></div>
+  <div class="summary-card blue"><div class="summary-num">4</div><div class="summary-label">Quick wins</div></div>
+</div>
+
+<!-- HIGH -->
+<div class="tier">
+  <div class="tier-label high">High — visible and breaks cohesion</div>
+  <div class="items">
+
+    <div class="item">
+      <div>
+        <div class="item-title">Growth step cards stack badly on mobile — look like identical boxy containers</div>
+        <div class="item-desc">7 identical glass cards stacked vertically with centered icon + uppercase label + text. No visual differentiation between steps. Reads like a repetitive list, not a flow. Fix: numbered horizontal flow on desktop, compact left-aligned list on mobile.</div>
+        <div class="item-where">LandingPage.jsx → growthSteps grid</div>
+      </div>
+      <span class="badge medium">Medium effort</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">ShinyButton is invisible on dark pricing cards — blends into background</div>
+        <div class="item-desc">The ShinyButton uses --shiny-cta-bg: #0a0a0f which is the same colour as the card background. The button has no visible edge. Needs a slightly lighter bg (#16161a) or a subtle border to define the button shape even before the conic-gradient activates.</div>
+        <div class="item-where">index.css → .shiny-cta / PricingPage + LandingPage pricing cards</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">No page transition — instant jump between routes feels abrupt</div>
+        <div class="item-desc">Every route change is an instant paint. A simple 200ms fade-in on the page root (AnimatePresence + motion.div on each page) would make the whole site feel 40% more premium with one wrapper component. Currently the most jarring gap vs. top-tier SaaS.</div>
+        <div class="item-where">App.jsx → Routes (add AnimatePresence wrapper)</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">About page body text too wide — 80+ char lines, no max-width on prose</div>
+        <div class="item-desc">Long paragraphs span the full container width. The skill flags 65–75 chars per line as the readable maximum. Currently running ~95 chars. Add max-w-prose (65ch) on body text blocks. Also the text has zero hierarchy — everything is the same size/weight.</div>
+        <div class="item-where">AboutUsPage.jsx → body text paragraphs</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">No footer on any public page — kills credibility and SEO</div>
+        <div class="item-desc">None of the public pages have a footer. For a SaaS selling to business founders, this is a red flag. Needs: company name, legal links (Privacy, Terms), nav links, the "Built by The AI Crucible" brand line, and a subtle ember motif to keep the identity consistent.</div>
+        <div class="item-where">All public pages — missing component</div>
+      </div>
+      <span class="badge medium">Medium effort</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">Integration pills have no icons — plain text in identical pills looks unfinished</div>
+        <div class="item-desc">The "Instagram / LinkedIn / Mailchimp / Shopify..." pills are just text in matching rounded borders. No visual differentiation, no brand colours, no icons. Should use Lucide or simple coloured dot indicators to make each platform feel distinct and real.</div>
+        <div class="item-where">LandingPage.jsx → "Connects with the tools" section</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- MEDIUM -->
+<div class="tier">
+  <div class="tier-label medium">Medium — inconsistency that chips at trust</div>
+  <div class="items">
+
+    <div class="item">
+      <div>
+        <div class="item-title">Eyebrow label styles inconsistent across pages</div>
+        <div class="item-desc">Some sections use the new .label-eyebrow class (correct). Others still use inline text-xs uppercase tracking-widest with different colours. Should be unified to one token everywhere.</div>
+        <div class="item-where">Multiple pages — LandingPage, FeaturesPage, HowItWorksPage</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">PricingPage (/pricing) still uses old Button component — not upgraded</div>
+        <div class="item-desc">The standalone /pricing page was not touched during Phase 3. It still uses the old gradient Button, old typography patterns, and no spring animations. Needs ShinyButton + TiltCard + spring reveals applied.</div>
+        <div class="item-where">PricingPage.jsx</div>
+      </div>
+      <span class="badge medium">Medium effort</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">Muted text too low contrast on body paragraphs (text-zinc-500 on near-black)</div>
+        <div class="item-desc">text-zinc-500 (#71717a) on #020203 background = ~3.8:1 contrast. WCAG AA requires 4.5:1. text-zinc-400 (#a1a1aa) = 6.2:1. Should shift all body/description text from zinc-500 → zinc-400 for accessibility compliance.</div>
+        <div class="item-where">index.css + all page body text classes</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">Section spacing inconsistent — py-24 vs py-32 vs py-20 mix</div>
+        <div class="item-desc">Sections breathe at different rhythm. A consistent vertical spacing system (py-20 small, py-28 medium, py-36 large) applied systematically would make the scroll feel intentional rather than ad-hoc.</div>
+        <div class="item-where">All pages</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">Login/Signup pages not upgraded to Cinema system</div>
+        <div class="item-desc">These are high-traffic conversion pages but still use older glass-panel + Button styles. The new OLED gradient, ShinyButton on submit, and spring focus states were planned but not applied.</div>
+        <div class="item-where">LoginPage.jsx, SignupPage.jsx</div>
+      </div>
+      <span class="badge medium">Medium effort</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">Hero "See How It Works" ghost button has no consistent style</div>
+        <div class="item-desc">The secondary CTA on the hero is styled with variant="ghost" — text-zinc-400 with no border. Compared to the ShinyButton primary CTA, it looks like a forgotten link, not a CTA. Needs a subtle border treatment to give it weight.</div>
+        <div class="item-where">LandingPage.jsx → hero CTAs</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">Contact / Affiliates / Integrations pages completely unstyled</div>
+        <div class="item-desc">These pages were not touched at all during the redesign. They still use old glass-panel + Button + heading styles. Visitors who land there from the footer will experience a jarring style mismatch.</div>
+        <div class="item-where">ContactPage.jsx, AffiliatesPage.jsx, IntegrationsPage.jsx</div>
+      </div>
+      <span class="badge medium">Medium effort</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOW / QUICK WINS -->
+<div class="tier">
+  <div class="tier-label low">Quick wins — high return, low effort</div>
+  <div class="items">
+
+    <div class="item">
+      <div>
+        <div class="item-title">Add a subtle horizontal rule / gradient divider between sections</div>
+        <div class="item-desc">A 1px gradient line (transparent → indigo/5 → transparent) between major sections gives the eye a rest point and makes the page feel intentionally structured. Currently all sections bleed together.</div>
+        <div class="item-where">index.css → add .section-divider utility</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">The glass-panel hero mock terminal is a nice element — add a subtle typing cursor animation</div>
+        <div class="item-desc">The [GUILD] / [QUALITY] terminal on the landing page hero preview panel is compelling content. A blinking cursor at the end of the last line would sell the "live system" feeling better.</div>
+        <div class="item-where">LandingPage.jsx → glass mockup preview section</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">CTA section at bottom of landing page should use ShinyButton, not gradient Button</div>
+        <div class="item-desc">The final "Ready to Turn Your Content Into Customers?" CTA section uses the old bg-white text-black Button. Should match the hero CTA with ShinyButton for consistency.</div>
+        <div class="item-where">LandingPage.jsx → CTA section (line ~445)</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+    <div class="item">
+      <div>
+        <div class="item-title">Badge / pill border-radius inconsistent — some rounded-full, some rounded-2xl, some rounded-lg</div>
+        <div class="item-desc">Status badges, eyebrow pills, and feature tags all use different border-radius values. Should standardise: small text badges → rounded-full, feature cards → rounded-xl, large CTAs → rounded-full.</div>
+        <div class="item-where">Multiple components</div>
+      </div>
+      <span class="badge quick">Quick</span>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top:32px;padding:20px;border-radius:12px;background:rgba(94,106,210,0.07);border:1px solid rgba(94,106,210,0.2)">
+  <div style="font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:6px">Recommended order of attack</div>
+  <div style="font-size:12px;color:#475569;line-height:1.8">
+    1. <strong style="color:#e2e8f0">Page transitions</strong> (App.jsx — 20 min, huge perceived quality bump)<br>
+    2. <strong style="color:#e2e8f0">ShinyButton bg fix</strong> (CSS — 5 min, fixes invisible button)<br>
+    3. <strong style="color:#e2e8f0">Footer component</strong> (new component, all public pages — credibility)<br>
+    4. <strong style="color:#e2e8f0">Growth steps redesign</strong> (LandingPage — numbered flow, not boxy grid)<br>
+    5. <strong style="color:#e2e8f0">Body text contrast fix</strong> (zinc-500 → zinc-400 sweep)<br>
+    6. <strong style="color:#e2e8f0">Integration pills with icons</strong> (landing page quick win)<br>
+    7. <strong style="color:#e2e8f0">PricingPage + Login/Signup upgrade</strong><br>
+    8. <strong style="color:#e2e8f0">About page prose width + hierarchy</strong><br>
+    9. <strong style="color:#e2e8f0">Contact / Affiliates / Integrations pages</strong>
+  </div>
+</div>
+
+</body>
+</html>

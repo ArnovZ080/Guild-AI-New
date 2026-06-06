@@ -1,0 +1,8 @@
+{"type":"server-started","port":58132,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:58132","screen_dir":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/content","state_dir":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/state"}
+{"type":"screen-added","file":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/content/design-direction.html"}
+{"type":"screen-updated","file":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/content/design-direction.html"}
+{"type":"screen-added","file":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/content/skill-recommendations.html"}
+{"type":"screen-updated","file":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/content/skill-recommendations.html"}
+{"type":"screen-added","file":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/content/implementation-plan.html"}
+{"type":"screen-updated","file":"/Users/arnovanzyl/Dropbox/Mac (2)/Documents/GitHub/Guild-AI-New/.superpowers/brainstorm/56436-1780508524/content/implementation-plan.html"}
+{"type":"server-stopped","reason":"idle timeout"}

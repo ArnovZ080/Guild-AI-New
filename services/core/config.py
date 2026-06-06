@@ -49,7 +49,7 @@ class Settings(BaseSettings):
 
     # Security
     SECRET_KEY: str = "changeme"
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
 
     # Media Storage
     MEDIA_UPLOAD_DIR: str = "./uploads/media"

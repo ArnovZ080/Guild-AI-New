@@ -4,7 +4,9 @@ import {
     Send, User, Bot, Sparkles, ArrowRight, CheckCircle,
     Settings, Loader2, Building, Heart, Target, Database, Upload, Link, X
 } from 'lucide-react';
-import { agentAPI } from '../../services/api';
+import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const STEPS = [
     { id: 'core', title: 'The Core', icon: Building, description: 'Defining your business identity' },
@@ -14,6 +16,8 @@ const STEPS = [
 ];
 
 const OnboardingFlow = () => {
+    const { setIdentityComplete } = useAuth();
+    const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(0);
     const [isSaving, setIsSaving] = useState(false);
     const [identity, setIdentity] = useState({
@@ -55,13 +59,9 @@ const OnboardingFlow = () => {
     const finalizeOnboarding = async () => {
         setIsSaving(true);
         try {
-            await fetch('/api/identity', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(identity)
-            });
-            // Redirect or show success
-            window.location.href = '/';
+            await api.onboarding.update(identity);
+            setIdentityComplete(true);
+            navigate('/chat');
         } catch (error) {
             console.error("Failed to save identity", error);
         } finally {
@@ -94,11 +94,11 @@ const OnboardingFlow = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-white/[0.03] p-8">
-            <div className="max-w-5xl mx-auto w-full flex flex-col h-full bg-white rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden">
+        <div className="flex flex-col h-screen bg-transparent p-8">
+            <div className="max-w-5xl mx-auto w-full flex flex-col h-full bg-surface-base/50 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-white/[0.06] overflow-hidden">
 
                 {/* Stepper Header */}
-                <div className="bg-slate-900 p-10 text-white">
+                <div className="bg-transparent border-b border-white/[0.06] p-10 text-zinc-100">
                     <div className="flex justify-between items-center mb-10">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-indigo-500 rounded-2xl shadow-lg shadow-indigo-500/30">
@@ -131,7 +131,7 @@ const OnboardingFlow = () => {
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-12 bg-white/[0.03]/50">
+                <div className="flex-1 overflow-y-auto p-12 bg-transparent">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={STEPS[currentStep].id}
@@ -141,7 +141,7 @@ const OnboardingFlow = () => {
                             className="max-w-2xl mx-auto"
                         >
                             <div className="mb-10 text-center">
-                                <h2 className="text-3xl font-bold text-slate-900 mb-3">{STEPS[currentStep].description}</h2>
+                                <h2 className="text-3xl font-bold text-zinc-100 mb-3">{STEPS[currentStep].description}</h2>
                                 <p className="text-zinc-400">Provide these details to train your Orchestrator on your specific business DNA.</p>
                             </div>
 
@@ -154,7 +154,7 @@ const OnboardingFlow = () => {
                                             type="text"
                                             value={identity.business_name}
                                             onChange={(e) => setIdentity({ ...identity, business_name: e.target.value })}
-                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                            className="w-full bg-white/5 border border-white/[0.06] p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-zinc-100 placeholder-zinc-500"
                                             placeholder="e.g. Acme Innovations"
                                         />
                                     </div>
@@ -163,7 +163,7 @@ const OnboardingFlow = () => {
                                         <textarea
                                             value={identity.niche}
                                             onChange={(e) => setIdentity({ ...identity, niche: e.target.value })}
-                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all h-32"
+                                            className="w-full bg-white/5 border border-white/[0.06] p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all h-32 text-zinc-100 placeholder-zinc-500"
                                             placeholder="What exactly do you do and what is your unique value proposition?"
                                         />
                                     </div>
@@ -179,7 +179,7 @@ const OnboardingFlow = () => {
                                                 type="text"
                                                 value={identity.brand.voice}
                                                 onChange={(e) => setIdentity({ ...identity, brand: { ...identity.brand, voice: e.target.value } })}
-                                                className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                                className="w-full bg-white/5 border border-white/[0.06] p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none text-zinc-100 placeholder-zinc-500"
                                                 placeholder="e.g. Authoritative"
                                             />
                                         </div>
@@ -189,7 +189,7 @@ const OnboardingFlow = () => {
                                                 type="text"
                                                 value={identity.brand.tone}
                                                 onChange={(e) => setIdentity({ ...identity, brand: { ...identity.brand, tone: e.target.value } })}
-                                                className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                                className="w-full bg-white/5 border border-white/[0.06] p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none text-zinc-100 placeholder-zinc-500"
                                                 placeholder="e.g. Humorous"
                                             />
                                         </div>
@@ -198,7 +198,7 @@ const OnboardingFlow = () => {
                                         <label className="text-xs font-black text-zinc-600 uppercase tracking-widest ml-1">Vocabulary (Keywords)</label>
                                         <input
                                             type="text"
-                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                                            className="w-full bg-white/5 border border-white/[0.06] p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none text-zinc-100 placeholder-zinc-500"
                                             placeholder="Comma separated terms your brand loves..."
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Enter') {
@@ -224,7 +224,7 @@ const OnboardingFlow = () => {
                                         <textarea
                                             value={identity.icp.ideal_client_description}
                                             onChange={(e) => setIdentity({ ...identity, icp: { ...identity.icp, ideal_client_description: e.target.value } })}
-                                            className="w-full glass-panel p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none h-48"
+                                            className="w-full bg-white/5 border border-white/[0.06] p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none h-48 text-zinc-100 placeholder-zinc-500"
                                             placeholder="Describe your perfect customer in detail. Who are they? What do they value?"
                                         />
                                     </div>
@@ -243,14 +243,14 @@ const OnboardingFlow = () => {
                                         <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all">
                                             <Upload className="text-zinc-600 group-hover:text-indigo-500" strokeWidth={1.5} />
                                         </div>
-                                        <h3 className="text-xl font-bold text-slate-900 mb-2">Upload Business Intelligence</h3>
+                                        <h3 className="text-xl font-bold text-zinc-100 mb-2">Upload Business Intelligence</h3>
                                         <p className="text-zinc-400">Brand guidelines, product catalogs, or internal strategy docs.</p>
                                     </div>
 
                                     {files.length > 0 && (
                                         <div className="space-y-3">
                                             {files.map((f, i) => (
-                                                <div key={i} className="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+                                                <div key={i} className="bg-white/5 p-4 rounded-2xl border border-white/[0.06] flex items-center justify-between">
                                                     <div className="flex items-center gap-3">
                                                         <Database size={18} className="text-indigo-400" strokeWidth={1.5} />
                                                         <span className="text-sm font-bold text-zinc-400">{f.name}</span>
@@ -268,7 +268,7 @@ const OnboardingFlow = () => {
                 </div>
 
                 {/* Footer Controls */}
-                <div className="p-10 border-t border-slate-100 bg-white flex justify-between items-center">
+                <div className="p-10 border-t border-white/[0.06] bg-transparent flex justify-between items-center">
                     <button
                         onClick={handleBack}
                         disabled={currentStep === 0}

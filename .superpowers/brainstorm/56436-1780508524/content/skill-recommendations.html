@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI/UX Pro Max — Guild Recommendations</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #07090f;
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 40px 24px 80px;
+    min-height: 100vh;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .header { margin-bottom: 40px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #a5b4fc; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
+    border-radius: 20px; padding: 4px 12px; margin-bottom: 12px;
+  }
+  .badge::before { content: '◆'; color: #f59e0b; font-size: 8px; }
+  h1 { font-size: 28px; font-weight: 800; color: #f8fafc; letter-spacing: -0.8px; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: #64748b; line-height: 1.6; }
+
+  .section { margin-bottom: 36px; }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: #6366f1; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(99,102,241,0.2); }
+
+  /* Style recommendation */
+  .style-card {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 20px;
+    background: rgba(255,255,255,0.03);
+    margin-bottom: 12px;
+  }
+  .style-card.highlight { border-color: rgba(99,102,241,0.4); background: rgba(99,102,241,0.06); }
+  .style-name { font-size: 15px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .style-rec { font-size: 11px; color: #f59e0b; font-weight: 600; margin-bottom: 8px; }
+  .style-desc { font-size: 13px; color: #94a3b8; line-height: 1.6; margin-bottom: 12px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: #94a3b8;
+  }
+  .pill.accent { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .pill.amber { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); color: #fcd34d; }
+  .pill.green { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.2); color: #86efac; }
+
+  /* Color swatches */
+  .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .swatch { border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+  .swatch-color { height: 50px; }
+  .swatch-label { padding: 6px 8px; background: rgba(255,255,255,0.03); }
+  .swatch-name { font-size: 10px; font-weight: 600; color: #e2e8f0; }
+  .swatch-hex { font-size: 10px; color: #64748b; font-family: monospace; }
+
+  /* Typography */
+  .font-demo { margin-bottom: 12px; }
+  .font-demo-heading { letter-spacing: -1.5px; font-weight: 800; color: #f8fafc; }
+  .font-demo-sub { color: #64748b; font-size: 14px; margin-top: 4px; }
+  .font-meta { font-size: 11px; color: #475569; margin-top: 6px; font-family: monospace; }
+
+  /* Checklist */
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: #94a3b8; line-height: 1.5;
+  }
+  .check { color: #22c55e; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+  .warn { color: #f59e0b; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+  .keep { color: #6366f1; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+
+  /* What changes */
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .diff-col { border-radius: 12px; padding: 16px; }
+  .diff-col.before { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); }
+  .diff-col.after { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.15); }
+  .diff-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .diff-col.before .diff-label { color: #f87171; }
+  .diff-col.after .diff-label { color: #86efac; }
+  .diff-item { font-size: 12px; color: #94a3b8; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.5; }
+  .diff-item:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">UI/UX Pro Max Skill Analysis</div>
+  <h1>What the skill recommends for Guild</h1>
+  <p class="subtitle">Results from 67 UI styles · 161 design rules · 57 font pairings · analysed against Guild's product type (AI SaaS, dark, marketing automation)</p>
+</div>
+
+<!-- STYLE -->
+<div class="section">
+  <div class="section-label">Recommended Style</div>
+
+  <div class="style-card highlight">
+    <div class="style-name">Modern Dark Cinema — OLED Variant</div>
+    <div class="style-rec">★ Primary recommendation for AI tool interfaces + developer-adjacent SaaS</div>
+    <div class="style-desc">
+      Background gradient from <code>#0a0a0f</code> (top) to <code>#020203</code> (bottom) — never pure black.
+      2–3 animated ambient "blob" views behind content. Cards at borderRadius 16 with <code>rgba(255,255,255,0.08)</code> hairline borders.
+      Spring physics on modals (damping 20, stiffness 90). Expo.out easing on all transitions.
+      Accent glow behind primary buttons. Embers stay — they're the ambient blobs of this system.
+    </div>
+    <div class="pill-row">
+      <span class="pill accent">OLED-safe dark (not pure black)</span>
+      <span class="pill accent">Expo.out cubic-bezier(0.16,1,0.3,1)</span>
+      <span class="pill amber">Spring physics on reveals</span>
+      <span class="pill">Hairline glass borders</span>
+      <span class="pill green">WCAG AA ✓</span>
+    </div>
+  </div>
+
+  <div class="style-card">
+    <div class="style-name">OLED Dark (Secondary influence)</div>
+    <div class="style-desc">Reinforces: high contrast text (7:1+), minimal glow used surgically (not on every element), vibrant accent colours used sparingly. Already partially in place — needs discipline applied consistently.</div>
+    <div class="pill-row">
+      <span class="pill">7:1 contrast ratio</span>
+      <span class="pill">Glow on primary CTAs only</span>
+      <span class="pill">Vibrant accent used sparingly</span>
+    </div>
+  </div>
+</div>
+
+<!-- COLOURS -->
+<div class="section">
+  <div class="section-label">Colour System</div>
+  <p style="font-size:13px;color:#64748b;margin-bottom:14px">Skill validated Guild's existing indigo primary. Recommending tightening the full token set:</p>
+
+  <div class="color-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#020203"></div>
+      <div class="swatch-label"><div class="swatch-name">bg-deep</div><div class="swatch-hex">#020203</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#050506"></div>
+      <div class="swatch-label"><div class="swatch-name">bg-base</div><div class="swatch-hex">#050506</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0a0a0c"></div>
+      <div class="swatch-label"><div class="swatch-name">bg-elevated</div><div class="swatch-hex">#0a0a0c</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#5E6AD2"></div>
+      <div class="swatch-label"><div class="swatch-name">accent</div><div class="swatch-hex">#5E6AD2</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:rgba(94,106,210,0.2)"></div>
+      <div class="swatch-label"><div class="swatch-name">accent-glow</div><div class="swatch-hex">rgba(5E6AD2/0.2)</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F59E0B"></div>
+      <div class="swatch-label"><div class="swatch-name">ember-amber</div><div class="swatch-hex">#F59E0B (keep)</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:rgba(255,255,255,0.08)"></div>
+      <div class="swatch-label"><div class="swatch-name">border</div><div class="swatch-hex">rgba(fff/0.08)</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#EDEDEF"></div>
+      <div class="swatch-label"><div class="swatch-name">fg-primary</div><div class="swatch-hex">#EDEDEF</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TYPOGRAPHY -->
+<div class="section">
+  <div class="section-label">Typography</div>
+
+  <div class="style-card highlight">
+    <div class="font-demo">
+      <div class="font-demo-heading" style="font-size:32px">Guild knows your business.</div>
+      <div class="font-demo-sub">Inter 800 · −1.5px tracking · Display 48pt</div>
+      <div class="font-meta">Inter 700 (−1.5 tracking) → headings | Inter 600 (−0.5) → H2/H3 | Inter 400 → body | Inter 500 UPPERCASE (+1.2) → labels</div>
+    </div>
+    <div class="style-name" style="font-size:13px;margin-top:8px">Modern Dark Cinema (Inter System) — ★ Recommended</div>
+    <div class="style-desc">You already use Inter. The skill recommends staying on it but applying the Cinema weight/tracking discipline: tighter negative tracking on display sizes, uppercase labels with positive tracking. This creates the precision feel without a font change.</div>
+  </div>
+
+  <div class="style-card">
+    <div class="font-demo">
+      <div class="font-demo-heading" style="font-size:28px;font-family:Georgia,serif;font-weight:700;letter-spacing:-1px">Guild knows your business.</div>
+      <div class="font-demo-sub">Satoshi / General Sans — "Premium Sans" pairing</div>
+      <div class="font-meta">Satoshi (Fontshare) for headings · General Sans for body · more personality, higher effort</div>
+    </div>
+    <div class="style-name" style="font-size:13px;margin-top:8px">Premium Sans — Alternative (requires font loading)</div>
+    <div class="style-desc">More distinctive personality but requires adding Fontshare fonts. Bigger upgrade but also more risk of rendering inconsistency.</div>
+  </div>
+</div>
+
+<!-- WHAT CHANGES vs WHAT STAYS -->
+<div class="section">
+  <div class="section-label">What changes vs what stays</div>
+  <div class="diff-grid">
+    <div class="diff-col before">
+      <div class="diff-label">Replace / Fix</div>
+      <div class="diff-item">Pure #090a0f background → OLED gradient #0a0a0f→#020203</div>
+      <div class="diff-item">Space Grotesk headings → Inter Cinema weight/tracking system</div>
+      <div class="diff-item">Flat section reveals → spring physics reveals (cubic-bezier 0.16,1,0.3,1)</div>
+      <div class="diff-item">Glass panels everywhere → surgical use (nav + cards only)</div>
+      <div class="diff-item">Uniform glow on all icons → glow on CTAs/embers only</div>
+      <div class="diff-item">Scroll = just scroll → scroll-driven section transitions</div>
+      <div class="diff-item">Nav sits flat → nav gains hairline border + blur on scroll</div>
+    </div>
+    <div class="diff-col after">
+      <div class="diff-label">Keep / Enhance</div>
+      <div class="diff-item">✦ Ember particle canvas — it IS the ambient blob system</div>
+      <div class="diff-item">Indigo #5E6AD2 accent — skill validated this exactly</div>
+      <div class="diff-item">Inter font family — already correct, just retune weights</div>
+      <div class="diff-item">Dark-only theme — skill confirms right for AI tools</div>
+      <div class="diff-item">Amber ember sparks (#F59E0B) — the crucible brand moment</div>
+      <div class="diff-item">Glass on nav — refine, don't remove</div>
+      <div class="diff-item">7-step growth flow — content is strong, only presentation changes</div>
+    </div>
+  </div>
+</div>
+
+<!-- UX RULES FROM SKILL -->
+<div class="section">
+  <div class="section-label">UX Rules the skill flagged</div>
+  <ul class="checklist">
+    <li><span class="check">✓</span> <strong>prefers-reduced-motion:</strong> All scroll animations must respect this — wrap every Framer Motion transition</li>
+    <li><span class="check">✓</span> <strong>Smooth scroll:</strong> <code>html { scroll-behavior: smooth }</code> — add to index.css</li>
+    <li><span class="warn">⚠</span> <strong>No scroll-jacking:</strong> Innovative scroll = triggered reveals, NOT overriding native scroll speed</li>
+    <li><span class="warn">⚠</span> <strong>No continuous decorative animation:</strong> Embers are fine (ambient). Bouncing icons, pulsing badges = remove</li>
+    <li><span class="keep">→</span> <strong>Touch targets 48×48px minimum</strong> on mobile nav and CTAs</li>
+    <li><span class="keep">→</span> <strong>Horizontal overflow hidden</strong> on all sections — <code>overflow-x: hidden</code></li>
+  </ul>
+</div>
+
+<div style="margin-top:32px;padding:20px;border-radius:14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2)">
+  <div style="font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:8px">Ready to lock the design system?</div>
+  <div style="font-size:13px;color:#64748b;line-height:1.6">
+    The skill recommends: <strong style="color:#e2e8f0">Modern Dark Cinema</strong> style · <strong style="color:#e2e8f0">Inter Cinema System</strong> typography ·
+    <strong style="color:#e2e8f0">Indigo #5E6AD2</strong> accent · <strong style="color:#e2e8f0">Spring physics</strong> animations · <strong style="color:#e2e8f0">Ember field kept as-is</strong>.
+    Let me know if you want to tweak anything before we spec the full design system and start implementing.
+  </div>
+</div>
+
+</body>
+</html>

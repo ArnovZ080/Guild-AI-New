@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import AmbientEmbers from './components/AmbientEmbers';
+import guildLogo from './assets/guild-logo.png';
 
 /* ── Lazy-loaded views (code-split) ── */
 const ChatInterface = lazy(() => import('./components/chat/ChatInterface'));
@@ -178,8 +179,8 @@ function AppContent() {
         >
           {/* Logo */}
           <div className="p-4 border-b border-white/[0.06] flex items-center gap-2">
-            <div className="w-8 h-8 gradient-cobalt rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0">
-              <span className="font-bold text-white text-sm">G</span>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
+              <img src={guildLogo} alt="Guild Logo" className="w-full h-full object-contain" />
             </div>
             {!sidebarCollapsed && (
               <span className="text-gradient-cobalt font-heading text-lg font-bold tracking-tight">Guild AI</span>

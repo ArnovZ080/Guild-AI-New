@@ -4,6 +4,7 @@ import { Sparkles, ArrowRight, ShieldCheck, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import ZARPrice from '@/components/ui/ZARPrice';
+import guildLogo from '../assets/guild-logo.png';
 
 function SignupPage() {
   const [params] = useSearchParams();
@@ -51,7 +52,9 @@ function SignupPage() {
         <div className="p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-indigo-500/10 to-emerald-500/5 border-r border-white/[0.06]">
           <div>
             <div className="flex items-center gap-2 mb-10">
-              <div className="w-10 h-10 bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm rounded-lg flex items-center justify-center font-bold text-indigo-400">G</div>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                <img src={guildLogo} alt="Guild Logo" className="w-full h-full object-contain" />
+              </div>
               <span className="text-xl font-heading font-bold text-gradient-cobalt">Guild AI</span>
             </div>
             <h2 className="text-3xl font-heading font-bold text-zinc-200 mb-3 leading-tight">

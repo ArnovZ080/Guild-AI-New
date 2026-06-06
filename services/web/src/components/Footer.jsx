@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Flame } from 'lucide-react'
+import guildLogo from '../assets/guild-logo.png';
 
 const nav = [
   {
@@ -41,8 +42,8 @@ export default function Footer() {
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">G</span>
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center">
+                <img src={guildLogo} alt="Guild Logo" className="w-full h-full object-contain" />
               </div>
               <span className="font-bold text-sm text-white tracking-tight">Guild <span className="text-indigo-400">AI</span></span>
             </div>

@@ -152,6 +152,28 @@ async def onboarding_status(
     }
 
 
+@router.post("/update")
+async def update_identity_manual(
+    data: dict,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserAccount = Depends(get_current_user),
+):
+    """Manually update identity from the UI flow."""
+    # Flatten brand and icp for the identity model
+    flat_data = {}
+    if "business_name" in data: flat_data["business_name"] = data["business_name"]
+    if "niche" in data: flat_data["niche"] = data["niche"]
+    
+    if "brand" in data and isinstance(data["brand"], dict):
+        flat_data["brand_voice"] = data["brand"]
+    
+    if "icp" in data and isinstance(data["icp"], dict):
+        flat_data["icp"] = data["icp"]
+        
+    identity = await BusinessIdentityManager.create_or_update(db, current_user.id, flat_data)
+    return {"completion_percentage": identity.completion_percentage}
+
+
 _ESSENTIAL_FIELDS = [
     "business_name", "niche", "industry", "target_audience",
     "icp", "brand_voice", "brand_story", "competitors",

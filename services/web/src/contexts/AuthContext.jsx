@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
         try {
           await api.auth.verify();
           const status = await api.onboarding.status();
-          setIdentityComplete(status?.completion >= 50);
+          setIdentityComplete(status?.completion_percentage >= 50);
         } catch {
           setIdentityComplete(false);
         }
