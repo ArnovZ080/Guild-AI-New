@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } f
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare, FileText, Activity, TrendingUp, GitBranch, Settings as SettingsIcon,
-  LogOut, ChevronLeft,
+  LogOut, ChevronLeft, Database,
 } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,6 +23,7 @@ const GrowthDashboard = lazy(() => import('./components/dashboard/GrowthDashboar
 const WorkflowBuilder = lazy(() => import('./components/workflows/WorkflowBuilder'));
 const SettingsPage = lazy(() => import('./components/settings/SettingsPage'));
 const OnboardingFlow = lazy(() => import('./components/onboarding/OnboardingFlow'));
+const AdminVault = lazy(() => import('./components/admin/AdminVault'));
 
 /* ── Public pages ── */
 import LandingPage from './pages/LandingPage';
@@ -146,7 +147,7 @@ function MobileTabBar({ navItems, currentPath }) {
    ═══════════════════════════════════════════ */
 function AppContent() {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const publicPaths = [
@@ -165,6 +166,10 @@ function AppContent() {
     { to: '/workflows', icon: GitBranch, label: 'Workflows', badge: 0 },
     { to: '/settings', icon: SettingsIcon, label: 'Settings', badge: 0 },
   ];
+
+  if (isAdmin) {
+    navItems.push({ to: '/admin', icon: Database, label: 'Admin Vault', badge: 0 });
+  }
 
   const currentPath = location.pathname;
 
@@ -272,6 +277,7 @@ function AppContent() {
               <Route path="/workflows" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><WorkflowBuilder /></Suspense></ErrorBoundary></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><SettingsPage /></Suspense></ErrorBoundary></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><div className="p-8 max-w-4xl mx-auto"><OnboardingFlow /></div></Suspense></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute><ErrorBoundary><Suspense fallback={<ViewLoader />}><AdminVault /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
               {/* Catch-all → Chat */}
               <Route path="*" element={<Navigate to="/chat" replace />} />

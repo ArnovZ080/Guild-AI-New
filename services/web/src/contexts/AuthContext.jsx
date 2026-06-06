@@ -26,6 +26,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [identityComplete, setIdentityComplete] = useState(null); // null = unknown
+  const [isAdmin, setIsAdmin] = useState(false);
 
   /* ── Get Firebase ID token ── */
   const getToken = useCallback(async () => {
@@ -51,15 +52,18 @@ export function AuthProvider({ children }) {
         guildWS.connect(fbUser.uid);
         // Register with backend if first time, check identity
         try {
-          await api.auth.verify();
+          const userRes = await api.auth.verify();
+          setIsAdmin(userRes?.is_admin || false);
           const status = await api.onboarding.status();
           setIdentityComplete(status?.completion_percentage >= 50);
         } catch {
           setIdentityComplete(false);
+          setIsAdmin(false);
         }
       } else {
         guildWS.disconnect();
         setIdentityComplete(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
@@ -99,6 +103,7 @@ export function AuthProvider({ children }) {
     loading,
     identityComplete,
     setIdentityComplete,
+    isAdmin,
     login,
     signup,
     loginWithGoogle,

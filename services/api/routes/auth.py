@@ -31,6 +31,7 @@ class UserResponse(BaseModel):
     subscription_tier: str
     is_active: bool
     has_business_identity: bool
+    is_admin: bool
 
     model_config = {"from_attributes": True}
 
@@ -83,6 +84,7 @@ async def register(
         subscription_tier=user.subscription_tier,
         is_active=user.is_active,
         has_business_identity=False,
+        is_admin=user.is_admin,
     )
 
 
@@ -123,6 +125,7 @@ async def verify_token(
         subscription_tier=user.subscription_tier,
         is_active=user.is_active,
         has_business_identity=has_bi,
+        is_admin=user.is_admin,
     )
 
 
@@ -144,4 +147,5 @@ async def get_me(
         subscription_tier=current_user.subscription_tier,
         is_active=current_user.is_active,
         has_business_identity=has_bi,
+        is_admin=current_user.is_admin,
     )

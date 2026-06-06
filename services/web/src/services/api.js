@@ -216,6 +216,22 @@ export const api = {
       authFetch(`/api/media/${id}/enhance`, { method: 'POST', body: JSON.stringify(instructions) }),
   },
 
+  // ── Admin ──
+  admin: {
+    vault: {
+      upload: (data) =>
+        authFetch('/api/admin/vault/upload', { method: 'POST', body: JSON.stringify(data) }),
+      list: (params = {}) =>
+        authFetch(`/api/admin/vault/?${new URLSearchParams(params)}`),
+      categories: () =>
+        authFetch('/api/admin/vault/categories'),
+      toggle: (id) =>
+        authFetch(`/api/admin/vault/${id}/toggle`, { method: 'POST' }),
+      delete: (id) =>
+        authFetch(`/api/admin/vault/${id}`, { method: 'DELETE' }),
+    }
+  },
+
   // ── Health ──
   health: () => publicFetch('/health'),
 };

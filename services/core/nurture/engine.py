@@ -135,11 +135,19 @@ class NurtureEngine:
         bi_context = await BusinessIdentityManager.get_context_prompt(None, sequence.user_id)
 
         # Generate personalized message
+        from services.core.knowledge.admin_vault import admin_vault_pipeline
+        admin_knowledge = await admin_vault_pipeline.query(f"{step['type']} {step['purpose']}", top_k=2)
+        admin_context = ""
+        if admin_knowledge:
+            admin_context = "GLOBAL ADMIN KNOWLEDGE (Best Practices & Frameworks):\n" + "\n".join([f"- {d['text']}" for d in admin_knowledge])
+
         prompt = f"""Create a {step['type']} message for a nurture sequence.
 
 PURPOSE: {step['purpose']}
 STEP: {step_index + 1} of {len(steps)}
 CHANNEL: {step['type']}
+
+{admin_context}
 
 {bi_context}
 

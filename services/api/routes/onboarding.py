@@ -159,18 +159,22 @@ async def update_identity_manual(
     current_user: UserAccount = Depends(get_current_user),
 ):
     """Manually update identity from the UI flow."""
-    # Flatten brand and icp for the identity model
-    flat_data = {}
+    # We save all data from the UI directly into the onboarding_answers JSONB column
+    # We can also pull out top-level fields for convenience
+    flat_data = {
+        "onboarding_answers": data
+    }
     if "business_name" in data: flat_data["business_name"] = data["business_name"]
     if "niche" in data: flat_data["niche"] = data["niche"]
     
-    if "brand" in data and isinstance(data["brand"], dict):
-        flat_data["brand_voice"] = data["brand"]
-    
-    if "icp" in data and isinstance(data["icp"], dict):
-        flat_data["icp"] = data["icp"]
-        
     identity = await BusinessIdentityManager.create_or_update(db, current_user.id, flat_data)
+    
+    # Since they finished the manual UI questionnaire, force completion to 100%
+    # This prevents the infinite loop issue where the legacy form didn't fill all _ESSENTIAL_FIELDS
+    identity.completion_percentage = 100.0
+    await db.commit()
+    await db.refresh(identity)
+    
     return {"completion_percentage": identity.completion_percentage}
 
 

@@ -23,13 +23,14 @@ def generate_uuid():
 # ── Core ──
 
 class UserAccount(Base):
-    __tablename__ = "users"
+    __tablename__ = "user_accounts"
 
     id = Column(String, primary_key=True, default=generate_uuid)
     firebase_uid = Column(String, unique=True, index=True, nullable=True)
     email = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=True)
     role = Column(String, default="user")
+    is_admin = Column(Boolean, default=False, nullable=False)
     subscription_tier = Column(String, default="free")  # free, starter, growth, scale
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -52,10 +53,10 @@ class UserAccount(Base):
 
 
 class BusinessIdentity(Base):
-    __tablename__ = "business_identity"
+    __tablename__ = "business_identities"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), unique=True, nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), unique=True, nullable=False)
     business_name = Column(String, nullable=True)
     niche = Column(String, nullable=True)
     industry = Column(String, nullable=True)
@@ -71,6 +72,7 @@ class BusinessIdentity(Base):
     goals_3month = Column(Text, nullable=True)
     goals_12month = Column(Text, nullable=True)
     challenges = Column(JSONB, default=list)
+    onboarding_answers = Column(JSONB, default=dict)
     completion_percentage = Column(Float, default=0.0)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -84,7 +86,7 @@ class Conversation(Base):
     __tablename__ = "conversations"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     title = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -113,7 +115,7 @@ class ContentItem(Base):
     __tablename__ = "content_items"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     content_type = Column(String, nullable=False)  # blog, social, email, ad, video_script
     platform = Column(String, nullable=True)       # linkedin, instagram, facebook, etc.
     title = Column(String, nullable=True)
@@ -132,7 +134,7 @@ class ContentTemplate(Base):
     __tablename__ = "content_templates"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     name = Column(String, nullable=False)
     content_type = Column(String, nullable=False)
     platform = Column(String, nullable=True)
@@ -145,7 +147,7 @@ class Contact(Base):
     __tablename__ = "contacts"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     name = Column(String, nullable=True)
     email = Column(String, nullable=True)
     company = Column(String, nullable=True)
@@ -180,7 +182,7 @@ class NurtureSequence(Base):
     __tablename__ = "nurture_sequences"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     name = Column(String, nullable=False)
     trigger_type = Column(String, nullable=True)  # signup, engagement, abandoned
     steps = Column(JSONB, default=list)
@@ -194,7 +196,7 @@ class Campaign(Base):
     __tablename__ = "campaigns"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     name = Column(String, nullable=False)
     type = Column(String, nullable=True)         # content, email, ad, social
     status = Column(String, default="draft")
@@ -213,7 +215,7 @@ class Workflow(Base):
     __tablename__ = "workflows"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     template_name = Column(String, nullable=True)
@@ -232,7 +234,7 @@ class WorkflowExecution(Base):
 
     id = Column(String, primary_key=True, default=generate_uuid)
     workflow_id = Column(String, ForeignKey("workflows.id"), nullable=True)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     status = Column(String, default="running")
     started_at = Column(DateTime, default=datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
@@ -250,7 +252,7 @@ class Goal(Base):
     __tablename__ = "goals"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     target_metric = Column(String, nullable=True)
@@ -284,7 +286,7 @@ class CalendarEvent(Base):
     __tablename__ = "calendar_events"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     title = Column(String, nullable=False)
     start_time = Column(DateTime, nullable=False)
     end_time = Column(DateTime, nullable=True)
@@ -300,7 +302,7 @@ class CalendarPattern(Base):
     __tablename__ = "calendar_patterns"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     pattern_type = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     confidence = Column(Float, default=0.0)
@@ -313,7 +315,7 @@ class Subscription(Base):
     __tablename__ = "subscriptions"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), unique=True, nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), unique=True, nullable=False)
     plan = Column(String, default="free")  # free, starter, growth, scale
     status = Column(String, default="active")
     paystack_id = Column(String, nullable=True)
@@ -331,7 +333,7 @@ class TokenUsage(Base):
     __tablename__ = "token_usage"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     agent_id = Column(String, nullable=True)
     workflow_id = Column(String, nullable=True)
     model = Column(String, nullable=False)
@@ -349,7 +351,7 @@ class ConnectedIntegration(Base):
     __tablename__ = "connected_integrations"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     platform = Column(String, nullable=False)
     status = Column(String, default="connected")
     oauth_tokens_encrypted = Column(JSONB, default=dict)
@@ -366,7 +368,7 @@ class KnowledgeDocument(Base):
     __tablename__ = "knowledge_documents"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     filename = Column(String, nullable=False)
     content_type = Column(String, nullable=True)
     chunk_count = Column(Integer, default=0)
@@ -399,7 +401,7 @@ class CustomerJourney(Base):
     __tablename__ = "customer_journeys"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     customer_email = Column(String, nullable=False, index=True)
     stage = Column(String, default="visitor")
     data = Column(JSONB, default=dict)
@@ -417,7 +419,7 @@ class MediaAsset(Base):
     __tablename__ = "media_assets"
 
     id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False, index=True)
 
     # File info
     filename = Column(String, nullable=False)
@@ -446,6 +448,44 @@ class MediaAsset(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("UserAccount", back_populates="media_assets")
+
+
+# ── Admin Vault ──
+
+class AdminKnowledge(Base):
+    __tablename__ = "admin_knowledge"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    
+    # Who uploaded it
+    uploaded_by = Column(String, ForeignKey("user_accounts.id"), nullable=False)
+    
+    # File info
+    title = Column(String, nullable=False)           # "High-Converting Email Subject Lines"
+    filename = Column(String, nullable=False)         # "email-subjects-research.md"
+    content_type = Column(String, default="text/markdown")
+    
+    # The actual content (stored as text for .md files)
+    content = Column(Text, nullable=False)
+    
+    # Categorization
+    category = Column(String, nullable=False)         # "email_marketing", "seo", etc.
+    tags = Column(JSONB, default=list)                # ["email", "subject lines", "conversion"]
+    
+    # Processing status
+    is_embedded = Column(Boolean, default=False)      # Whether it's been embedded in Qdrant
+    embedding_ids = Column(JSONB, default=list)       # Qdrant point IDs for this document's chunks
+    chunk_count = Column(Integer, default=0)
+    
+    # Metadata
+    description = Column(Text, nullable=True)         # Admin's notes on what this is and why it matters
+    source_url = Column(String, nullable=True)        # Where the knowledge came from
+    
+    # Status
+    is_active = Column(Boolean, default=True)         # Can be deactivated without deleting
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 # ── Legacy compatibility aliases ──

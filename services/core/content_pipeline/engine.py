@@ -219,10 +219,18 @@ Aim for 5-10 pieces across platforms."""
             ]
 
     async def _create_content(self, content_type: str, platform: str, topic: str, bi: dict) -> dict:
+        from services.core.knowledge.admin_vault import admin_vault_pipeline
+        admin_knowledge = await admin_vault_pipeline.query(f"{platform} {content_type} {topic}", top_k=2)
+        admin_context = ""
+        if admin_knowledge:
+            admin_context = "GLOBAL ADMIN KNOWLEDGE (Best Practices & Frameworks):\n" + "\n".join([f"- {d['text']}" for d in admin_knowledge])
+
         prompt = f"""Create {content_type} content for {platform}.
 
 Topic: {topic}
 Business: {json.dumps(bi, default=str)[:600]}
+
+{admin_context}
 
 Return ONLY valid JSON: {{"title": "string", "body": "full content text", "hashtags": ["list"], "cta": "call to action"}}"""
         try:
