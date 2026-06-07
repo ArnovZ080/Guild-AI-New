@@ -492,12 +492,63 @@ class AdminKnowledge(Base):
 LLMUsageRecord = TokenUsage
 Project = Goal
 ProjectMilestone = Milestone
-AgentAuthorization = AgentEventRecord
 AdaptiveLearningSignal = AgentEventRecord
-AIActionOutcome = AgentEventRecord
 UserPreference = AgentEventRecord
-LearnedPattern = AgentEventRecord
-AgentTrigger = AgentEventRecord
 AgentOutput = AgentEventRecord
 IntegrationCredential = ConnectedIntegration
+
+# ── Agent Orchestration ──
+
+class AgentAuthorization(Base):
+    __tablename__ = "agent_authorizations"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
+    task_id = Column(String, nullable=False)
+    agent_id = Column(String, nullable=False)
+    action_type = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    params = Column(JSONB, default=dict)
+    status = Column(String, default="pending")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class AIActionOutcome(Base):
+    __tablename__ = "ai_action_outcomes"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
+    task_id = Column(String, nullable=False)
+    agent_id = Column(String, nullable=False)
+    action_type = Column(String, nullable=False)
+    platform = Column(String, nullable=False)
+    params = Column(JSONB, default=dict)
+    score = Column(String, nullable=False)
+    metrics = Column(JSONB, default=dict)
+    context_data = Column(JSONB, default=dict)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+class LearnedPattern(Base):
+    __tablename__ = "learned_patterns"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
+    category = Column(String, nullable=False)
+    insight = Column(Text, nullable=False)
+    recommendation = Column(Text, nullable=False)
+    supporting_data = Column(JSONB, default=dict)
+    confidence_score = Column(Float, default=0.0)
+    sample_size = Column(Integer, default=0)
+    active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class AgentTrigger(Base):
+    __tablename__ = "agent_triggers"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    frequency = Column(String, nullable=False)
+    workflow_name = Column(String, nullable=False)
+    parameters = Column(JSONB, default=dict)
+    is_active = Column(Boolean, default=True)
+    last_run = Column(DateTime, nullable=True)
+    next_run = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 

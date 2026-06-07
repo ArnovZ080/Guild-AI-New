@@ -90,9 +90,24 @@ if os.path.isdir(_uploads):
     app.mount("/media", StaticFiles(directory=_uploads), name="media")
 
 # ── Static files (production: serves frontend build) ──
+from fastapi.responses import FileResponse
 _dist = os.path.join(os.path.dirname(__file__), "..", "web", "dist")
 if os.path.isdir(_dist):
-    app.mount("/", StaticFiles(directory=_dist, html=True), name="static")
+    # Mount assets folder for performance if it exists
+    assets_dir = os.path.join(_dist, "assets")
+    if os.path.isdir(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+        
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Prevent accessing files outside of _dist
+        file_path = os.path.abspath(os.path.join(_dist, full_path))
+        if not file_path.startswith(os.path.abspath(_dist)):
+            return FileResponse(os.path.join(_dist, "index.html"))
+            
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(_dist, "index.html"))
 
 
 # ── Health check (enhanced) ──

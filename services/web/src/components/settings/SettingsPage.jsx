@@ -13,6 +13,7 @@ import {
 import ZARPrice from '../ui/ZARPrice';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
 
@@ -34,6 +35,7 @@ function ProfileTab() {
   const [identity, setIdentity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -57,6 +59,7 @@ function ProfileTab() {
   if (loading) return <Loader2 size={20} className="animate-spin text-indigo-400 mx-auto my-12" />;
 
   const fields = [
+    { key: 'user_name', label: 'Your Name', type: 'text' },
     { key: 'business_name', label: 'Business Name', type: 'text' },
     { key: 'niche', label: 'Niche', type: 'text' },
     { key: 'industry', label: 'Industry', type: 'text' },
@@ -66,29 +69,24 @@ function ProfileTab() {
     { key: 'goals_12month', label: '12-Month Goals', type: 'text' },
     { key: 'target_audience', label: 'Target Audience', type: 'textarea' },
     { key: 'brand_story', label: 'Brand Story', type: 'textarea' },
-    { key: 'icp', label: 'Ideal Customer Profile (JSON)', type: 'json' },
-    { key: 'competitors', label: 'Competitors (comma-separated)', type: 'array' },
-    { key: 'marketing_channels', label: 'Marketing Channels (comma-separated)', type: 'array' },
-    { key: 'content_preferences', label: 'Content Preferences (JSON)', type: 'json' },
-    { key: 'challenges', label: 'Challenges (comma-separated)', type: 'array' },
+    { key: 'icp', label: 'Ideal Customer Profile', type: 'textarea' },
+    { key: 'competitors', label: 'Competitors', type: 'textarea' },
+    { key: 'marketing_channels', label: 'Marketing Channels', type: 'textarea' },
+    { key: 'content_preferences', label: 'Content Preferences', type: 'textarea' },
+    { key: 'challenges', label: 'Challenges', type: 'textarea' },
   ];
 
   const completion = identity?.completion_percentage || 0;
 
   const handleChange = (key, type, val) => {
-    let newVal = val;
-    if (type === 'array') newVal = val.split(',').map(s => s.trim()).filter(Boolean);
-    else if (type === 'json') {
-      try { newVal = JSON.parse(val); } catch { /* Keep as string temporarily if invalid JSON */ }
-    }
-    setIdentity({ ...identity, [key]: newVal });
+    setIdentity({ ...identity, [key]: val });
   };
 
   const getDisplayValue = (key, type) => {
     let val = identity?.[key] || '';
-    if (type === 'array' && Array.isArray(val)) return val.join(', ');
-    if (type === 'json' && typeof val === 'object') return JSON.stringify(val, null, 2);
-    return typeof val === 'object' ? JSON.stringify(val) : val;
+    if (typeof val === 'object') return JSON.stringify(val, null, 2);
+    if (Array.isArray(val)) return val.join(', ');
+    return val;
   };
 
   return (
@@ -98,6 +96,14 @@ function ProfileTab() {
         <span className={`text-xs font-medium px-2 py-0.5 rounded ${completion >= 80 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>
           {Math.round(completion)}% complete
         </span>
+        {completion >= 50 && (
+          <button 
+            onClick={() => navigate('/onboarding')} 
+            className="ml-auto text-xs px-2.5 py-1 rounded bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 transition-colors"
+          >
+            Redo Induction
+          </button>
+        )}
       </div>
 
       <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
@@ -106,14 +112,14 @@ function ProfileTab() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map(({ key, label, type }) => (
-          <div key={key} className={type === 'textarea' || type === 'json' ? 'sm:col-span-2' : ''}>
+          <div key={key} className={type === 'textarea' ? 'sm:col-span-2' : ''}>
             <label className="text-xs text-zinc-400 mb-1 block">{label}</label>
-            {type === 'textarea' || type === 'json' ? (
+            {type === 'textarea' ? (
               <textarea
                 value={getDisplayValue(key, type)}
                 onChange={(e) => handleChange(key, type, e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 font-mono"
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 font-sans"
               />
             ) : (
               <input

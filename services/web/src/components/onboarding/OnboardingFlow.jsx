@@ -31,6 +31,7 @@ const OnboardingFlow = () => {
     
     const [identity, setIdentity] = useState({
         // Core
+        user_name: '',
         business_name: '',
         niche: '',
         business_type: '',
@@ -179,6 +180,16 @@ const OnboardingFlow = () => {
                             {/* Step 1: Core */}
                             {currentStep === 0 && (
                                 <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Your Name</label>
+                                        <input
+                                            type="text"
+                                            value={identity.user_name}
+                                            onChange={(e) => updateField('user_name', e.target.value)}
+                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-900 placeholder-slate-400 shadow-sm"
+                                            placeholder="e.g. Jane Doe"
+                                        />
+                                    </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Company Legal Name</label>
                                         <input

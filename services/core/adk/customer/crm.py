@@ -156,7 +156,7 @@ AgentRegistry.register(
         category="sales",
         capabilities=["add_contact", "score_lead", "move_stage", "log_interaction",
                        "get_pipeline_summary", "sync_external"],
-        description="Contact management, pipeline tracking, ICP scoring",
+        description="Contact management, pipeline tracking, ICP scoring"
     ),
-    agent_class=CRMAgent,
+    agent_class=CRMAgent
 )

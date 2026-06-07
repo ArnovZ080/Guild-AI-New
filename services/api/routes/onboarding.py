@@ -160,17 +160,38 @@ async def update_identity_manual(
 ):
     """Manually update identity from the UI flow."""
     # We save all data from the UI directly into the onboarding_answers JSONB column
-    # We can also pull out top-level fields for convenience
+    # And we also pull out top-level fields for the Orchestrator context
     flat_data = {
-        "onboarding_answers": data
+        "onboarding_answers": data,
+        "business_name": data.get("business_name", ""),
+        "niche": data.get("niche", ""),
+        "industry": data.get("business_type", ""),
+        "target_audience": data.get("icp_description", ""),
+        "brand_voice": {
+            "tone": data.get("brand_voice_tone", ""),
+            "personality": data.get("brand_personality", ""),
+            "values": data.get("brand_values", "")
+        },
+        "brand_story": f"Positioning: {data.get('brand_positioning', '')}\nDifferentiation: {data.get('brand_differentiation', '')}",
+        "goals_3month": data.get("priority_3months", ""),
+        "goals_12month": data.get("vision_12months", ""),
+        "challenges": [data.get("biggest_challenge", "")] if data.get("biggest_challenge") else [],
+        "icp": {
+            "type": data.get("audience_type", ""),
+            "problem": data.get("audience_problem", ""),
+            "avatar": data.get("customer_avatar", "")
+        }
     }
-    if "business_name" in data: flat_data["business_name"] = data["business_name"]
-    if "niche" in data: flat_data["niche"] = data["niche"]
     
     identity = await BusinessIdentityManager.create_or_update(db, current_user.id, flat_data)
     
+    
+    # Update the user's name if provided
+    if data.get("user_name"):
+        current_user.name = data["user_name"]
+        db.add(current_user)
+
     # Since they finished the manual UI questionnaire, force completion to 100%
-    # This prevents the infinite loop issue where the legacy form didn't fill all _ESSENTIAL_FIELDS
     identity.completion_percentage = 100.0
     await db.commit()
     await db.refresh(identity)

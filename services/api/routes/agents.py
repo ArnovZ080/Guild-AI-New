@@ -28,6 +28,7 @@ class AgentRunResponse(BaseModel):
     status: str
     message: str
     run_id: Optional[str] = None # For future async task tracking
+    result: Optional[Any] = None
 
 class AgentCapabilityResponse(BaseModel):
     name: str
@@ -87,7 +88,8 @@ async def run_agent(agent_name: str, request: AgentRunRequest, background_tasks:
         return AgentRunResponse(
             status="completed",
             message="Agent execution successful",
-            run_id="sync-execution" # Placeholder
+            run_id="sync-execution", # Placeholder
+            result=result
         )
 
     except Exception as e:

@@ -6,7 +6,7 @@
  * Supports auto-reconnect with exponential backoff.
  */
 
-const WS_BASE = import.meta.env.VITE_WS_URL || 'ws://localhost:8001';
+const WS_BASE = import.meta.env.VITE_WS_URL || (window.location.hostname === 'localhost' ? 'ws://localhost:8001' : (window.location.protocol === 'https:' ? `wss://${window.location.host}` : `ws://${window.location.host}`));
 const MAX_RECONNECT_DELAY = 30_000;
 
 class GuildWebSocket {

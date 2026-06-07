@@ -33,6 +33,13 @@ function groupByDate(conversations) {
   return groups;
 }
 
+function getWelcomeMessage(name) {
+  const hour = new Date().getHours();
+  if (hour < 12) return `Good morning, ${name}! What are we working on today?`;
+  if (hour < 18) return `Good afternoon, ${name}! Ready to create some content?`;
+  return `Good evening, ${name}! Let's review today's growth.`;
+}
+
 /* ─── Message Bubble ─── */
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
@@ -175,9 +182,13 @@ export default function ChatInterface() {
         // Normal orchestrator mode
         response = await api.agents.run('OrchestratorAgent', { goal: userMsg.content });
       }
+      
+      const rawContent = response.response || response.result?.data?.response || response.result?.response || response.reply;
+      const finalContent = typeof rawContent === 'object' ? JSON.stringify(rawContent, null, 2) : (rawContent || JSON.stringify(response, null, 2));
+
       const assistantMsg = {
         role: 'assistant',
-        content: response.response || response.result || response.reply || JSON.stringify(response),
+        content: finalContent,
         tokens: response.tokens_used,
         timestamp: Date.now(),
       };
@@ -282,7 +293,7 @@ export default function ChatInterface() {
                 <Sparkles size={28} className="text-white" />
               </div>
               <h2 className="text-xl font-heading font-bold text-zinc-200">
-                {!identityComplete ? 'Welcome to Guild AI' : 'How can I help you grow today?'}
+                {!identityComplete ? 'Welcome to Guild AI' : (user?.name ? getWelcomeMessage(user.name) : 'How can I help you grow today?')}
               </h2>
               <p className="text-sm text-zinc-400 max-w-md">
                 {!identityComplete

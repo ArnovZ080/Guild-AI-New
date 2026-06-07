@@ -94,10 +94,19 @@ USER OBJECTIVE:
         # 3. Execution: Run the delegated tasks
         results = await self._execute_plan(plan, context or {})
         
+        # 4. Generate Conversational Summary
+        try:
+            summary_prompt = f"You are Guild AI. User requested: '{goal}'. Execution complete. Results: {str(results)[:800]}\nRespond directly to the user in 1-2 friendly sentences."
+            response_text = await default_llm.chat_completion([{"role": "system", "content": summary_prompt}])
+        except Exception as e:
+            self.logger.error(f"Summary generation failed: {e}")
+            response_text = "I've successfully processed your request. Please check the results."
+
         return {
             "status": "completed",
             "plan": plan.model_dump(),
-            "results": results
+            "results": results,
+            "response": response_text
         }
 
     async def execute_approved_plan(self, plan_data: Dict[str, Any], context: Optional[Dict] = None) -> Dict[str, Any]:
@@ -472,5 +481,6 @@ AgentRegistry.register(AgentCapability(
     name="OrchestratorAgent",
     category="Orchestration",
     capabilities=["workflow_management", "task_delegation"],
-    description="Breaks down complex goals and manages multi-agent workflows."
+    description="Breaks down complex goals and manages multi-agent workflows.",
+    agent_class=OrchestratorAgent
 ))

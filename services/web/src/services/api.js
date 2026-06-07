@@ -3,7 +3,7 @@
  * Covers all Phase 1 + Phase 2 backend endpoints.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8001';
+const API_BASE = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8001' : '');
 
 /* ─── Token getter (set by AuthContext on mount) ─── */
 let _getToken = () => Promise.resolve(null);
