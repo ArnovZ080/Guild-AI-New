@@ -147,8 +147,17 @@ function MobileTabBar({ navItems, currentPath }) {
    ═══════════════════════════════════════════ */
 function AppContent() {
   const location = useLocation();
-  const { user, logout, isAdmin } = useAuth();
+  const { user, dbUser, logout, isAdmin } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [trialExpiredModal, setTrialExpiredModal] = useState(false);
+
+  useEffect(() => {
+    const handleExpired = () => setTrialExpiredModal(true);
+    window.addEventListener('trial_expired', handleExpired);
+    return () => window.removeEventListener('trial_expired', handleExpired);
+  }, []);
+
+  const trialDaysRemaining = dbUser?.trial_ends_at ? Math.max(0, Math.ceil((new Date(dbUser.trial_ends_at) - new Date()) / (1000 * 60 * 60 * 24))) : 0;
 
   const publicPaths = [
     '/', '/landing', '/login', '/signup', '/waitlist', '/pricing',
@@ -213,17 +222,24 @@ function AppContent() {
           {/* Bottom section */}
           <div className="p-3 border-t border-white/[0.06] space-y-2">
             {user && (
-              <div className="flex items-center gap-2 px-1">
-                <div className="w-7 h-7 rounded-full gradient-cobalt border border-blue-500/20 flex-shrink-0" />
-                {!sidebarCollapsed && (
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-zinc-300 truncate">{user.displayName || user.email?.split('@')[0]}</p>
-                    <p className="text-xs text-zinc-600 truncate">{user.email}</p>
+              <div className="flex flex-col gap-2 px-1">
+                {!isAdmin && dbUser?.subscription_status !== 'active' && !sidebarCollapsed && (
+                  <div className={`text-[10px] font-medium tracking-wide uppercase px-2 py-1.5 rounded-md ${trialDaysRemaining <= 3 ? 'bg-red-500/10 text-red-400' : 'bg-indigo-500/10 text-indigo-300'}`}>
+                    {trialDaysRemaining > 0 ? `Free Trial: ${trialDaysRemaining} days left` : 'Trial Expired'}
                   </div>
                 )}
-                <button onClick={logout} className="p-1.5 rounded-md text-zinc-600 hover:text-red-400 hover:bg-white/5 transition-colors" title="Logout">
-                  <LogOut size={14} strokeWidth={1.5} />
-                </button>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full gradient-cobalt border border-blue-500/20 flex-shrink-0" />
+                  {!sidebarCollapsed && (
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-zinc-300 truncate">{user.displayName || user.email?.split('@')[0]}</p>
+                      <p className="text-xs text-zinc-600 truncate">{user.email}</p>
+                    </div>
+                  )}
+                  <button onClick={logout} className="p-1.5 rounded-md text-zinc-600 hover:text-red-400 hover:bg-white/5 transition-colors" title="Logout">
+                    <LogOut size={14} strokeWidth={1.5} />
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -285,6 +301,39 @@ function AppContent() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <AnimatePresence>
+        {trialExpiredModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-surface-base border border-white/[0.06] shadow-2xl rounded-2xl p-6 max-w-md w-full text-center space-y-4"
+            >
+              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                <LogOut className="text-red-400" size={28} />
+              </div>
+              <h2 className="text-xl font-bold text-white">Trial Expired</h2>
+              <p className="text-sm text-zinc-400">
+                Your 14-day free trial has come to an end. To continue using Guild AI's autonomous workforce, please select a subscription plan.
+              </p>
+              <div className="pt-4 flex gap-3 justify-center">
+                <Link
+                  to="/settings"
+                  onClick={() => setTrialExpiredModal(false)}
+                  className="px-6 py-2 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 transition-colors"
+                >
+                  View Plans
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ToastContainer
         position="bottom-right"

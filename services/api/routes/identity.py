@@ -62,6 +62,30 @@ async def update_identity(identity: dict, db: AsyncSession = Depends(get_db), cu
         logger.error(f"Failed to save identity: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/document")
+async def get_documents(
+    db: AsyncSession = Depends(get_db),
+    current_user: UserAccount = Depends(get_current_user)
+):
+    """Retrieve all uploaded knowledge base documents."""
+    try:
+        from sqlalchemy import select
+        from services.core.db.models import KnowledgeDocument
+        stmt = select(KnowledgeDocument).where(KnowledgeDocument.user_id == current_user.id).order_by(KnowledgeDocument.embedded_at.desc())
+        result = await db.execute(stmt)
+        docs = result.scalars().all()
+        return [
+            {
+                "id": doc.id,
+                "name": doc.filename,
+                "size": doc.doc_metadata.get("size", 0) if doc.doc_metadata else 0,
+                "uploaded": doc.embedded_at.isoformat() if doc.embedded_at else None
+            } for doc in docs
+        ]
+    except Exception as e:
+        logger.error(f"Failed to get documents: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/document", response_model=KnowledgeSource)
 async def upload_document(
     file: UploadFile = File(...),

@@ -26,6 +26,12 @@ async function authFetch(url, options = {}) {
   const res = await fetch(`${API_BASE}${url}`, { ...options, headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
+    
+    // Intercept 402 Payment Required for trial expired logic
+    if (res.status === 402 && err.detail === "trial_expired") {
+      window.dispatchEvent(new CustomEvent('trial_expired'));
+    }
+
     throw new Error(err.detail || `API ${res.status}: ${res.statusText}`);
   }
   return res.json();
@@ -164,6 +170,8 @@ export const api = {
       authFetch('/api/v1/identity/', { method: 'POST', body: JSON.stringify(data) }),
     uploadDocument: (formData) =>
       authFetch('/api/v1/identity/document', { method: 'POST', body: formData }),
+    getDocuments: () =>
+      authFetch('/api/v1/identity/document'),
   },
 
   // ── Integrations ──

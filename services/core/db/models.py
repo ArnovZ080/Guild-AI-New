@@ -32,6 +32,9 @@ class UserAccount(Base):
     role = Column(String, default="user")
     is_admin = Column(Boolean, default=False, nullable=False)
     subscription_tier = Column(String, default="free")  # free, starter, growth, scale
+    subscription_status = Column(String, default="inactive") # active, past_due, canceled
+    trial_started_at = Column(DateTime, default=datetime.utcnow)
+    trial_ends_at = Column(DateTime, nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

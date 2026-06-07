@@ -212,7 +212,17 @@ function IntegrationsTab() {
                       toast.success(`Disconnected from ${c.platform || c.name}`);
                     } catch (err) { toast.error(err.message); }
                   } else {
-                    window.location.href = `/api/v1/oauth/authorize/${c.platform || c.name}`;
+                    try {
+                      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/oauth/authorize/${c.platform || c.name}`);
+                      const data = await res.json();
+                      if (res.ok && data.auth_url) {
+                        window.location.href = data.auth_url;
+                      } else {
+                        toast.error(data.detail || "Integration not yet fully supported.");
+                      }
+                    } catch (err) {
+                      toast.error("Failed to connect integration.");
+                    }
                   }
                 }}
                 className={`text-xs px-2.5 py-1 rounded-lg ${c.connected ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'} transition-colors`}
@@ -283,6 +293,20 @@ function SubscriptionTab() {
 function KnowledgeTab() {
   const [dragging, setDragging] = useState(false);
   const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await api.identity.getDocuments();
+        setDocuments(data || []);
+      } catch (err) {
+        console.error("Failed to fetch documents", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const handleDrop = async (e) => {
     e.preventDefault();
@@ -292,12 +316,15 @@ function KnowledgeTab() {
       const formData = new FormData();
       formData.append('file', file);
       try {
-        await api.identity.uploadDocument(formData);
-        setDocuments((prev) => [...prev, { name: file.name, size: file.size, uploaded: new Date().toISOString() }]);
+        const res = await api.identity.uploadDocument(formData);
+        const newDoc = { name: file.name, size: file.size, uploaded: new Date().toISOString() };
+        setDocuments((prev) => [...prev, newDoc]);
         toast.success(`${file.name} uploaded!`);
       } catch (err) { toast.error(err.message); }
     }
   };
+
+  if (loading) return <Loader2 size={20} className="animate-spin text-indigo-400 mx-auto my-12" />;
 
   return (
     <div className="space-y-4">

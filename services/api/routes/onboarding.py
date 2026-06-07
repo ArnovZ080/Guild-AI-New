@@ -47,6 +47,7 @@ You're building their Business Identity, which includes:
 - Business name, niche, industry
 - Target audience / Ideal Customer Profile (demographics, psychographics, pain points)
 - Brand voice and tone (how they want to sound)
+- Brand visuals (colors, fonts, visual style)
 - Brand story / origin
 - Competitors
 - Pricing strategy
@@ -200,8 +201,7 @@ async def update_identity_manual(
         current_user.name = data["user_name"]
         db.add(current_user)
 
-    # Since they finished the manual UI questionnaire, force completion to 100%
-    identity.completion_percentage = 100.0
+    # Note: We rely on the core _compute_completion method to accurately calculate percentage instead of forcing it to 100.
     await db.commit()
     await db.refresh(identity)
     

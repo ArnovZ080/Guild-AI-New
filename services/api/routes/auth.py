@@ -67,11 +67,13 @@ async def register(
         )
 
     # Create user
+    from datetime import datetime, timedelta
     user = UserAccount(
         firebase_uid=firebase_uid,
         email=request.email,
         name=request.name,
         subscription_tier="free",
+        trial_ends_at=datetime.utcnow() + timedelta(days=14),
     )
     db.add(user)
     await db.commit()

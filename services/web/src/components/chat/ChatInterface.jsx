@@ -224,7 +224,13 @@ export default function ChatInterface() {
         response = await api.agents.run('OrchestratorAgent', { goal: userMsg.content });
       }
       
-      const rawContent = response.response || response.result?.data?.response || response.result?.response || response.reply;
+      let rawContent = response.response || response.result?.data?.response || response.result?.response || response.reply;
+      
+      // If it failed and we have an error string, use that instead of dumping raw JSON
+      if (response.result?.status === 'failed' && response.result?.data?.error) {
+        rawContent = `Error: ${response.result.data.error}`;
+      }
+
       const finalContent = typeof rawContent === 'object' ? JSON.stringify(rawContent, null, 2) : (rawContent || JSON.stringify(response, null, 2));
 
       const assistantMsg = {

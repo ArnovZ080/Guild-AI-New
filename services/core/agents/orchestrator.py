@@ -52,12 +52,12 @@ class OrchestratorAgent(BaseAgent):
         adaptive_context = await AdaptiveLearningService.get_context_for_orchestrator(db, user_id)
 
         # 2.6 Inject Proactive Customer Intelligence
-        proactive_actions = PredictiveEngine.get_proactive_tasks()
+        proactive_actions = await PredictiveEngine.get_proactive_tasks(db, user_id)
         proactive_context = ""
         if proactive_actions:
             lines = ["## Proactive Actions Needed (Predictive Engine)"]
             for a in proactive_actions[:5]:
-                lines.append(f"- [{a.priority.value.upper()}] {a.title} for customer {a.customer_id} (confidence: {a.confidence}, urgency: {a.urgency})")
+                lines.append(f"- [{a.priority.value.upper()}] {a.title} for customer {a.customer_id} (confidence: {getattr(a, 'confidence_score', 0.8)}, urgency: {a.urgency})")
             proactive_context = "\n".join(lines)
 
         # 3. Planning: Generate Delegation Plan with context-aware goal

@@ -81,6 +81,9 @@ app.include_router(chat.router, prefix="/api/v1")
 
 app.include_router(ws.router, tags=["WebSocket"])
 
+# ── Force register all connectors ──
+from services.core.integrations.registry import register_all_connectors
+register_all_connectors()
 
 # ── Serve uploaded media files ──
 import os

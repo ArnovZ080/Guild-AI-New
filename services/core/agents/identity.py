@@ -34,18 +34,25 @@ _FIELDS = {
 }
 
 
+def _is_populated(val) -> bool:
+    if not val:
+        return False
+    if isinstance(val, str):
+        return bool(val.strip())
+    if isinstance(val, dict):
+        return any(_is_populated(v) for v in val.values())
+    if isinstance(val, list):
+        return any(_is_populated(v) for v in val)
+    return True
+
 def _compute_completion(identity: BusinessIdentity) -> float:
     """Calculate completion percentage based on filled fields."""
     total_weight = sum(_FIELDS.values())
     filled_weight = 0
     for field, weight in _FIELDS.items():
         val = getattr(identity, field, None)
-        if val:
-            if isinstance(val, (dict, list)):
-                if len(val) > 0:
-                    filled_weight += weight
-            elif isinstance(val, str) and val.strip():
-                filled_weight += weight
+        if _is_populated(val):
+            filled_weight += weight
     return round((filled_weight / total_weight) * 100, 1)
 
 
