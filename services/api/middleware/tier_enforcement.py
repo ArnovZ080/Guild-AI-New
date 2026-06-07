@@ -21,7 +21,7 @@ async def enforce_content_limit(
     current_user: UserAccount = Depends(get_current_user),
 ):
     """Dependency that checks whether the user has remaining content quota."""
-    tier = current_user.tier or "free"
+    tier = current_user.subscription_tier or "free"
     limits = TIER_LIMITS.get(tier, TIER_LIMITS["free"])
 
     start_of_month = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)

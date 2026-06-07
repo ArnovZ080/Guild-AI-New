@@ -76,3 +76,6 @@ def register_all_connectors():
     IntegrationRegistry.register("facebook", FacebookPublishingIntegration)
 
     print(f"All {len(IntegrationRegistry.list_integrations())} connectors registered.")
+
+# Initialize the registry with all connectors
+register_all_connectors()

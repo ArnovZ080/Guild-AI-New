@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'react-toastify';
-import { format, startOfWeek, addDays, addWeeks, subWeeks, isSameDay } from 'date-fns';
+import { format, startOfWeek, addDays, addWeeks, subWeeks, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, addMonths, subMonths, subDays } from 'date-fns';
 
 /* ─── Content Type Icons ─── */
 const typeIcons = {
@@ -219,23 +219,50 @@ function GenerateModal({ open, onClose }) {
   );
 }
 
-/* ─── Week Calendar ─── */
-function WeekCalendar({ events }) {
-  const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
-  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+/* ─── Dynamic Calendar ─── */
+function DynamicCalendar({ events }) {
+  const [view, setView] = useState('week'); // 'day', 'week', 'month'
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3">
-        <button onClick={() => setWeekStart(subWeeks(weekStart, 1))} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
-          <ChevronLeft size={16} strokeWidth={1.5} />
-        </button>
-        <h3 className="text-sm font-medium text-zinc-300">{format(weekStart, 'MMM d')} – {format(addDays(weekStart, 6), 'MMM d, yyyy')}</h3>
-        <button onClick={() => setWeekStart(addWeeks(weekStart, 1))} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
-          <ChevronRight size={16} strokeWidth={1.5} />
-        </button>
+  const handlePrev = () => {
+    if (view === 'day') setCurrentDate(subDays(currentDate, 1));
+    else if (view === 'week') setCurrentDate(subWeeks(currentDate, 1));
+    else setCurrentDate(subMonths(currentDate, 1));
+  };
+
+  const handleNext = () => {
+    if (view === 'day') setCurrentDate(addDays(currentDate, 1));
+    else if (view === 'week') setCurrentDate(addWeeks(currentDate, 1));
+    else setCurrentDate(addMonths(currentDate, 1));
+  };
+
+  // Day View
+  const renderDay = () => {
+    const dayEvents = (events || []).filter((e) => isSameDay(new Date(e.scheduled_at || e.start), currentDate));
+    return (
+      <div className="glass-panel rounded-xl p-4 min-h-[400px]">
+        <p className="text-sm font-medium text-indigo-400 mb-4">{format(currentDate, 'EEEE, MMMM d')}</p>
+        <div className="space-y-2">
+          {dayEvents.length === 0 ? (
+            <p className="text-xs text-zinc-500">No events today.</p>
+          ) : (
+            dayEvents.map((evt, i) => (
+              <div key={i} className="text-sm px-3 py-2 rounded bg-indigo-500/10 text-indigo-300">
+                <div className="font-medium">{evt.title || evt.content_type || 'Event'}</div>
+                {evt.scheduled_at && <div className="text-xs opacity-70 mt-1">{format(new Date(evt.scheduled_at), 'h:mm a')}</div>}
+              </div>
+            ))
+          )}
+        </div>
       </div>
+    );
+  };
 
+  // Week View
+  const renderWeek = () => {
+    const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+    const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+    return (
       <div className="grid grid-cols-7 gap-1">
         {days.map((day) => {
           const isToday = isSameDay(day, new Date());
@@ -247,7 +274,7 @@ function WeekCalendar({ events }) {
               </p>
               <div className="space-y-1">
                 {dayEvents.map((evt, i) => (
-                  <div key={i} className="text-xs px-1.5 py-1 rounded bg-indigo-500/10 text-indigo-300 truncate">
+                  <div key={i} className="text-xs px-1.5 py-1 rounded bg-indigo-500/10 text-indigo-300 truncate" title={evt.title || evt.content_type}>
                     {evt.title || evt.content_type || 'Event'}
                   </div>
                 ))}
@@ -256,6 +283,78 @@ function WeekCalendar({ events }) {
           );
         })}
       </div>
+    );
+  };
+
+  // Month View
+  const renderMonth = () => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(monthStart);
+    
+    const start = startOfWeek(monthStart, { weekStartsOn: 1 });
+    const end = addDays(startOfWeek(monthEnd, { weekStartsOn: 1 }), 6);
+    
+    const days = eachDayOfInterval({ start, end });
+
+    return (
+      <div className="grid grid-cols-7 gap-1">
+        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
+          <div key={d} className="text-xs font-medium text-zinc-500 text-center py-1">{d}</div>
+        ))}
+        {days.map((day) => {
+          const isToday = isSameDay(day, new Date());
+          const isCurrentMonth = isSameMonth(day, currentDate);
+          const dayEvents = (events || []).filter((e) => isSameDay(new Date(e.scheduled_at || e.start), day));
+          return (
+            <div key={day.toISOString()} className={`glass-panel rounded-xl p-1 min-h-[80px] ${isToday ? 'border-indigo-500/30' : ''} ${!isCurrentMonth ? 'opacity-30' : ''}`}>
+              <p className={`text-[10px] font-medium mb-1 ${isToday ? 'text-indigo-400' : 'text-zinc-400'}`}>
+                {format(day, 'd')}
+              </p>
+              <div className="space-y-0.5 flex flex-wrap gap-0.5">
+                {dayEvents.map((evt, i) => (
+                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-indigo-500" title={evt.title || evt.content_type} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button onClick={handlePrev} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
+            <ChevronLeft size={16} strokeWidth={1.5} />
+          </button>
+          <h3 className="text-sm font-medium text-zinc-300 min-w-[140px] text-center">
+            {view === 'day' ? format(currentDate, 'MMM d, yyyy') : 
+             view === 'week' ? `${format(startOfWeek(currentDate, {weekStartsOn:1}), 'MMM d')} – ${format(addDays(startOfWeek(currentDate, {weekStartsOn:1}), 6), 'MMM d')}` : 
+             format(currentDate, 'MMMM yyyy')}
+          </h3>
+          <button onClick={handleNext} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-300 hover:bg-white/5 transition-colors">
+            <ChevronRight size={16} strokeWidth={1.5} />
+          </button>
+        </div>
+        
+        <div className="flex items-center gap-1 p-1 rounded-lg bg-white/[0.02] border border-white/[0.06]">
+          {['day', 'week', 'month'].map(v => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-2 py-1 text-xs font-medium rounded transition-colors ${view === v ? 'bg-white/[0.08] text-zinc-200' : 'text-zinc-400 hover:text-zinc-300'}`}
+            >
+              {v.charAt(0).toUpperCase() + v.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {view === 'day' && renderDay()}
+      {view === 'week' && renderWeek()}
+      {view === 'month' && renderMonth()}
     </div>
   );
 }
@@ -394,7 +493,7 @@ export default function ContentQueue() {
             </div>
           )}
 
-          {activeTab === 'calendar' && <WeekCalendar events={[...queue, ...events]} />}
+          {activeTab === 'calendar' && <DynamicCalendar events={[...queue, ...events]} />}
 
           {activeTab === 'published' && (
             <div className="space-y-3">

@@ -57,15 +57,39 @@ function ProfileTab() {
   if (loading) return <Loader2 size={20} className="animate-spin text-indigo-400 mx-auto my-12" />;
 
   const fields = [
-    { key: 'business_name', label: 'Business Name' },
-    { key: 'industry', label: 'Industry' },
-    { key: 'target_audience', label: 'Target Audience' },
-    { key: 'brand_voice', label: 'Brand Voice' },
-    { key: 'unique_value', label: 'Unique Value Proposition' },
-    { key: 'goals', label: 'Business Goals' },
+    { key: 'business_name', label: 'Business Name', type: 'text' },
+    { key: 'niche', label: 'Niche', type: 'text' },
+    { key: 'industry', label: 'Industry', type: 'text' },
+    { key: 'brand_voice', label: 'Brand Voice', type: 'text' },
+    { key: 'pricing_strategy', label: 'Pricing Strategy', type: 'text' },
+    { key: 'goals_3month', label: '3-Month Goals', type: 'text' },
+    { key: 'goals_12month', label: '12-Month Goals', type: 'text' },
+    { key: 'target_audience', label: 'Target Audience', type: 'textarea' },
+    { key: 'brand_story', label: 'Brand Story', type: 'textarea' },
+    { key: 'icp', label: 'Ideal Customer Profile (JSON)', type: 'json' },
+    { key: 'competitors', label: 'Competitors (comma-separated)', type: 'array' },
+    { key: 'marketing_channels', label: 'Marketing Channels (comma-separated)', type: 'array' },
+    { key: 'content_preferences', label: 'Content Preferences (JSON)', type: 'json' },
+    { key: 'challenges', label: 'Challenges (comma-separated)', type: 'array' },
   ];
 
   const completion = identity?.completion_percentage || 0;
+
+  const handleChange = (key, type, val) => {
+    let newVal = val;
+    if (type === 'array') newVal = val.split(',').map(s => s.trim()).filter(Boolean);
+    else if (type === 'json') {
+      try { newVal = JSON.parse(val); } catch { /* Keep as string temporarily if invalid JSON */ }
+    }
+    setIdentity({ ...identity, [key]: newVal });
+  };
+
+  const getDisplayValue = (key, type) => {
+    let val = identity?.[key] || '';
+    if (type === 'array' && Array.isArray(val)) return val.join(', ');
+    if (type === 'json' && typeof val === 'object') return JSON.stringify(val, null, 2);
+    return typeof val === 'object' ? JSON.stringify(val) : val;
+  };
 
   return (
     <div className="space-y-4">
@@ -80,15 +104,24 @@ function ProfileTab() {
         <div className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all" style={{ width: `${completion}%` }} />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        {fields.map(({ key, label }) => (
-          <div key={key}>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {fields.map(({ key, label, type }) => (
+          <div key={key} className={type === 'textarea' || type === 'json' ? 'sm:col-span-2' : ''}>
             <label className="text-xs text-zinc-400 mb-1 block">{label}</label>
-            <input
-              value={identity?.[key] || ''}
-              onChange={(e) => setIdentity({ ...identity, [key]: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30"
-            />
+            {type === 'textarea' || type === 'json' ? (
+              <textarea
+                value={getDisplayValue(key, type)}
+                onChange={(e) => handleChange(key, type, e.target.value)}
+                rows={4}
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 font-mono"
+              />
+            ) : (
+              <input
+                value={getDisplayValue(key, type)}
+                onChange={(e) => handleChange(key, type, e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30"
+              />
+            )}
           </div>
         ))}
       </div>
@@ -139,7 +172,20 @@ function IntegrationsTab() {
                 <p className="text-sm font-medium text-zinc-200 capitalize">{c.platform || c.name}</p>
                 <p className="text-xs text-zinc-400">{c.connected ? 'Connected' : 'Not connected'}</p>
               </div>
-              <button className={`text-xs px-2.5 py-1 rounded-lg ${c.connected ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'} transition-colors`}>
+              <button 
+                onClick={async () => {
+                  if (c.connected) {
+                    try {
+                      await api.integrations.disconnect(c.platform || c.name);
+                      setConnectors(prev => prev.map(x => (x.platform || x.name) === (c.platform || c.name) ? { ...x, connected: false } : x));
+                      toast.success(`Disconnected from ${c.platform || c.name}`);
+                    } catch (err) { toast.error(err.message); }
+                  } else {
+                    window.location.href = `/api/v1/oauth/${c.platform || c.name}/authorize`;
+                  }
+                }}
+                className={`text-xs px-2.5 py-1 rounded-lg ${c.connected ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'} transition-colors`}
+              >
                 {c.connected ? 'Disconnect' : 'Connect'}
               </button>
             </div>
@@ -731,11 +777,82 @@ function PreferencesTab() {
 
 /* ── Admin Tab ── */
 function AdminTab() {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [category, setCategory] = useState('best_practices');
+  const [uploading, setUploading] = useState(false);
+
+  const handleIngest = async () => {
+    if (!title || !content) { toast.error('Title and content are required'); return; }
+    setUploading(true);
+    try {
+      await api.admin.vault.upload({
+        title,
+        filename: title.replace(/\s+/g, '-').toLowerCase() + '.md',
+        content,
+        category,
+      });
+      toast.success('Admin knowledge ingested!');
+      setTitle(''); setContent('');
+    } catch (err) { toast.error(err.message); }
+    setUploading(false);
+  };
+
   return (
-    <div className="glass-panel rounded-xl p-8 text-center space-y-2">
-      <Shield size={28} className="mx-auto text-zinc-600" strokeWidth={1.5} />
-      <p className="text-sm text-zinc-400">Admin features coming soon.</p>
-      <p className="text-xs text-zinc-600">Waitlist management, beta access, and user administration.</p>
+    <div className="space-y-4">
+      <div className="glass-panel rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Shield className="text-indigo-400" />
+          <h3 className="text-sm font-heading font-bold text-zinc-200">Admin Knowledge Vault</h3>
+        </div>
+        <p className="text-xs text-zinc-400 mb-6">
+          Ingest global system knowledge (best practices, frameworks) directly into the agent vector store.
+        </p>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs text-zinc-400 mb-1 block">Title / Topic</label>
+            <input
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              placeholder="e.g. Email Conversion Framework 2026"
+              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-400 mb-1 block">Category</label>
+            <select
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-300 outline-none"
+            >
+              <option value="best_practices">Best Practices</option>
+              <option value="marketing_framework">Marketing Framework</option>
+              <option value="sales_tactics">Sales Tactics</option>
+              <option value="system_rules">System Rules</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-zinc-400 mb-1 block">Raw Content (Markdown supported)</label>
+            <textarea
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              rows={8}
+              placeholder="Paste raw knowledge, guidelines, or frameworks here..."
+              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 font-mono"
+            />
+          </div>
+
+          <button
+            onClick={handleIngest}
+            disabled={uploading}
+            className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 disabled:opacity-40 transition-colors"
+          >
+            {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+            Ingest to Vault
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -6,6 +6,7 @@ from services.core.agents.registry import AgentRegistry, AgentCapability
 # Import agents to trigger registration
 import services.core.agents.research
 import services.core.agents.content
+import services.core.agents.orchestrator
 import services.core.adk.financial_advisor
 import services.core.adk.business_intelligence
 import services.core.adk.customer_intelligence
