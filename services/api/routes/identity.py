@@ -11,7 +11,7 @@ from services.core.db.base import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
 from services.api.middleware.auth import get_current_user
-from services.core.db.models import UserAccount
+from services.core.db.models import UserAccount, KnowledgeDocument
 from services.core.tools.document_processor import document_processor
 
 router = APIRouter(prefix="/identity", tags=["identity"])
@@ -63,7 +63,11 @@ async def update_identity(identity: dict, db: AsyncSession = Depends(get_db), cu
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/document", response_model=KnowledgeSource)
-async def upload_document(file: UploadFile = File(...)):
+async def upload_document(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: UserAccount = Depends(get_current_user)
+):
     """Upload and process a business document to the knowledge base."""
     temp_path = None
     try:
@@ -89,10 +93,18 @@ async def upload_document(file: UploadFile = File(...)):
             indexed_at=datetime.now().isoformat()
         )
         
-        # 4. Update Identity Knowledge Base
-        identity = await BusinessIdentityManager.get(db, current_user.id)
-        # Assuming knowledge_base is stored or managed properly in DB.
-        # This is a simplification. The KnowledgeBase routes should handle this cleanly.
+        # 4. Update Identity Knowledge Base (Database)
+        doc = KnowledgeDocument(
+            id=new_source.id,
+            user_id=current_user.id,
+            filename=file.filename,
+            content_type="document",
+            chunk_count=len(result.get("chunks", [])),
+            embedded_at=datetime.now(),
+            doc_metadata={"preview": new_source.content_preview}
+        )
+        db.add(doc)
+        await db.commit()
         
         return new_source
         

@@ -148,6 +148,14 @@ export const api = {
       authFetch('/api/v1/agents/events'),
   },
 
+  // ── Chat ──
+  chat: {
+    list: () => authFetch('/api/v1/chat/'),
+    get: (id) => authFetch(`/api/v1/chat/${id}`),
+    sendMessage: (id, data) => 
+      authFetch(`/api/v1/chat/${id}/message`, { method: 'POST', body: JSON.stringify(data) }),
+  },
+
   // ── Identity ──
   identity: {
     get: () =>

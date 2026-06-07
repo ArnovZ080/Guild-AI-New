@@ -24,6 +24,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [identityComplete, setIdentityComplete] = useState(null); // null = unknown
   const [isAdmin, setIsAdmin] = useState(false);
@@ -53,10 +54,12 @@ export function AuthProvider({ children }) {
         // Register with backend if first time, check identity
         try {
           const userRes = await api.auth.verify();
+          setDbUser(userRes);
           setIsAdmin(userRes?.is_admin || false);
           const status = await api.onboarding.status();
           setIdentityComplete(status?.completion_percentage >= 50);
         } catch {
+          setDbUser(null);
           setIdentityComplete(false);
           setIsAdmin(false);
         }
@@ -102,6 +105,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
+    dbUser,
     loading,
     identityComplete,
     setIdentityComplete,

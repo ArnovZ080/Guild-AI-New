@@ -172,10 +172,19 @@ async def update_identity_manual(
             "personality": data.get("brand_personality", ""),
             "values": data.get("brand_values", "")
         },
+        "brand_visual": {
+            "colors": data.get("brand_colors", ""),
+            "fonts": data.get("brand_fonts", ""),
+            "style": data.get("brand_style", "")
+        },
         "brand_story": f"Positioning: {data.get('brand_positioning', '')}\nDifferentiation: {data.get('brand_differentiation', '')}",
         "goals_3month": data.get("priority_3months", ""),
         "goals_12month": data.get("vision_12months", ""),
         "challenges": [data.get("biggest_challenge", "")] if data.get("biggest_challenge") else [],
+        "competitors": data.get("competitors", []),
+        "pricing_strategy": data.get("pricing_strategy", ""),
+        "marketing_channels": data.get("marketing_channels", []),
+        "content_preferences": data.get("content_preferences", {}),
         "icp": {
             "type": data.get("audience_type", ""),
             "problem": data.get("audience_problem", ""),
@@ -201,7 +210,7 @@ async def update_identity_manual(
 
 _ESSENTIAL_FIELDS = [
     "business_name", "niche", "industry", "target_audience",
-    "icp", "brand_voice", "brand_story", "competitors",
+    "icp", "brand_voice", "brand_visual", "brand_story", "competitors",
     "pricing_strategy", "marketing_channels", "content_preferences",
     "goals_3month", "goals_12month", "challenges",
 ]

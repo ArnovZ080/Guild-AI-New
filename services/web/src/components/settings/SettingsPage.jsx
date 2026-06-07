@@ -73,19 +73,33 @@ function ProfileTab() {
     { key: 'competitors', label: 'Competitors', type: 'textarea' },
     { key: 'marketing_channels', label: 'Marketing Channels', type: 'textarea' },
     { key: 'content_preferences', label: 'Content Preferences', type: 'textarea' },
+    { key: 'brand_visual', label: 'Brand Visual', type: 'textarea' },
     { key: 'challenges', label: 'Challenges', type: 'textarea' },
   ];
 
   const completion = identity?.completion_percentage || 0;
 
   const handleChange = (key, type, val) => {
-    setIdentity({ ...identity, [key]: val });
+    let newVal = val;
+    if (['competitors', 'marketing_channels', 'challenges'].includes(key)) {
+      newVal = val.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (['brand_voice', 'brand_visual', 'content_preferences', 'icp'].includes(key)) {
+      try { 
+        newVal = JSON.parse(val); 
+      } catch (e) { 
+        newVal = { raw_text: val }; 
+      }
+    }
+    setIdentity({ ...identity, [key]: newVal });
   };
 
   const getDisplayValue = (key, type) => {
     let val = identity?.[key] || '';
-    if (typeof val === 'object') return JSON.stringify(val, null, 2);
     if (Array.isArray(val)) return val.join(', ');
+    if (typeof val === 'object') {
+      if (val.raw_text) return val.raw_text;
+      return JSON.stringify(val, null, 2);
+    }
     return val;
   };
 
@@ -187,7 +201,7 @@ function IntegrationsTab() {
                       toast.success(`Disconnected from ${c.platform || c.name}`);
                     } catch (err) { toast.error(err.message); }
                   } else {
-                    window.location.href = `/api/v1/oauth/${c.platform || c.name}/authorize`;
+                    window.location.href = `/api/v1/oauth/authorize/${c.platform || c.name}`;
                   }
                 }}
                 className={`text-xs px-2.5 py-1 rounded-lg ${c.connected ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'} transition-colors`}
@@ -868,15 +882,21 @@ function AdminTab() {
    ═══════════════════════════════════════════ */
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
+  const { isAdmin } = useAuth();
 
-  const tabContent = {
-    profile: <ProfileTab />,
-    integrations: <IntegrationsTab />,
-    subscription: <SubscriptionTab />,
-    knowledge: <KnowledgeTab />,
-    media: <MediaLibraryTab />,
-    preferences: <PreferencesTab />,
-    admin: <AdminTab />,
+  const availableTabs = isAdmin ? TABS : TABS.filter(t => t.key !== 'admin');
+
+  const renderTab = () => {
+    switch (activeTab) {
+      case 'profile': return <ProfileTab />;
+      case 'integrations': return <IntegrationsTab />;
+      case 'subscription': return <SubscriptionTab />;
+      case 'knowledge': return <KnowledgeTab />;
+      case 'media': return <MediaLibraryTab />;
+      case 'preferences': return <PreferencesTab />;
+      case 'admin': return isAdmin ? <AdminTab /> : null;
+      default: return <ProfileTab />;
+    }
   };
 
   return (
@@ -886,7 +906,7 @@ export default function SettingsPage() {
       <div className="flex flex-col md:flex-row gap-4">
         {/* Tab Nav */}
         <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible md:w-48 flex-shrink-0">
-          {TABS.map((tab) => (
+          {availableTabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
@@ -900,7 +920,7 @@ export default function SettingsPage() {
 
         {/* Tab Content */}
         <div className="flex-1 min-w-0">
-          {tabContent[activeTab]}
+          {renderTab()}
         </div>
       </div>
     </div>

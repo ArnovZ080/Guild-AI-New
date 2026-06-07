@@ -136,7 +136,7 @@ function ThinkingIndicator({ agent }) {
    Main Chat Interface
    ═══════════════════════════════════════════ */
 export default function ChatInterface() {
-  const { user, identityComplete } = useAuth();
+  const { user, dbUser, identityComplete } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [activeConvId, setActiveConvId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -161,25 +161,66 @@ export default function ChatInterface() {
     const unsub2 = guildWS.on('workflow_complete', () => {
       setThinkingAgent(null);
     });
+    
+    // Fetch conversations list
+    const fetchConvs = async () => {
+      try {
+        const data = await api.chat.list();
+        setConversations(data);
+        if (data.length > 0 && !activeConvId) {
+          setActiveConvId(data[0].id);
+        }
+      } catch (e) {
+        console.error("Failed to load conversations", e);
+      }
+    };
+    fetchConvs();
+    
     return () => { unsub1(); unsub2(); };
   }, []);
+
+  /* Fetch active conversation messages */
+  useEffect(() => {
+    if (!activeConvId) {
+      setMessages([]);
+      return;
+    }
+    const loadChat = async () => {
+      try {
+        const data = await api.chat.get(activeConvId);
+        setMessages(data.messages || []);
+      } catch (e) {
+        console.error("Failed to load chat", e);
+      }
+    };
+    loadChat();
+  }, [activeConvId]);
 
   /* ── Send message ── */
   const handleSend = useCallback(async () => {
     if (!input.trim() || sending) return;
     const userMsg = { role: 'user', content: input.trim(), timestamp: Date.now() };
+    
+    // Generate an ID if this is a new chat
+    const convId = activeConvId || crypto.randomUUID();
+    if (!activeConvId) {
+      setActiveConvId(convId);
+      setConversations(prev => [{ id: convId, title: input.trim().slice(0, 50), created_at: new Date().toISOString() }, ...prev]);
+    }
+
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setSending(true);
     setThinkingAgent('Guild');
 
     try {
+      // Save user message to DB
+      await api.chat.sendMessage(convId, userMsg);
+
       let response;
       if (!identityComplete) {
-        // Onboarding mode
         response = await api.onboarding.chat(userMsg.content);
       } else {
-        // Normal orchestrator mode
         response = await api.agents.run('OrchestratorAgent', { goal: userMsg.content });
       }
       
@@ -193,6 +234,10 @@ export default function ChatInterface() {
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
+      
+      // Save assistant message to DB
+      await api.chat.sendMessage(convId, assistantMsg);
+      
     } catch (err) {
       setMessages((prev) => [...prev, { role: 'assistant', content: `Sorry, something went wrong: ${err.message}`, timestamp: Date.now() }]);
     } finally {
@@ -200,7 +245,7 @@ export default function ChatInterface() {
       setThinkingAgent(null);
       setAgentEvents([]);
     }
-  }, [input, sending, identityComplete]);
+  }, [input, sending, identityComplete, activeConvId]);
 
   /* ── New chat ── */
   const handleNewChat = () => {
@@ -293,7 +338,7 @@ export default function ChatInterface() {
                 <Sparkles size={28} className="text-white" />
               </div>
               <h2 className="text-xl font-heading font-bold text-zinc-200">
-                {!identityComplete ? 'Welcome to Guild AI' : (user?.name ? getWelcomeMessage(user.name) : 'How can I help you grow today?')}
+                {!identityComplete ? 'Welcome to Guild AI' : (dbUser?.name ? getWelcomeMessage(dbUser.name) : 'How can I help you grow today?')}
               </h2>
               <p className="text-sm text-zinc-400 max-w-md">
                 {!identityComplete

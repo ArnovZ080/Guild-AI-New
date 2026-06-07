@@ -384,6 +384,7 @@ class AgentEventRecord(Base):
     __tablename__ = "agent_event_records"
 
     id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, nullable=True, index=True)
     agent_id = Column(String, nullable=False, index=True)
     workflow_name = Column(String, nullable=True)
     event_type = Column(String, nullable=False)
