@@ -493,10 +493,30 @@ class AdminKnowledge(Base):
 LLMUsageRecord = TokenUsage
 Project = Goal
 ProjectMilestone = Milestone
-AdaptiveLearningSignal = AgentEventRecord
-UserPreference = AgentEventRecord
 AgentOutput = AgentEventRecord
 IntegrationCredential = ConnectedIntegration
+
+class AdaptiveLearningSignal(Base):
+    __tablename__ = "adaptive_learning_signals"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
+    pattern = Column(String, nullable=False)
+    source = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class UserPreference(Base):
+    __tablename__ = "user_preferences"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
+    category = Column(String, nullable=False)
+    rule = Column(String, nullable=False)
+    rule_key = Column(String, nullable=False)
+    conditions = Column(JSONB, default=dict)
+    confidence = Column(String, nullable=False)
+    signal_count = Column(Integer, default=1)
+    source = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 # ── Agent Orchestration ──
 

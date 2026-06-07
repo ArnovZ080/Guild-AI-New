@@ -49,7 +49,11 @@ async def get_conversation(
         conversation = result.scalar_one_or_none()
         
         if not conversation:
-            raise HTTPException(status_code=404, detail="Conversation not found")
+            return {
+                "id": conversation_id,
+                "title": "New Chat",
+                "messages": []
+            }
             
         messages = sorted(conversation.messages, key=lambda m: m.created_at)
         return {

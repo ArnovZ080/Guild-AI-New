@@ -63,18 +63,22 @@ function ProfileTab() {
     { key: 'business_name', label: 'Business Name', type: 'text' },
     { key: 'niche', label: 'Niche', type: 'text' },
     { key: 'industry', label: 'Industry', type: 'text' },
-    { key: 'brand_voice', label: 'Brand Voice', type: 'text' },
+    { key: 'brand_voice_tone', label: 'Brand Tone', type: 'text' },
+    { key: 'brand_personality', label: 'Brand Personality', type: 'text' },
+    { key: 'brand_values', label: 'Brand Values', type: 'text' },
+    { key: 'brand_visual_colors', label: 'Brand Colors', type: 'text' },
+    { key: 'brand_visual_fonts', label: 'Brand Fonts', type: 'text' },
+    { key: 'brand_visual_style', label: 'Brand Style', type: 'text' },
     { key: 'pricing_strategy', label: 'Pricing Strategy', type: 'text' },
     { key: 'goals_3month', label: '3-Month Goals', type: 'text' },
     { key: 'goals_12month', label: '12-Month Goals', type: 'text' },
     { key: 'target_audience', label: 'Target Audience', type: 'textarea' },
     { key: 'brand_story', label: 'Brand Story', type: 'textarea' },
     { key: 'icp', label: 'Ideal Customer Profile', type: 'textarea' },
-    { key: 'competitors', label: 'Competitors', type: 'textarea' },
-    { key: 'marketing_channels', label: 'Marketing Channels', type: 'textarea' },
+    { key: 'competitors', label: 'Competitors (comma separated)', type: 'textarea' },
+    { key: 'marketing_channels', label: 'Marketing Channels (comma separated)', type: 'textarea' },
     { key: 'content_preferences', label: 'Content Preferences', type: 'textarea' },
-    { key: 'brand_visual', label: 'Brand Visual', type: 'textarea' },
-    { key: 'challenges', label: 'Challenges', type: 'textarea' },
+    { key: 'challenges', label: 'Challenges (comma separated)', type: 'textarea' },
   ];
 
   const completion = identity?.completion_percentage || 0;
@@ -83,7 +87,7 @@ function ProfileTab() {
     let newVal = val;
     if (['competitors', 'marketing_channels', 'challenges'].includes(key)) {
       newVal = val.split(',').map(s => s.trim()).filter(Boolean);
-    } else if (['brand_voice', 'brand_visual', 'content_preferences', 'icp'].includes(key)) {
+    } else if (['content_preferences', 'icp'].includes(key)) {
       try { 
         newVal = JSON.parse(val); 
       } catch (e) { 
@@ -94,6 +98,13 @@ function ProfileTab() {
   };
 
   const getDisplayValue = (key, type) => {
+    if (key === 'brand_voice_tone') return identity?.brand_voice_tone || identity?.brand_voice?.tone || '';
+    if (key === 'brand_personality') return identity?.brand_personality || identity?.brand_voice?.personality || '';
+    if (key === 'brand_values') return identity?.brand_values || identity?.brand_voice?.values || '';
+    if (key === 'brand_visual_colors') return identity?.brand_visual_colors || identity?.brand_visual?.colors || '';
+    if (key === 'brand_visual_fonts') return identity?.brand_visual_fonts || identity?.brand_visual?.fonts || '';
+    if (key === 'brand_visual_style') return identity?.brand_visual_style || identity?.brand_visual?.style || '';
+    
     let val = identity?.[key] || '';
     if (Array.isArray(val)) return val.join(', ');
     if (typeof val === 'object') {
