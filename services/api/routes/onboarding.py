@@ -141,13 +141,22 @@ async def onboarding_status(
     missing = []
     for field in _ESSENTIAL_FIELDS:
         val = getattr(identity, field, None)
-        if val and (not isinstance(val, (dict, list)) or len(val) > 0):
+        from services.core.agents.identity import _is_populated
+        if _is_populated(val):
             filled.append(field)
         else:
             missing.append(field)
 
+    from services.core.agents.identity import _compute_completion
+    completion = _compute_completion(identity)
+
+    # Automatically fix DB if it's out of sync
+    if abs(identity.completion_percentage - completion) > 0.1:
+        identity.completion_percentage = completion
+        await db.commit()
+
     return {
-        "completion_percentage": identity.completion_percentage,
+        "completion_percentage": completion,
         "fields_filled": filled,
         "fields_missing": missing,
     }

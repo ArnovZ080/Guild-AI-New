@@ -18,12 +18,22 @@ router = APIRouter(prefix="/identity", tags=["identity"])
 
 @router.get("/")
 async def get_identity(db: AsyncSession = Depends(get_db), current_user: UserAccount = Depends(get_current_user)):
-    """Retrieve the current persistent business identity."""
+    """Retrieve the persistent business identity."""
     try:
         identity = await BusinessIdentityManager.get(db, current_user.id)
         if not identity:
-            return {}
-        # Serialize fields correctly 
+            # Return empty skeleton
+            return {
+                "business_name": "", "niche": "", "industry": "", "target_audience": "",
+                "icp": {}, "brand_voice": "", "brand_visual": "", "brand_story": "",
+                "competitors": [], "pricing_strategy": "", "marketing_channels": [],
+                "content_preferences": [], "goals_3month": "", "goals_12month": "",
+                "challenges": "", "completion_percentage": 0.0, "user_name": current_user.name
+            }
+            
+        from services.core.agents.identity import _compute_completion
+        completion = _compute_completion(identity)
+
         return {
             "business_name": identity.business_name,
             "niche": identity.niche,
@@ -31,6 +41,7 @@ async def get_identity(db: AsyncSession = Depends(get_db), current_user: UserAcc
             "target_audience": identity.target_audience,
             "icp": identity.icp,
             "brand_voice": identity.brand_voice,
+            "brand_visual": identity.brand_visual,
             "brand_story": identity.brand_story,
             "competitors": identity.competitors,
             "pricing_strategy": identity.pricing_strategy,
@@ -39,7 +50,7 @@ async def get_identity(db: AsyncSession = Depends(get_db), current_user: UserAcc
             "goals_3month": identity.goals_3month,
             "goals_12month": identity.goals_12month,
             "challenges": identity.challenges,
-            "completion_percentage": identity.completion_percentage,
+            "completion_percentage": completion,
             "user_name": current_user.name
         }
     except Exception as e:
@@ -95,9 +106,11 @@ async def upload_document(
     """Upload and process a business document to the knowledge base."""
     temp_path = None
     try:
+        import tempfile
         # 1. Save uploaded file to temp location
-        os.makedirs("temp_uploads", exist_ok=True)
-        temp_path = os.path.join("temp_uploads", f"{uuid.uuid4()}_{file.filename}")
+        temp_dir = os.path.join(tempfile.gettempdir(), "guild_uploads")
+        os.makedirs(temp_dir, exist_ok=True)
+        temp_path = os.path.join(temp_dir, f"{uuid.uuid4()}_{file.filename}")
         
         with open(temp_path, "wb") as f:
             f.write(await file.read())
@@ -105,8 +118,8 @@ async def upload_document(
         # 2. Process with DocumentProcessor
         result = document_processor.process_document(temp_path)
         
-        if result["status"] == "failed":
-            raise HTTPException(status_code=400, detail=result["error"])
+        if result.get("status") == "failed":
+            raise HTTPException(status_code=400, detail=result.get("error", "Unknown processing error"))
             
         # 3. Create KnowledgeSource entry
         new_source = KnowledgeSource(

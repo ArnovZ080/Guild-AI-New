@@ -41,6 +41,11 @@ async def list_waitlist():
     # Admin only check would go here
     return _waitlist_db
 
+@router.get("/count")
+async def count_waitlist():
+    """Return the number of people on the waitlist."""
+    return {"count": len(_waitlist_db)}
+
 @router.post("/grant-beta-access")
 async def grant_beta_access(email: str = Body(..., embed=True)):
     entry = next((e for e in _waitlist_db if e.email == email), None)
