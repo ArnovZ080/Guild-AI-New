@@ -49,6 +49,11 @@ async function publicFetch(url) {
    ═══════════════════════════════════════════════ */
 
 export const api = {
+  // ── OAuth ──
+  oauth: {
+    authorizeMeta: () => authFetch('/api/v1/oauth/authorize/meta'),
+  },
+
   // ── Auth ──
   auth: {
     register: (data) =>
@@ -176,6 +181,7 @@ export const api = {
 
   // ── Integrations ──
   integrations: {
+    metaStatus: () => authFetch('/api/v1/integrations/meta/status'),
     list: () =>
       authFetch('/api/v1/integrations/'),
     connect: (platform, config) =>

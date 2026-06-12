@@ -26,7 +26,7 @@ from .connectors.social import (
 )
 from .connectors.extended import (
     GoogleAnalyticsIntegration, PipedriveIntegration,
-    OutlookCalendarIntegration, FacebookPublishingIntegration
+    OutlookCalendarIntegration
 )
 from .base import IntegrationRegistry
 
@@ -73,7 +73,6 @@ def register_all_connectors():
     IntegrationRegistry.register("google_analytics", GoogleAnalyticsIntegration)
     IntegrationRegistry.register("pipedrive", PipedriveIntegration)
     IntegrationRegistry.register("outlook_calendar", OutlookCalendarIntegration)
-    IntegrationRegistry.register("facebook", FacebookPublishingIntegration)
 
     print(f"All {len(IntegrationRegistry.list_integrations())} connectors registered.")
 

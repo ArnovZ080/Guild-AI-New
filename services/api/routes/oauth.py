@@ -4,10 +4,36 @@ from typing import Dict, Any
 from services.core.integrations.oauth import OAuthService
 from services.core.agents.secrets import SecretManager
 from services.core.logging import logger
+from services.api.middleware.auth import get_current_user
+from services.core.db.base import get_db
+from services.core.db.models import UserAccount
+from services.core.integrations import meta_oauth, oauth_state
 
 router = APIRouter(prefix="/oauth", tags=["oauth"])
 secret_manager = SecretManager()
 oauth_service = OAuthService(secret_manager)
+
+@router.get("/authorize/meta")
+async def authorize_meta(current_user: UserAccount = Depends(get_current_user)):
+    """Start the Meta OAuth flow for the logged-in user."""
+    state = oauth_state.create_state(current_user.id, "meta")
+    return {"authorize_url": meta_oauth.authorize_url(state)}
+
+@router.get("/callback/meta")
+async def callback_meta(code: str = None, state: str = None, error: str = None, db=Depends(get_db)):
+    """Meta redirects here. Public route — protected by the state check."""
+    if error or not code or not state:
+        return RedirectResponse("/settings?meta=denied")
+    mapping = oauth_state.pop_state(state)
+    if not mapping:
+        return RedirectResponse("/settings?meta=expired")
+    try:
+        await meta_oauth.complete_connection(db, mapping["user_id"], code)
+        return RedirectResponse("/settings?meta=connected")
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error("Meta OAuth completion failed: %s", e)
+        return RedirectResponse("/settings?meta=error")
 
 @router.get("/authorize/{platform}")
 async def authorize(platform: str):

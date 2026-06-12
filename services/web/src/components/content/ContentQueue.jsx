@@ -92,6 +92,17 @@ function ContentCard({ item, onApprove, onReject, onEdit, selected, onToggleSele
           </div>
         )}
 
+        {/* Needs Attention Badge */}
+        {item.status === 'needs_attention' && item.performance_metrics?.publish_result?.reason && (
+          <div className="flex items-center gap-1.5 text-xs text-amber-400 bg-amber-500/10 px-2 py-1.5 rounded-lg border border-amber-500/20">
+            <Sparkles size={12} strokeWidth={1.5} />
+            {item.performance_metrics.publish_result.reason === 'needs_image' ? 'Add an image to publish to Instagram' :
+             item.performance_metrics.publish_result.reason === 'meta_not_connected' ? 'Connect Meta in Settings' :
+             item.performance_metrics.publish_result.reason === 'meta_needs_reauth' ? 'Reconnect Meta in Settings' :
+             'Needs attention: ' + item.performance_metrics.publish_result.reason}
+          </div>
+        )}
+
         {/* Preview */}
         <AnimatePresence>
           {expanded && (

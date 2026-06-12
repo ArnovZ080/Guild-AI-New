@@ -49,3 +49,5 @@ black>=23.11.0
 email-validator>=2.0.0
 stripe>=7.0.0
 markitdown>=0.0.1a2
+
+cryptography>=42.0.0

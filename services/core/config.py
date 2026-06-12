@@ -47,6 +47,12 @@ class Settings(BaseSettings):
     PAYSTACK_SECRET_KEY: Optional[str] = None
     PAYSTACK_PUBLIC_KEY: Optional[str] = None
 
+    # Meta (Facebook + Instagram)
+    META_APP_ID: Optional[str] = None
+    META_APP_SECRET: Optional[str] = None
+    META_REDIRECT_URI: str = "http://localhost:8001/api/v1/oauth/callback/meta"
+    APP_ENV: str = "local"  # local | production
+
     # Security
     SECRET_KEY: str = "changeme"
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"

@@ -333,26 +333,56 @@ class ContentPublisher:
     """Publishes approved content to target platforms via integrations."""
 
     async def publish(self, db: AsyncSession, content_item: ContentItem) -> dict:
-        """Publish a single approved content item to its platform."""
+        """Publish a single approved content item to its platform. No fake successes."""
+        from services.core.integrations.connectors.meta import (
+            MetaConnector, NeedsReauth, PublishPreconditionError)
+
         if content_item.status != "approved":
             return {"error": "Content must be approved before publishing"}
 
         platform = (content_item.platform or "").lower()
+        pm = dict(content_item.performance_metrics or {})
 
-        # Route to appropriate connector
+        def _hold(reason: str) -> dict:
+            content_item.status = "needs_attention"
+            pm["publish_result"] = {"status": "held", "reason": reason}
+            content_item.performance_metrics = pm
+            return {"status": "needs_attention", "reason": reason}
+
         try:
-            result = await self._publish_to_platform(platform, content_item)
-            content_item.status = "published"
-            content_item.published_at = datetime.utcnow()
-            content_item.performance_metrics = {
-                **(content_item.performance_metrics or {}),
-                "publish_result": result,
-            }
-            await db.commit()
-            return {"status": "published", "platform": platform, "result": result}
+            if platform in ("facebook", "instagram", "meta"):
+                connector = await MetaConnector.for_user(db, content_item.user_id)
+                if connector is None:
+                    result = _hold("meta_not_connected")
+                else:
+                    res = await connector.publish_post(
+                        content=content_item.body or "",
+                        media_urls=content_item.media_urls or [],
+                        title=content_item.title,
+                        platform_hint=platform,
+                    )
+                    content_item.status = "published"
+                    content_item.published_at = datetime.utcnow()
+                    pm["publish_result"] = res
+                    content_item.performance_metrics = pm
+                    result = {"status": "published", "platform": platform, "result": res}
+            else:
+                result = _hold(f"connector_not_implemented:{platform}")
+
+        except PublishPreconditionError as e:
+            result = _hold(e.reason)
+        except NeedsReauth:
+            result = _hold("meta_needs_reauth")
         except Exception as e:
-            logger.error("Publishing failed for %s to %s: %s", content_item.id, platform, e)
-            return {"status": "failed", "error": str(e)}
+            # Transient (network/5xx): stay 'approved' so the next cycle retries.
+            logger.error("Publishing failed for %s to %s: %s",
+                         content_item.id, platform, e)
+            pm["last_publish_error"] = str(e)
+            content_item.performance_metrics = pm
+            result = {"status": "failed", "error": str(e)}
+
+        await db.commit()
+        return result
 
     async def publish_scheduled(self, db: AsyncSession) -> List[ContentItem]:
         """Find and publish all content where scheduled_for <= now."""
@@ -372,20 +402,7 @@ class ContentPublisher:
                 published.append(item)
         return published
 
-    async def _publish_to_platform(self, platform: str, item: ContentItem) -> dict:
-        """Route to the correct integration connector."""
-        from services.core.integrations.registry import IntegrationRegistry
 
-        connector = IntegrationRegistry.get_connector(platform)
-        if connector and hasattr(connector, "publish_post"):
-            return await connector.publish_post(
-                content=item.body,
-                media_urls=item.media_urls or [],
-                title=item.title,
-            )
-        # Fallback: log but don't fail
-        logger.warning("No publishing connector for platform: %s", platform)
-        return {"status": "simulated", "platform": platform, "note": "No connector configured"}
 
 
 # ── Content Scheduler ──

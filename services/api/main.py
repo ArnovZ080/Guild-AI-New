@@ -20,6 +20,13 @@ app = FastAPI(
     description="AI-powered content-to-customer growth engine",
 )
 
+from services.core.config import settings as _settings
+if _settings.APP_ENV == "production" and _settings.SECRET_KEY == "changeme":
+    raise RuntimeError(
+        "SECRET_KEY is still 'changeme' in production. "
+        "Set a real SECRET_KEY env var before deploying."
+    )
+
 # ── CORS ──
 app.add_middleware(
     CORSMiddleware,

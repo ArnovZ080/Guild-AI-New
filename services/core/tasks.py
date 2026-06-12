@@ -21,27 +21,27 @@ def _get_sync_session():
     return SessionLocal()
 
 
+def _run_async(coro):
+    """Bridge: run an async service from a sync Celery worker."""
+    import asyncio
+    return asyncio.run(coro)
+
+
 @celery_app.task(name="services.core.tasks.publish_scheduled_content")
 def publish_scheduled_content():
-    """Publish content items that are approved and past their scheduled time."""
+    """Actually publish approved+due content via the ContentPublisher."""
     logger.info("Task: publish_scheduled_content — starting")
+
+    async def _job():
+        from services.core.db.base import AsyncSessionLocal
+        from services.core.content_pipeline.engine import ContentPublisher
+        async with AsyncSessionLocal() as db:
+            published = await ContentPublisher().publish_scheduled(db)
+            return len(published)
+
     try:
-        db = _get_sync_session()
-        from sqlalchemy import update
-        from datetime import datetime
-        from services.core.db.models import ContentItem
-        result = db.execute(
-            update(ContentItem)
-            .where(
-                ContentItem.status == "approved",
-                ContentItem.scheduled_for <= datetime.utcnow(),
-            )
-            .values(status="published", published_at=datetime.utcnow())
-        )
-        db.commit()
-        count = result.rowcount
-        logger.info(f"Published {count} scheduled content items")
-        db.close()
+        count = _run_async(_job())
+        logger.info("Published %s scheduled content items", count)
         return {"published": count}
     except Exception as e:
         logger.error(f"publish_scheduled_content failed: {e}")
@@ -82,10 +82,22 @@ def sync_external_calendars():
 
 @celery_app.task(name="services.core.tasks.collect_performance_data")
 def collect_performance_data():
-    """Collect content performance data from connected platforms."""
+    """Ingest engagement from Meta for every connected user (poll cycle)."""
     logger.info("Task: collect_performance_data — starting")
-    # Placeholder: requires active platform integrations
-    return {"status": "collected", "note": "No active integrations to query"}
+
+    async def _job():
+        from services.core.db.base import AsyncSessionLocal
+        from services.core.ingestion.poller import poll_all_meta
+        async with AsyncSessionLocal() as db:
+            return await poll_all_meta(db)
+
+    try:
+        summary = _run_async(_job())
+        logger.info("Ingestion summary: %s", summary)
+        return summary
+    except Exception as e:
+        logger.error(f"collect_performance_data failed: {e}")
+        return {"error": str(e)}
 
 
 @celery_app.task(name="services.core.tasks.daily_content_strategy")

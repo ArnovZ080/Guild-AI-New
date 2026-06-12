@@ -172,25 +172,79 @@ function ProfileTab() {
 /* ── Integrations Tab ── */
 function IntegrationsTab() {
   const [connectors, setConnectors] = useState([]);
+  const [metaInfo, setMetaInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await api.integrations.list();
+        const [data, metaData] = await Promise.all([
+          api.integrations.list().catch(() => []),
+          api.integrations.metaStatus().catch(() => null)
+        ]);
         setConnectors(data?.integrations || data || []);
+        if (metaData) setMetaInfo(metaData);
       } catch { /* ok */ }
+      
+      // Check query params
+      const urlParams = new URLSearchParams(window.location.search);
+      const metaQuery = urlParams.get('meta');
+      if (metaQuery === 'success') {
+        toast.success("Successfully connected Meta!");
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (metaQuery === 'error') {
+        toast.error("Failed to connect Meta.");
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
       setLoading(false);
     })();
   }, []);
+
+  const handleMetaConnect = async () => {
+    try {
+      const { auth_url } = await api.oauth.authorizeMeta();
+      if (auth_url) {
+        window.location.href = auth_url;
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to start Meta authorization.");
+    }
+  };
 
   if (loading) return <Loader2 size={20} className="animate-spin text-indigo-400 mx-auto my-12" />;
 
   return (
     <div className="space-y-3">
+        {/* Render Meta connector specifically */}
+        {metaInfo && (
+          <div className="glass-panel rounded-xl p-4 flex items-center gap-3 border border-indigo-500/30">
+            <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-400/40 shadow-glow-sm flex items-center justify-center text-indigo-400 text-xs font-bold">
+              META
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-zinc-200">Meta (Facebook & Instagram)</p>
+              {metaInfo.status === 'connected' ? (
+                <p className="text-xs text-zinc-400">
+                  Connected as {metaInfo.page_name} {metaInfo.ig_username ? `(@${metaInfo.ig_username})` : ''}
+                </p>
+              ) : metaInfo.status === 'needs_reauth' ? (
+                <p className="text-xs text-amber-400">Needs Reconnection</p>
+              ) : (
+                <p className="text-xs text-zinc-400">Not connected</p>
+              )}
+            </div>
+            <button 
+              onClick={handleMetaConnect}
+              className={`text-xs px-2.5 py-1 rounded-lg ${metaInfo.status === 'connected' ? 'bg-emerald-500/10 text-emerald-400' : metaInfo.status === 'needs_reauth' ? 'bg-amber-500/10 text-amber-400' : 'bg-indigo-500/10 text-indigo-400'} transition-colors`}
+            >
+              {metaInfo.status === 'connected' ? 'Reconnect' : metaInfo.status === 'needs_reauth' ? 'Reconnect' : 'Connect Meta'}
+            </button>
+          </div>
+        )}
+
       {connectors.length === 0 ? (
         <div className="glass-panel rounded-xl p-8 text-center text-sm text-zinc-400">
-          No integrations available yet.
+          No other integrations available yet.
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

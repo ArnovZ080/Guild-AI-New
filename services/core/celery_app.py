@@ -40,10 +40,10 @@ celery_app.conf.beat_schedule = {
         "task": "services.core.tasks.sync_external_calendars",
         "schedule": 1800.0,  # every 30 minutes
     },
-    # Collect content performance data from integrations
+    # Ingest engagement from connected platforms (Meta polling)
     "collect-performance-data": {
         "task": "services.core.tasks.collect_performance_data",
-        "schedule": 3600.0,  # every hour
+        "schedule": 900.0,  # every 15 minutes
     },
     # Generate daily content strategy suggestions at 6am UTC
     "daily-content-strategy": {

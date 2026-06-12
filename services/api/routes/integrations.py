@@ -3,6 +3,10 @@ from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
 from services.core.integrations.base import IntegrationRegistry, IntegrationConfig
 from services.core.agents.secrets import SecretManager
+from services.api.middleware.auth import get_current_user
+from services.core.db.base import get_db
+from services.core.db.models import UserAccount, ConnectedIntegration
+from sqlalchemy import select
 
 router = APIRouter(prefix="/integrations", tags=["integrations"])
 secret_manager = SecretManager()
@@ -20,7 +24,7 @@ class IntegrationMetadata(BaseModel):
     is_connected: bool
 
 @router.get("/", response_model=List[IntegrationMetadata])
-async def list_integrations():
+async def list_integrations(current_user: UserAccount = Depends(get_current_user)):
     """List all available integrations and their connection status."""
     available = IntegrationRegistry.list_integrations()
     keys = secret_manager.list_keys()
@@ -41,7 +45,7 @@ async def list_integrations():
     return results
 
 @router.post("/connect")
-async def connect_integration(request: ConnectionRequest):
+async def connect_integration(request: ConnectionRequest, current_user: UserAccount = Depends(get_current_user)):
     """Store credentials and initialize an integration."""
     if request.platform not in IntegrationRegistry.list_integrations():
         raise HTTPException(status_code=404, detail=f"Platform {request.platform} not supported.")
@@ -68,7 +72,7 @@ async def connect_integration(request: ConnectionRequest):
         raise HTTPException(status_code=500, detail=f"Failed to initialize integration: {str(e)}")
 
 @router.post("/test/{platform}")
-async def test_connection(platform: str):
+async def test_connection(platform: str, current_user: UserAccount = Depends(get_current_user)):
     """Verify an existing connection."""
     instance = IntegrationRegistry.get_instance(platform)
     if not instance:
@@ -88,9 +92,28 @@ async def test_connection(platform: str):
     return {"platform": platform, "is_valid": is_valid}
 
 @router.delete("/{platform}")
-async def disconnect_integration(platform: str):
+async def disconnect_integration(platform: str, current_user: UserAccount = Depends(get_current_user)):
     """Remove a connection."""
     secret_manager.delete_secret(platform)
     # Also remove from active instances if possible
     # (IntegrationRegistry would need a way to remove instances)
     return {"status": "success", "message": f"Disconnected {platform}."}
+
+@router.get("/meta/status")
+async def meta_status(current_user: UserAccount = Depends(get_current_user),
+                      db=Depends(get_db)):
+    result = await db.execute(select(ConnectedIntegration).where(
+        ConnectedIntegration.user_id == current_user.id,
+        ConnectedIntegration.platform == "meta",
+    ))
+    row = result.scalars().first()
+    if row is None:
+        return {"platform": "meta", "status": "not_connected"}
+    return {
+        "platform": "meta",
+        "status": row.status,
+        "page_name": row.config.get("page_name"),
+        "ig_username": row.config.get("ig_username"),
+        "expires_at": (row.oauth_tokens_encrypted or {}).get("expires_at"),
+        "last_synced": row.last_synced.isoformat() if row.last_synced else None,
+    }

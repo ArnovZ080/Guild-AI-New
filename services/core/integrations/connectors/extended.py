@@ -108,24 +108,4 @@ class OutlookCalendarIntegration(BaseIntegration):
         return {"available": True}
 
 
-class FacebookPublishingIntegration(BaseIntegration):
-    """Facebook Page publishing via Graph API."""
 
-    def __init__(self, config: IntegrationConfig):
-        config.platform = "facebook"
-        super().__init__(config)
-
-    @property
-    def capabilities(self) -> List[str]:
-        return ["publish_post", "schedule_post", "get_insights"]
-
-    async def validate_connection(self) -> bool:
-        return bool(self.config.credentials.get("page_access_token"))
-
-    async def execute_action(self, action_name: str, params: Dict[str, Any]) -> Any:
-        if action_name == "publish_post":
-            return await self.publish_post(**params)
-        return {"error": f"Unknown action: {action_name}"}
-
-    async def publish_post(self, content: str = "", media_urls: list = None, title: str = "", **kwargs) -> dict:
-        return {"status": "simulated", "platform": "facebook", "content_preview": content[:100]}
