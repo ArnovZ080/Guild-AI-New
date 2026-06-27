@@ -94,6 +94,7 @@ class NurtureEngine:
             user_id=user_id,
             name=f"{template['name']} — Contact {contact_id[:8]}",
             trigger_type=template["trigger"],
+            contact_id=contact_id,
             steps=steps,
             status="active",
         )
@@ -160,15 +161,51 @@ Return ONLY valid JSON: {{"subject": "email subject line", "body": "message body
         except Exception:
             message = {"subject": step["purpose"], "body": step["purpose"], "cta": "Learn more"}
 
-        # Update step
+        # ── Actually send ──────────────────────────────────────────────
+        from services.core.email.mailer import send_email, EmailNotConfigured
+        from services.core.db.models import Contact, Interaction, UserAccount
+
+        contact = None
+        if sequence.contact_id:
+            r = await db.execute(select(Contact).where(Contact.id == sequence.contact_id))
+            contact = r.scalars().first()
+
         step["content"] = message
-        step["status"] = "sent"
         step["executed_at"] = datetime.utcnow().isoformat()
+
+        if contact is None or not contact.email:
+            # No deliverable recipient — visible, honest status (never fake "sent")
+            step["status"] = "skipped_no_email"
+        else:
+            try:
+                # reply-to = the business owner, so replies reach a human
+                r = await db.execute(select(UserAccount).where(
+                    UserAccount.id == sequence.user_id))
+                owner = r.scalars().first()
+                await send_email(
+                    to_email=contact.email,
+                    to_name=contact.name or "",
+                    subject=message.get("subject", ""),
+                    body=f"{message.get('body', '')}\n\n{message.get('cta', '')}",
+                    reply_to=owner.email if owner else None,
+                )
+                step["status"] = "sent"
+                db.add(Interaction(
+                    contact_id=contact.id, type="nurture_email",
+                    channel="email", direction="outbound",
+                    content=message.get("subject", ""),
+                ))
+            except EmailNotConfigured:
+                step["status"] = "blocked_email_not_configured"
+            except Exception as e:
+                step["status"] = "send_failed"
+                step["error"] = str(e)[:300]
+
         steps[step_index] = step
         sequence.steps = steps
 
         # Check if all steps complete
-        if all(s.get("status") == "sent" for s in steps):
+        if all(s.get("status") in ("sent", "skipped_no_email") for s in steps):
             sequence.status = "completed"
 
         await db.commit()
@@ -185,7 +222,7 @@ Return ONLY valid JSON: {{"subject": "email subject line", "body": "message body
 
         for seq in sequences:
             for i, step in enumerate(seq.steps or []):
-                if step.get("status") != "pending":
+                if step.get("status") not in ("pending", "send_failed"):
                     continue
                 due_at = datetime.fromisoformat(step.get("due_at", now.isoformat()))
                 if due_at <= now:

@@ -173,6 +173,9 @@ class BusinessIdentityManager:
         if identity.challenges and isinstance(identity.challenges, list):
             sections.append(f"\n### Key Challenges\n{', '.join(str(c) for c in identity.challenges)}")
 
+        if hasattr(identity, 'brand_style_guide') and identity.brand_style_guide:
+            sections.append(f"\n### Brand Style Guide\n{identity.brand_style_guide}")
+
         return "\n".join(sections)
 
 

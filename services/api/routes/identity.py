@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks
 from typing import Dict, List, Any, Optional
 import os
 import uuid
@@ -28,7 +28,8 @@ async def get_identity(db: AsyncSession = Depends(get_db), current_user: UserAcc
                 "icp": {}, "brand_voice": "", "brand_visual": "", "brand_story": "",
                 "competitors": [], "pricing_strategy": "", "marketing_channels": [],
                 "content_preferences": [], "goals_3month": "", "goals_12month": "",
-                "challenges": "", "completion_percentage": 0.0, "user_name": current_user.name
+                "challenges": "", "completion_percentage": 0.0, "user_name": current_user.name,
+                "website_url": "", "brand_style_guide": ""
             }
             
         from services.core.agents.identity import _compute_completion
@@ -51,6 +52,8 @@ async def get_identity(db: AsyncSession = Depends(get_db), current_user: UserAcc
             "goals_12month": identity.goals_12month,
             "challenges": identity.challenges,
             "completion_percentage": completion,
+            "website_url": identity.website_url,
+            "brand_style_guide": identity.brand_style_guide,
             "user_name": current_user.name
         }
     except Exception as e:
@@ -58,7 +61,7 @@ async def get_identity(db: AsyncSession = Depends(get_db), current_user: UserAcc
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/")
-async def update_identity(identity: dict, db: AsyncSession = Depends(get_db), current_user: UserAccount = Depends(get_current_user)):
+async def update_identity(identity: dict, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db), current_user: UserAccount = Depends(get_current_user)):
     """Update or initialize the persistent business identity."""
     try:
         # Separate user name update from identity updates
@@ -67,10 +70,73 @@ async def update_identity(identity: dict, db: AsyncSession = Depends(get_db), cu
             current_user.name = user_name
             db.add(current_user)
             
+        old_identity = await BusinessIdentityManager.get(db, current_user.id)
+        old_url = old_identity.website_url if old_identity else None
+            
         updated = await BusinessIdentityManager.create_or_update(db, current_user.id, identity)
+        
+        # Trigger background task if website_url was just added or changed
+        new_url = identity.get("website_url")
+        if new_url and new_url != old_url:
+            from services.core.branding.extractor import is_safe_url, style_extractor
+            from services.core.db.base import AsyncSessionLocal
+            
+            if is_safe_url(new_url):
+                async def _run_extraction(url, user_id):
+                    style_md = await style_extractor.extract_style(url)
+                    async with AsyncSessionLocal() as session:
+                        await BusinessIdentityManager.create_or_update(session, user_id, {
+                            "brand_style_guide": style_md,
+                            "style_extracted_at": datetime.utcnow()
+                        })
+                background_tasks.add_task(_run_extraction, new_url, current_user.id)
+            else:
+                logger.warning(f"Skipping extraction for unsafe or invalid URL: {new_url}")
+            
         return updated
     except Exception as e:
         logger.error(f"Failed to save identity: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+from pydantic import BaseModel
+class RescanRequest(BaseModel):
+    website_url: Optional[str] = None
+
+@router.post("/rescan-style")
+async def rescan_style(
+    request: Optional[RescanRequest] = None,
+    background_tasks: BackgroundTasks = None,
+    db: AsyncSession = Depends(get_db), 
+    current_user: UserAccount = Depends(get_current_user)
+):
+    try:
+        from services.core.branding.extractor import is_safe_url, style_extractor
+        from services.core.db.base import AsyncSessionLocal
+        
+        target_url = request.website_url if request and request.website_url else None
+        
+        if not target_url:
+            identity = await BusinessIdentityManager.get(db, current_user.id)
+            if not identity or not identity.website_url:
+                raise HTTPException(status_code=400, detail="No website URL configured")
+            target_url = identity.website_url
+            
+        if not is_safe_url(target_url):
+            raise HTTPException(status_code=400, detail="Invalid or unsafe URL")
+            
+        async def _run_extraction(url, user_id):
+            style_md = await style_extractor.extract_style(url)
+            async with AsyncSessionLocal() as session:
+                await BusinessIdentityManager.create_or_update(session, user_id, {
+                    "brand_style_guide": style_md,
+                    "style_extracted_at": datetime.utcnow()
+                })
+        background_tasks.add_task(_run_extraction, target_url, current_user.id)
+        return {"status": "started"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to trigger rescan: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/document")

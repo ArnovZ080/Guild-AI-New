@@ -3,7 +3,7 @@ Tests for project CRUD and API endpoints.
 """
 import pytest
 from httpx import AsyncClient, ASGITransport
-from services.core.main import app
+from services.api.main import app
 
 
 @pytest.fixture

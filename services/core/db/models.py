@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy import (
     Column, String, Integer, Float, Boolean, DateTime,
-    ForeignKey, Text,
+    ForeignKey, Text, Index
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
@@ -77,6 +77,9 @@ class BusinessIdentity(Base):
     challenges = Column(JSONB, default=list)
     onboarding_answers = Column(JSONB, default=dict)
     completion_percentage = Column(Float, default=0.0)
+    website_url = Column(String, nullable=True)
+    brand_style_guide = Column(Text, nullable=True)
+    style_extracted_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -188,6 +191,7 @@ class NurtureSequence(Base):
     user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False)
     name = Column(String, nullable=False)
     trigger_type = Column(String, nullable=True)  # signup, engagement, abandoned
+    contact_id = Column(String, ForeignKey("contacts.id"), nullable=True)
     steps = Column(JSONB, default=list)
     status = Column(String, default="draft")  # draft, active, paused, completed
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -574,5 +578,64 @@ class AgentTrigger(Base):
     is_active = Column(Boolean, default=True)
     last_run = Column(DateTime, nullable=True)
     next_run = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+# ── Funnel Builder ──
+
+class HostedPage(Base):
+    __tablename__ = "hosted_pages"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("user_accounts.id"), nullable=False, index=True)
+    
+    slug = Column(String, nullable=False, unique=True, index=True)
+    title = Column(String, nullable=False)
+    page_type = Column(String, nullable=False)
+    
+    html_content = Column(Text, nullable=False)
+    
+    form_id = Column(String, nullable=True, unique=True, default=lambda: __import__('secrets').token_urlsafe(12))
+    redirect_url = Column(String, nullable=True)
+    nurture_sequence_id = Column(String, nullable=True)
+    thank_you_message = Column(String, default="Thanks! We'll be in touch soon.")
+    
+    campaign_id = Column(String, ForeignKey("campaigns.id"), nullable=True)
+    content_item_id = Column(String, nullable=True)
+    
+    status = Column(String, default="draft")
+    views = Column(Integer, default=0)
+    submissions = Column(Integer, default=0)
+    conversion_rate = Column(Float, default=0.0)
+    
+    style_source = Column(String, default="business_identity")
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    published_at = Column(DateTime, nullable=True)
+
+    __table_args__ = (
+        Index("ix_hosted_pages_user_status", "user_id", "status"),
+    )
+
+class FormSubmission(Base):
+    __tablename__ = "form_submissions"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    page_id = Column(String, ForeignKey("hosted_pages.id"), nullable=False, index=True)
+    
+    email = Column(String, nullable=False)
+    name = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    custom_fields = Column(JSONB, default=dict)
+    
+    source_url = Column(String, nullable=True)
+    ip_country = Column(String, nullable=True)
+    utm_source = Column(String, nullable=True)
+    utm_medium = Column(String, nullable=True)
+    utm_campaign = Column(String, nullable=True)
+    
+    contact_id = Column(String, ForeignKey("contacts.id"), nullable=True)
+    processed = Column(Boolean, default=False)
+    
     created_at = Column(DateTime, default=datetime.utcnow)
 

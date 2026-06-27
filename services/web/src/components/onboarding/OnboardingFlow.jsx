@@ -33,6 +33,7 @@ const OnboardingFlow = () => {
         // Core
         user_name: '',
         business_name: '',
+        website_url: '',
         niche: '',
         business_type: '',
         business_stage: '',
@@ -198,6 +199,16 @@ const OnboardingFlow = () => {
                                             onChange={(e) => updateField('business_name', e.target.value)}
                                             className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-900 placeholder-slate-400 shadow-sm"
                                             placeholder="e.g. Acme Innovations"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Website URL (Optional)</label>
+                                        <input
+                                            type="text"
+                                            value={identity.website_url || ''}
+                                            onChange={(e) => updateField('website_url', e.target.value)}
+                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-900 placeholder-slate-400 shadow-sm"
+                                            placeholder="https://example.com"
                                         />
                                     </div>
                                     <div className="space-y-2">

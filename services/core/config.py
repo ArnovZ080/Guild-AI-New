@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     PAYSTACK_SECRET_KEY: Optional[str] = None
     PAYSTACK_PUBLIC_KEY: Optional[str] = None
 
+    # Email sending (Guild-owned SendGrid)
+    SENDGRID_API_KEY: Optional[str] = None
+    EMAIL_FROM: str = "hello@mail.guildof1.com"
+    EMAIL_FROM_NAME: str = "Guild AI"
+
     # Meta (Facebook + Instagram)
     META_APP_ID: Optional[str] = None
     META_APP_SECRET: Optional[str] = None

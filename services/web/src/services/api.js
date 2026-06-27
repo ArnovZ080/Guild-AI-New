@@ -173,10 +173,22 @@ export const api = {
       authFetch('/api/v1/identity/'),
     update: (data) =>
       authFetch('/api/v1/identity/', { method: 'POST', body: JSON.stringify(data) }),
+    rescanStyle: () =>
+      authFetch('/api/v1/identity/rescan-style', { method: 'POST' }),
     uploadDocument: (formData) =>
       authFetch('/api/v1/identity/document', { method: 'POST', body: formData }),
     getDocuments: () =>
       authFetch('/api/v1/identity/document'),
+  },
+
+  // ── Funnels ──
+  funnels: {
+    list: () =>
+      authFetch('/api/v1/funnels'),
+    get: (id) =>
+      authFetch(`/api/v1/funnels/${id}`),
+    generate: (data) =>
+      authFetch('/api/v1/funnels/generate', { method: 'POST', body: JSON.stringify(data) }),
   },
 
   // ── Integrations ──

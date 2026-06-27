@@ -175,9 +175,10 @@ function LeadRow({ lead }) {
    ═══════════════════════════════════════════ */
 export default function GrowthDashboard() {
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ content: 0, leads: 0, pipeline: 0, revenue: 0 });
+  const [stats, setStats] = useState({ content: 0, leads: 0, pipeline: 0, revenue: 0, funnels: 0, funnelSubmissions: 0 });
   const [goals, setGoals] = useState([]);
   const [leads, setLeads] = useState([]);
+  const [funnels, setFunnels] = useState([]);
   const [insights, setInsights] = useState('');
   const [showAddGoal, setShowAddGoal] = useState(false);
   const [newGoal, setNewGoal] = useState('');
@@ -185,11 +186,12 @@ export default function GrowthDashboard() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [perf, goalData, leadData, pipe] = await Promise.allSettled([
+      const [perf, goalData, leadData, pipe, funnelData] = await Promise.allSettled([
         api.content.performance(),
         api.goals.list(),
         api.crm.newLeads(),
         api.crm.pipeline(),
+        api.funnels.list()
       ]);
       if (perf.status === 'fulfilled') {
         const p = perf.value;
@@ -215,6 +217,15 @@ export default function GrowthDashboard() {
           ...prev,
           pipeline: pipeData?.stages?.length || pipeData?.active || 0,
           revenue: pipeData?.total_value || 0,
+        }));
+      }
+      if (funnelData.status === 'fulfilled') {
+        const funs = funnelData.value || [];
+        setFunnels(funs);
+        setStats((prev) => ({
+          ...prev,
+          funnels: funs.length,
+          funnelSubmissions: funs.reduce((acc, f) => acc + (f.submissions || 0), 0)
         }));
       }
     } catch { /* ok */ }
@@ -265,10 +276,10 @@ export default function GrowthDashboard() {
         <StatCard icon={FileText} label="Content Published" value={stats.content}
           color="bg-indigo-500/10 border border-indigo-400/40 text-indigo-400"
           glowColor="rgba(94,106,210,0.25)" />
-        <StatCard icon={Users} label="Leads Captured" value={stats.leads}
+        <StatCard icon={Users} label="Funnel Submissions" value={stats.funnelSubmissions}
           color="bg-emerald-500/10 border border-emerald-400/40 text-emerald-400"
           glowColor="rgba(34,197,94,0.2)" />
-        <StatCard icon={TrendingUp} label="Pipeline Active" value={stats.pipeline}
+        <StatCard icon={TrendingUp} label="Active Funnels" value={stats.funnels}
           color="bg-amber-500/10 border border-amber-400/40 text-amber-400"
           glowColor="rgba(245,158,11,0.2)" />
         <StatCard icon={DollarSign} label="Revenue Influenced" value={`$${(stats.revenue / 1000).toFixed(1)}k`}

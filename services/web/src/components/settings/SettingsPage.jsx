@@ -61,6 +61,7 @@ function ProfileTab() {
   const fields = [
     { key: 'user_name', label: 'Your Name', type: 'text' },
     { key: 'business_name', label: 'Business Name', type: 'text' },
+    { key: 'website_url', label: 'Website URL', type: 'text' },
     { key: 'niche', label: 'Niche', type: 'text' },
     { key: 'industry', label: 'Industry', type: 'text' },
     { key: 'brand_voice_tone', label: 'Brand Tone', type: 'text' },
@@ -74,6 +75,7 @@ function ProfileTab() {
     { key: 'goals_12month', label: '12-Month Goals', type: 'text' },
     { key: 'target_audience', label: 'Target Audience', type: 'textarea' },
     { key: 'brand_story', label: 'Brand Story', type: 'textarea' },
+    { key: 'brand_style_guide', label: 'Brand Style Guide (Extracted from Website)', type: 'textarea_with_rescan' },
     { key: 'icp', label: 'Ideal Customer Profile', type: 'textarea' },
     { key: 'competitors', label: 'Competitors (comma separated)', type: 'textarea' },
     { key: 'marketing_channels', label: 'Marketing Channels (comma separated)', type: 'textarea' },
@@ -137,13 +139,29 @@ function ProfileTab() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map(({ key, label, type }) => (
-          <div key={key} className={type === 'textarea' ? 'sm:col-span-2' : ''}>
-            <label className="text-xs text-zinc-400 mb-1 block">{label}</label>
-            {type === 'textarea' ? (
+          <div key={key} className={type.startsWith('textarea') ? 'sm:col-span-2' : ''}>
+            <div className="flex justify-between items-end mb-1">
+              <label className="text-xs text-zinc-400 block">{label}</label>
+              {type === 'textarea_with_rescan' && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await api.identity.rescanStyle();
+                      toast.success('Style rescan triggered! It will update in the background.');
+                    } catch (err) { toast.error(err.message); }
+                  }}
+                  className="text-[10px] uppercase font-bold tracking-wider px-2 py-1 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 rounded transition-colors"
+                >
+                  Rescan Website
+                </button>
+              )}
+            </div>
+            {type.startsWith('textarea') ? (
               <textarea
                 value={getDisplayValue(key, type)}
                 onChange={(e) => handleChange(key, type, e.target.value)}
-                rows={4}
+                rows={key === 'brand_style_guide' ? 10 : 4}
                 className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/[0.06] text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-indigo-500/30 font-sans"
               />
             ) : (
