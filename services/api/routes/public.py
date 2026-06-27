@@ -32,8 +32,9 @@ async def serve_funnel_page(slug: str, request: Request, db: AsyncSession = Depe
         
     # Return with CSP headers
     response = HTMLResponse(content=html)
-    # Restrict script-src to specific CDNs to prevent XSS via LLM eval injection
-    response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline' https: data:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://use.fontawesome.com;"
+    # Restrict script-src to specific CDNs to prevent XSS via LLM eval injection.
+    # We restrict default-src but allow style-src 'unsafe-inline' for Tailwind's CDN.
+    response.headers["Content-Security-Policy"] = "default-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://use.fontawesome.com;"
     return response
 
 @router.post("/api/public/form/{form_id}")
@@ -44,15 +45,20 @@ async def capture_form_submission(
 ):
     ip = request.client.host if request.client else "unknown"
     rate_limit_key = f"rate_limit:form:{form_id}:{ip}"
-    r = aioredis.from_url(settings.REDIS_URL)
     try:
-        current = await r.incr(rate_limit_key)
-        if current == 1:
-            await r.expire(rate_limit_key, 60)
-        if current > 10:
-            raise HTTPException(status_code=429, detail="Too many requests. Try again later.")
-    finally:
-        await r.aclose()
+        r = aioredis.from_url(settings.REDIS_URL)
+        try:
+            current = await r.incr(rate_limit_key)
+            if current == 1:
+                await r.expire(rate_limit_key, 60)
+            if current > 10:
+                raise HTTPException(status_code=429, detail="Too many requests. Try again later.")
+        finally:
+            await r.aclose()
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.warning(f"Redis rate limiting failed, failing open for {ip}: {e}")
         
     # Retrieve form data
     form_data = await request.form()
