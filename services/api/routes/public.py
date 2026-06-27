@@ -8,6 +8,8 @@ from services.core.db.models import HostedPage, FormSubmission, Contact
 from services.core.logging import logger
 from services.core.crm.capture import lead_capture
 from datetime import datetime
+import redis.asyncio as aioredis
+from services.core.config import settings
 
 router = APIRouter(tags=["Public Funnels"])
 
@@ -30,9 +32,8 @@ async def serve_funnel_page(slug: str, request: Request, db: AsyncSession = Depe
         
     # Return with CSP headers
     response = HTMLResponse(content=html)
-    # Simple CSP to allow Tailwind CDN, Google Fonts, etc. but restrict script execution to known CDNs if desired.
-    # For now, a permissive CSP since LLM might use various CDNs
-    response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:;"
+    # Restrict script-src to specific CDNs to prevent XSS via LLM eval injection
+    response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline' https: data:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://use.fontawesome.com;"
     return response
 
 @router.post("/api/public/form/{form_id}")
@@ -41,6 +42,18 @@ async def capture_form_submission(
     request: Request,
     db: AsyncSession = Depends(get_db)
 ):
+    ip = request.client.host if request.client else "unknown"
+    rate_limit_key = f"rate_limit:form:{form_id}:{ip}"
+    r = aioredis.from_url(settings.REDIS_URL)
+    try:
+        current = await r.incr(rate_limit_key)
+        if current == 1:
+            await r.expire(rate_limit_key, 60)
+        if current > 10:
+            raise HTTPException(status_code=429, detail="Too many requests. Try again later.")
+    finally:
+        await r.aclose()
+        
     # Retrieve form data
     form_data = await request.form()
     data_dict = dict(form_data)
