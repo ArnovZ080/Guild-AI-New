@@ -43,7 +43,8 @@ steps:
       - '--min-instances=0'
       - '--max-instances=10'
       - '--allow-unauthenticated'
-      - '--set-secrets=DATABASE_URL=guild-database-url:latest,REDIS_URL=guild-redis-url:latest,SECRET_KEY=guild-secret-key:latest,PAYSTACK_SECRET_KEY=guild-paystack-secret:latest,QDRANT_API_KEY=guild-qdrant-api-key:latest,SUPABASE_SERVICE_KEY=guild-supabase-service-key:latest'
+      - '--set-env-vars=EMAIL_FROM=hello@mail.guildof1.com,EMAIL_FROM_NAME=Guild AI'
+      - '--set-secrets=DATABASE_URL=guild-database-url:latest,REDIS_URL=guild-redis-url:latest,SECRET_KEY=guild-secret-key:latest,PAYSTACK_SECRET_KEY=guild-paystack-secret:latest,QDRANT_API_KEY=guild-qdrant-api-key:latest,SUPABASE_SERVICE_KEY=guild-supabase-service-key:latest,SENDGRID_API_KEY=guild-sendgrid-api-key:latest'
 
 availableSecrets:
   secretManager:
