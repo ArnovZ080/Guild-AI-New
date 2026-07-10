@@ -223,11 +223,7 @@ function AppContent() {
           <div className="p-3 border-t border-white/[0.06] space-y-2">
             {user && (
               <div className="flex flex-col gap-2 px-1">
-                {!isAdmin && dbUser?.subscription_status !== 'active' && !sidebarCollapsed && (
-                  <div className={`text-[10px] font-medium tracking-wide uppercase px-2 py-1.5 rounded-md ${trialDaysRemaining <= 3 ? 'bg-red-500/10 text-red-400' : 'bg-indigo-500/10 text-indigo-300'}`}>
-                    {trialDaysRemaining > 0 ? `Free Trial: ${trialDaysRemaining} days left` : 'Trial Expired'}
-                  </div>
-                )}
+
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full gradient-cobalt border border-blue-500/20 flex-shrink-0" />
                   {!sidebarCollapsed && (

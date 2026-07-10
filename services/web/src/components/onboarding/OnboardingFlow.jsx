@@ -139,7 +139,6 @@ const OnboardingFlow = () => {
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold tracking-tight">Business Induction</h1>
-                                <p className="text-slate-500 text-sm">Phase 4: Persistent Context Alignment</p>
                             </div>
                         </div>
                         <div className="text-right">
