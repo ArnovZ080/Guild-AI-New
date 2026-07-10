@@ -213,20 +213,13 @@ const OnboardingFlow = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">What type of business are you running?</label>
-                                        <select
-                                            value={identity.business_type}
+                                        <input
+                                            type="text"
+                                            value={identity.business_type || ''}
                                             onChange={(e) => updateField('business_type', e.target.value)}
-                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-900 shadow-sm appearance-none"
-                                        >
-                                            <option value="" disabled>Select business type...</option>
-                                            <option value="Coaching / Consulting">Coaching / Consulting</option>
-                                            <option value="E-commerce / Online Store">E-commerce / Online Store</option>
-                                            <option value="SaaS / Digital Products">SaaS / Digital Products</option>
-                                            <option value="Freelancing / Services">Freelancing / Services</option>
-                                            <option value="Content Creation / Media">Content Creation / Media</option>
-                                            <option value="Agency / Marketing">Agency / Marketing</option>
-                                            <option value="Not sure yet">Not sure yet</option>
-                                        </select>
+                                            className="w-full bg-white border border-slate-200 p-5 rounded-2xl text-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-slate-900 placeholder-slate-400 shadow-sm"
+                                            placeholder="e.g. Artisan bakery, Fitness coach, Candle maker..."
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">What stage is your business at right now?</label>
