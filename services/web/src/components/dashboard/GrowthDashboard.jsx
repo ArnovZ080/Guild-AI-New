@@ -9,8 +9,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import {
   TrendingUp, Users, FileText, DollarSign, Target, Plus,
-  Loader2, ArrowUpRight, ArrowDownRight, RefreshCw, Sparkles, Trophy,
+  Loader2, ArrowUpRight, ArrowDownRight, RefreshCw, Sparkles, Trophy, HelpCircle
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import { toast } from 'react-toastify';
 
@@ -180,18 +181,21 @@ export default function GrowthDashboard() {
   const [leads, setLeads] = useState([]);
   const [funnels, setFunnels] = useState([]);
   const [insights, setInsights] = useState('');
+  const [openQuestions, setOpenQuestions] = useState([]);
   const [showAddGoal, setShowAddGoal] = useState(false);
   const [newGoal, setNewGoal] = useState('');
+  const navigate = useNavigate();
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [perf, goalData, leadData, pipe, funnelData] = await Promise.allSettled([
+      const [perf, goalData, leadData, pipe, funnelData, snap] = await Promise.allSettled([
         api.content.performance(),
         api.goals.list(),
         api.crm.newLeads(),
         api.crm.pipeline(),
-        api.funnels.list()
+        api.funnels.list(),
+        api.dashboard.snapshot()
       ]);
       if (perf.status === 'fulfilled') {
         const p = perf.value;
@@ -227,6 +231,9 @@ export default function GrowthDashboard() {
           funnels: funs.length,
           funnelSubmissions: funs.reduce((acc, f) => acc + (f.submissions || 0), 0)
         }));
+      }
+      if (snap.status === 'fulfilled') {
+        setOpenQuestions(snap.value?.open_questions || []);
       }
     } catch { /* ok */ }
     setLoading(false);
@@ -298,6 +305,33 @@ export default function GrowthDashboard() {
         </p>
         {insights && <p className="text-xs text-zinc-600 italic">- ContentIntelligenceAgent</p>}
       </div>
+
+      {/* Open Questions (Flagged Fields) */}
+      {openQuestions.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-heading font-bold text-zinc-300 flex items-center gap-2">
+            <HelpCircle size={14} className="text-indigo-400" /> Let's explore together
+          </h2>
+          <div className="grid gap-3 md:grid-cols-2">
+            {openQuestions.map((q, i) => (
+              <motion.button
+                key={i}
+                whileHover={{ y: -2 }}
+                onClick={() => navigate('/chat', { state: { prefill: `Let's figure out my ${q.field} — you said we'd explore it together.` } })}
+                className="glass-panel rounded-xl p-4 text-left group hover:bg-white/[0.04] transition-colors border-l-2 border-l-indigo-500"
+              >
+                <h4 className="text-sm font-medium text-zinc-200 capitalize mb-1">
+                  We still need to figure out: {q.field.replace(/_/g, ' ')}
+                </h4>
+                {q.note && <p className="text-xs text-zinc-400 truncate">{q.note}</p>}
+                <div className="mt-3 text-xs text-indigo-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  Tap to discuss →
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Goals & Milestones */}
       <div className="space-y-3">

@@ -5,8 +5,9 @@ Multi-turn chat that progressively builds the Business Identity.
 Uses the orchestrator to generate natural questions and extract structured data.
 """
 import logging
-from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException
+import json
+from typing import Optional, List, Dict
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,6 +25,7 @@ router = APIRouter()
 class OnboardingMessage(BaseModel):
     message: str
     conversation_id: Optional[str] = None
+    history: Optional[List[Dict[str, str]]] = None   # [{"role": "user"|"assistant", "content": "..."}]
 
 
 class OnboardingResponse(BaseModel):
@@ -33,50 +35,81 @@ class OnboardingResponse(BaseModel):
     fields_updated: list = []
 
 
-# System prompt for the onboarding conversation
-ONBOARDING_SYSTEM_PROMPT = """You are a friendly, knowledgeable business consultant onboarding a new user to Guild AI — an AI growth engine for their business.
+ONBOARDING_SYSTEM_PROMPT = """You are Guild's brand strategist conducting a warm induction interview with a new member. This is their first impression of Guild — make it feel like talking to a sharp, kind consultant who is genuinely curious about their business, never like filling in a form.
 
-Your goal is to learn about their business through a warm, natural conversation. You should:
-1. Ask ONE clear question at a time
-2. Be conversational, not robotic — sound like a business advisor catching up over coffee
-3. Help users who don't know their answers discover them
-4. Extract structured data from their natural responses
-5. Acknowledge what they've shared before asking the next question
+CONVERSATION RULES:
+1. ONE question per message. Never stack questions.
+2. Always briefly acknowledge or react to what they just said before moving on — reference specifics from their words.
+3. Keep messages short: 2-4 sentences plus the question.
+4. Warm, plain language. No marketing jargon (never say "ICP", say "your ideal customer"; never say "psychographics", say "what they care about").
+5. Occasionally reflect back an insight they didn't state directly ("Sounds like word-of-mouth is carrying you further than your posts are — that's exactly what we can fix.").
 
-You're building their Business Identity, which includes:
-- Business name, niche, industry
-- Target audience / Ideal Customer Profile (demographics, psychographics, pain points)
-- Brand voice and tone (how they want to sound)
-- Brand visuals (colors, fonts, visual style)
-- Brand story / origin
-- Competitors
-- Pricing strategy
-- Current marketing channels
-- Content preferences (formats, topics, frequency)
-- Business goals (3-month and 12-month)
-- Key challenges
+WHAT YOU'RE BUILDING (their Business Identity):
+- business_name, niche, industry
+- target_audience + icp (who buys, what they care about, their pain points)
+- brand_voice (how they want to sound), brand_visual (colors, fonts, style)
+- brand_story, competitors, pricing_strategy, marketing_channels
+- content_preferences, goals_3month, goals_12month, challenges
 
 CURRENT IDENTITY STATE:
 {identity_state}
 
-INSTRUCTIONS:
-- Look at what's already filled and what's missing
-- Ask about the MOST IMPORTANT missing field next
-- When the user responds, extract the structured data into a JSON block
-- After extraction, formulate your conversational reply
+KNOWLEDGE LEDGER (field statuses — known / coached / flagged):
+{ledger_state}
 
-Format your response as:
+WEBSITE STYLE SCAN:
+{style_scan_state}
+
+COACH MODE — applies to ANY question, whenever the user is unsure:
+If the user says anything like "I don't know", "not sure", "never thought about it", or gives a vague non-answer, do NOT move on and do NOT re-ask the same question. Instead:
+a) Normalize it in one sentence ("Most owners haven't put this into words — that's literally why Guild exists.")
+b) Explain the concept in ONE plain sentence (what it is, why it matters for their marketing).
+c) Ask a CONCRETE ANECDOTE question instead of the abstract one. Examples:
+   - ideal customer → "Think of your favourite customer — the one you wish you had ten of. Who are they? What did they buy? What did they say about it?"
+   - brand voice → "If your business were a person at a dinner party, how would they talk? Or: show me a message you've sent a customer that felt 'very you'."
+   - competitors → "When someone doesn't buy from you, where do they go instead?"
+   - goals → "Picture this time next year going brilliantly. What's different about your business?"
+d) Assemble the field's value FROM their anecdotes, read it back to them, and ask if it rings true. Mark it "coached" in the ledger.
+e) If after coaching they still don't know: reassure them ("No problem — once your content is live we'll SEE who actually engages, and figure this out from real data"), mark the field "flagged" with a short note, and move on. Never make them feel tested.
+
+STYLE SCAN REVEAL:
+If the style scan state above contains results and the ledger does not show "style_reveal_done", then in your NEXT message — before your question — casually reveal it: "By the way, while we've been talking I had a look at your website..." Summarize 2-3 concrete observations (colors, mood, typography feel) in plain words and ask if that feels right. Record their reaction into brand_visual. Include "style_reveal_done": {{"status": "known"}} in your ledger updates.
+
+STRUCTURED OUTPUT — every message, use exactly this format:
 ```json
-{{"extracted": {{"field_name": "value", ...}}}}
+{{"extracted": {{"field_name": "value", ...}}, "ledger": {{"field_name": {{"status": "known|coached|flagged", "note": "optional short note"}}}}, "coach_mode": false, "progress_hint": "short label of what was just learned"}}
 ```
-<your conversational reply to the user>
+<your conversational reply>
 
-If no data can be extracted from this message, just reply conversationally with no JSON block."""
+- "extracted" and "ledger" may be empty objects if nothing was learned this turn.
+- Set "coach_mode": true when your reply is coaching (the UI renders it differently).
+- Choose the next question by importance: business basics → ideal customer → brand voice → goals → challenges → the rest. Skip anything already known.
 
+COMPLETION:
+When all essential fields are known/coached/flagged, do NOT ask more questions. Reply with warm closure, summarize the 3 most interesting things you learned about their business, mention any flagged fields you'll revisit together later, and include "onboarding_complete": true inside the JSON block."""
+
+
+async def _run_style_scan(user_id: str, url: str):
+    from services.core.db.base import AsyncSessionLocal
+    from services.core.branding.extractor import WebsiteStyleExtractor
+    try:
+        guide = await WebsiteStyleExtractor().extract_style(url)
+        async with AsyncSessionLocal() as db:
+            await BusinessIdentityManager.create_or_update(db, user_id, {"brand_style_guide": guide})
+    except Exception as e:
+        logger.warning("Style scan failed for %s: %s", user_id, e)
+
+def _style_scan_state(identity) -> str:
+    if identity.brand_style_guide:
+        return f"RESULTS READY:\n{identity.brand_style_guide[:1200]}"
+    if identity.website_url:
+        return "Scan in progress — results not ready yet. Do not mention the scan."
+    return "No website provided."
 
 @router.post("/chat", response_model=OnboardingResponse)
 async def onboarding_chat(
     request: OnboardingMessage,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     current_user: UserAccount = Depends(get_current_user),
 ):
@@ -95,10 +128,16 @@ async def onboarding_chat(
     identity_state = _format_identity_state(identity)
 
     # Build messages
-    messages = [
-        {"role": "system", "content": ONBOARDING_SYSTEM_PROMPT.format(identity_state=identity_state)},
-        {"role": "user", "content": request.message},
-    ]
+    history = (request.history or [])[-16:]  # last 8 exchanges is plenty; caps token cost
+    messages = (
+        [{"role": "system", "content": ONBOARDING_SYSTEM_PROMPT.format(
+            identity_state=identity_state,
+            ledger_state=json.dumps(identity.knowledge_ledger or {}),
+            style_scan_state=_style_scan_state(identity),
+        )}]
+        + history
+        + [{"role": "user", "content": request.message}]
+    )
 
     # Generate response
     response_text = await default_llm.chat_completion(
@@ -108,13 +147,23 @@ async def onboarding_chat(
     )
 
     # Parse extracted data and conversational reply
-    extracted, reply = _parse_response(response_text)
+    extracted, ledger_updates, coach_mode, onboarding_complete, reply = _parse_response(response_text)
     fields_updated = []
 
     # Update identity with extracted data
     if extracted:
         await BusinessIdentityManager.create_or_update(db, current_user.id, extracted)
         fields_updated = list(extracted.keys())
+
+    # Merge ledger updates
+    if ledger_updates:
+        merged = dict(identity.knowledge_ledger or {})
+        merged.update(ledger_updates)
+        await BusinessIdentityManager.create_or_update(db, current_user.id, {"knowledge_ledger": merged})
+
+    # Fire the style scan the moment a website_url is captured (non-blocking)
+    if extracted.get("website_url") and not identity.brand_style_guide:
+        background_tasks.add_task(_run_style_scan, current_user.id, extracted["website_url"])
 
     # Reload for updated completion
     identity = await BusinessIdentityManager.get(db, current_user.id)
@@ -247,11 +296,33 @@ def _parse_response(text: str) -> tuple:
         try:
             data = json.loads(json_match.group(1))
             extracted = data.get("extracted", {})
+            ledger = data.get("ledger", {})
+            coach_mode = data.get("coach_mode", False)
+            onboarding_complete = data.get("onboarding_complete", False)
+            
             # Remove JSON block from reply
             reply = text[:json_match.start()] + text[json_match.end():]
             reply = reply.strip()
-            return extracted, reply
+            return extracted, ledger, coach_mode, onboarding_complete, reply
         except json.JSONDecodeError:
             pass
 
-    return {}, text.strip()
+    return {}, {}, False, False, text.strip()
+
+@router.post("/finale")
+async def onboarding_finale(
+    db: AsyncSession = Depends(get_db),
+    current_user: UserAccount = Depends(get_current_user),
+):
+    """Generate one real, Judge-scored sample post from the fresh identity."""
+    from services.core.content_pipeline.engine import content_generator
+    identity = await BusinessIdentityManager.get(db, current_user.id)
+    topic = f"An introduction post that captures what makes {identity.business_name or 'this business'} special"
+    try:
+        item = await content_generator.generate_single_content(
+            db, current_user.id, content_type="social", platform="instagram", topic=topic)
+        return {"status": "ok", "content_item_id": item.id, "title": item.title,
+                "body": item.body, "judge_score": (item.performance_metrics or {}).get("judge_score")}
+    except Exception as e:
+        logger.error("Onboarding finale generation failed: %s", e)
+        return {"status": "skipped"}  # never block completion on this

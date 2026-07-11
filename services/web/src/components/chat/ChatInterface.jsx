@@ -17,6 +17,7 @@ import {
 import { api } from '../../services/api';
 import { guildWS } from '../../services/websocket';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 /* ─── Helpers ─── */
 function groupByDate(conversations) {
@@ -148,6 +149,7 @@ export default function ChatInterface() {
   const [activeConvId, setActiveConvId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const location = useLocation();
   const [sending, setSending] = useState(false);
   const [thinkingAgent, setThinkingAgent] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -158,6 +160,15 @@ export default function ChatInterface() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, agentEvents, thinkingAgent]);
+
+  /* Handle prefilled messages from dashboard */
+  useEffect(() => {
+    if (location.state?.prefill) {
+      setInput(location.state.prefill);
+      // Optional: clear the state so it doesn't persist on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   /* Subscribe to WebSocket events */
   useEffect(() => {

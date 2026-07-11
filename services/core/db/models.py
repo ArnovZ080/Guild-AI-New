@@ -76,6 +76,7 @@ class BusinessIdentity(Base):
     goals_12month = Column(Text, nullable=True)
     challenges = Column(JSONB, default=list)
     onboarding_answers = Column(JSONB, default=dict)
+    knowledge_ledger = Column(JSONB, default=dict)  # {field: {"status": "known|coached|flagged", "note": str}}
     completion_percentage = Column(Float, default=0.0)
     website_url = Column(String, nullable=True)
     brand_style_guide = Column(Text, nullable=True)

@@ -48,6 +48,13 @@ async def dashboard_snapshot(
         )
     )).scalar() or 0
 
+    from services.core.agents.identity import BusinessIdentityManager
+    identity = await BusinessIdentityManager.get(db, uid)
+    flagged = {k: v for k, v in (identity.knowledge_ledger or {}).items()
+               if isinstance(v, dict) and v.get("status") == "flagged"} if identity else {}
+    open_questions = [
+        {"field": k, "note": v.get("note", "")} for k, v in flagged.items()]
+
     return {
         "user_tier": current_user.tier,
         "content_total": content_total,
@@ -55,4 +62,5 @@ async def dashboard_snapshot(
         "contacts_total": contacts_total,
         "goals_active": goals_active,
         "tokens_used_this_month": tokens_month,
+        "open_questions": open_questions,
     }
