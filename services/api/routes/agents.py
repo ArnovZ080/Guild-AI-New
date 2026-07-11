@@ -1,6 +1,9 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 from typing import Dict, List, Any, Optional
 from pydantic import BaseModel
+
+from services.core.db.models import UserAccount
+from services.api.middleware.auth import get_current_user
 
 from services.core.agents.registry import AgentRegistry, AgentCapability
 # Import agents to trigger registration
@@ -37,7 +40,7 @@ class AgentCapabilityResponse(BaseModel):
     description: str
 
 @router.get("/", response_model=List[AgentCapabilityResponse])
-async def list_agents():
+async def list_agents(current_user: UserAccount = Depends(get_current_user)):
     """List all available agent capabilities."""
     registry_items = AgentRegistry.list_all()
     # Convert dataclasses to Pydantic models (excluding agent_class)
@@ -51,7 +54,7 @@ async def list_agents():
     ]
 
 @router.post("/{agent_name}/run", response_model=AgentRunResponse)
-async def run_agent(agent_name: str, request: AgentRunRequest, background_tasks: BackgroundTasks):
+async def run_agent(agent_name: str, request: AgentRunRequest, background_tasks: BackgroundTasks, current_user: UserAccount = Depends(get_current_user)):
     """
     Trigger an agent run.
     For now, this runs synchronously or via background tasks.
@@ -81,7 +84,9 @@ async def run_agent(agent_name: str, request: AgentRunRequest, background_tasks:
         # For this phase, let's await it to verify it works, then move to async.
         # Ideally, we return a run_id and have a status endpoint.
         
-        result = await agent_instance.run(request.input_data, request.context)
+        context = request.context or {}
+        context["user_id"] = current_user.id
+        result = await agent_instance.run(request.input_data, context)
         
         # In a real system, we'd store the result in DB/Redis associated with a run_id
         
@@ -97,7 +102,7 @@ async def run_agent(agent_name: str, request: AgentRunRequest, background_tasks:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/events", response_model=List[AgentEvent])
-async def get_agent_events(since_id: Optional[str] = None, limit: int = 50):
+async def get_agent_events(since_id: Optional[str] = None, limit: int = 50, current_user: UserAccount = Depends(get_current_user)):
     """
     Retrieve real-time agent activity events.
     Polling endpoint for the Agent Theater UI.

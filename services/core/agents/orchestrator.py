@@ -41,7 +41,9 @@ class OrchestratorAgent(BaseAgent):
             raise ValueError("OrchestratorAgent requires a 'goal'")
 
         # 1. Enforce Persistent Business Context
-        user_id = context.get("user_id", "default_user") if context else "default_user"
+        user_id = context.get("user_id") if context else None
+        if not user_id:
+            raise ValueError("user_id required in context")
         db = context.get("db") if context else None
         business_context = await identity_manager.get_context_prompt(db, user_id)
 
@@ -90,6 +92,28 @@ USER OBJECTIVE:
                 "plan": plan.model_dump(),
                 "message": "Pre-flight DAG execution graph generated. Awaiting user approval to trigger workforce."
             }
+
+        # Check if the primary intent is content creation to bridge directly
+        # to the ContentMarketingAgent / Content Engine
+        if plan.tasks and len(plan.tasks) == 1 and plan.tasks[0].assigned_agent == "ContentMarketingAgent":
+            try:
+                from services.core.content_pipeline.engine import content_generator
+                item = await content_generator.generate_single_content(
+                    db, user_id, 
+                    content_type="social", 
+                    platform="omnichannel", 
+                    topic=goal
+                )
+                return {
+                    "status": "completed",
+                    "plan": plan.model_dump(),
+                    "results": {"content": item.title},
+                    "response": f"I've created '{item.title}' — it's in your Content Queue for review.",
+                    "content_item_id": item.id
+                }
+            except Exception as e:
+                self.logger.error(f"Failed to route directly to content engine: {e}")
+                # Fallback to standard execution if bridging fails
 
         # 3. Execution: Run the delegated tasks
         results = await self._execute_plan(plan, context or {})
@@ -147,7 +171,9 @@ USER OBJECTIVE:
         goal = input_data.get("goal")
         timeframe = input_data.get("timeframe", 90)
         
-        user_id = input_data.get("user_id", "default_user")
+        user_id = input_data.get("user_id")
+        if not user_id:
+            raise ValueError("user_id required in context")
         db = input_data.get("db")
         identity = await identity_manager.get_identity(db, user_id)
         
@@ -211,6 +237,9 @@ Return JSON with a "milestones" key containing a list of objects with:
             return await project_manager.create_project(db, user_id, identity.business_name if identity else "Unknown", goal, timeframe)
 
     async def execute_milestone(self, project_id: str, milestone_id: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+        user_id = context.get("user_id") if context else None
+        if not user_id:
+            raise ValueError("user_id required in context")
         db = context.get("db") if context else None
         project = await project_manager.get_project(db, project_id)
         if not project:
@@ -244,7 +273,7 @@ Create a detailed JSON delegation plan with an array of tasks. Refer to previous
             "project_id": project_id, 
             "milestone_id": milestone_id,
             "db": db,
-            "user_id": context.get("user_id", "default_user") if context else "default_user"
+            "user_id": user_id
         })
         
         # 3. Update status
@@ -322,7 +351,9 @@ Optimize for:
 
     async def _execute_plan(self, plan: DelegationPlan, initial_context: Dict) -> Dict[str, Any]:
         db = initial_context.get("db")
-        user_id = initial_context.get("user_id", "default_user")
+        user_id = initial_context.get("user_id")
+        if not user_id:
+            raise ValueError("user_id required in context")
         results = {}
         pending_tasks = {t.id: t for t in plan.tasks}
         completed_tasks: Set[str] = set()
@@ -429,7 +460,7 @@ Optimize for:
                             outcome_score = "excellent" if review.get("overall_score", 0) >= 90 else "good" if review.get("overall_score", 0) >= 70 else "neutral"
                             await OutcomeTracker.record_outcome(
                                 db=initial_context.get("db"),
-                                user_id=initial_context.get("user_id", "default_user"),
+                                user_id=user_id,
                                 task_id=task.id,
                                 agent_id=task.assigned_agent,
                                 action_type=task.intent.split(":")[0] if ":" in task.intent else "general",

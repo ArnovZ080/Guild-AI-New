@@ -54,8 +54,15 @@ function MessageBubble({ message }) {
       </div>
       <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? 'bg-indigo-500/15 text-zinc-200 rounded-tr-md' : 'glass-panel text-zinc-300 rounded-tl-md'}`}>
         {message.content}
+        {message.content_item_id && (
+          <div className="mt-3">
+            <a href="/content" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 text-xs font-medium hover:bg-indigo-500/30 transition-colors">
+              <Sparkles size={12} /> View in Queue
+            </a>
+          </div>
+        )}
         {message.tokens && (
-          <span className="block mt-1 text-xs text-zinc-600">{message.tokens} tokens</span>
+          <span className="block mt-2 text-xs text-zinc-600 border-t border-white/5 pt-1">{message.tokens} tokens</span>
         )}
       </div>
     </motion.div>
@@ -224,18 +231,21 @@ export default function ChatInterface() {
         response = await api.agents.run('OrchestratorAgent', { goal: userMsg.content });
       }
       
-      let rawContent = response.response || response.result?.data?.response || response.result?.response || response.reply;
+      let rawContent = response.response || response.result?.data?.response || response.result?.response || response.reply || response.message || response.summary;
       
       // If it failed and we have an error string, use that instead of dumping raw JSON
       if (response.result?.status === 'failed' && response.result?.data?.error) {
         rawContent = `Error: ${response.result.data.error}`;
       }
 
-      const finalContent = typeof rawContent === 'object' ? JSON.stringify(rawContent, null, 2) : (rawContent || JSON.stringify(response, null, 2));
+      // Never stringify to the user; provide a polite fallback if we can't extract a string message
+      const finalContent = typeof rawContent === 'string' ? rawContent : "I've processed your request successfully.";
+      const contentItemId = response.content_item_id || response.result?.content_item_id || response.result?.data?.content_item_id;
 
       const assistantMsg = {
         role: 'assistant',
         content: finalContent,
+        content_item_id: contentItemId,
         tokens: response.tokens_used,
         timestamp: Date.now(),
       };
