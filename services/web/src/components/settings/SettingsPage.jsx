@@ -220,9 +220,9 @@ function IntegrationsTab() {
 
   const handleMetaConnect = async () => {
     try {
-      const { auth_url } = await api.oauth.authorizeMeta();
-      if (auth_url) {
-        window.location.href = auth_url;
+      const { authorize_url } = await api.oauth.authorizeMeta();
+      if (authorize_url) {
+        window.location.href = authorize_url;
       }
     } catch (err) {
       toast.error(err.message || "Failed to start Meta authorization.");
