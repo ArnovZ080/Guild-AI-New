@@ -66,12 +66,14 @@ export const api = {
 
   // ── Onboarding ──
   onboarding: {
-    chat: (message) =>
-      authFetch('/api/onboarding/chat', { method: 'POST', body: JSON.stringify({ message }) }),
+    chat: (message, history) =>
+      authFetch('/api/onboarding/chat', { method: 'POST', body: JSON.stringify({ message, history }) }),
     status: () =>
       authFetch('/api/onboarding/status'),
     update: (data) =>
       authFetch('/api/onboarding/update', { method: 'POST', body: JSON.stringify(data) }),
+    finale: () =>
+      authFetch('/api/onboarding/finale', { method: 'POST' }),
   },
 
   // ── Content Pipeline ──

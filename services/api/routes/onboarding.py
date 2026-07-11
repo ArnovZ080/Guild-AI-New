@@ -208,6 +208,9 @@ async def onboarding_status(
         "completion_percentage": completion,
         "fields_filled": filled,
         "fields_missing": missing,
+        "knowledge_ledger": identity.knowledge_ledger or {},
+        "brand_style_guide": identity.brand_style_guide,
+        "identity_data": {f: getattr(identity, f, None) for f in _ESSENTIAL_FIELDS}
     }
 
 
