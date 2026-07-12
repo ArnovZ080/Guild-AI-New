@@ -1,0 +1,1 @@
+Before Oct 16, 2026: migrate llm.py from vertexai.generative_models to google-genai SDK, and move GEMINI_FLASH/PRO_MODEL off the 2.5 line (verify regional availability of the 3.x target in us-central1 first — test with one API call before switching env vars).

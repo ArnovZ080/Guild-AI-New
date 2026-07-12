@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     # GCP / Vertex AI
     GCP_PROJECT_ID: str = "guild-ai-080"
     GCP_LOCATION: str = "us-central1"
-    GEMINI_FLASH_MODEL: str = "gemini-3.1-flash-lite"
-    GEMINI_PRO_MODEL: str = "gemini-3.1-pro"
+    GEMINI_FLASH_MODEL: str = "gemini-2.5-flash"
+    GEMINI_PRO_MODEL: str = "gemini-2.5-pro"
 
     # Anthropic (fallback only)
     ANTHROPIC_API_KEY: Optional[str] = None
