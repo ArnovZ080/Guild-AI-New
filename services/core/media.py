@@ -144,9 +144,10 @@ class VideoGenerator:
                 if time.time() - start_time > max_wait:
                     raise TimeoutError(f"Video generation timed out after {max_wait} seconds.")
                 await asyncio.sleep(15)
+                # google-genai get() takes the operation object itself
                 operation = await loop.run_in_executor(
                     None,
-                    lambda: client.operations.get(operation=operation.name)
+                    lambda op=operation: client.operations.get(operation=op)
                 )
 
             if operation.error:
