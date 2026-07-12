@@ -5,7 +5,7 @@ pydantic>=2.5.0
 pydantic-settings>=2.0.0
 
 # LLM - Vertex AI (Primary)
-google-cloud-aiplatform>=1.60.0
+google-cloud-aiplatform==1.71.1 # TODO: migrate llm.py from vertexai.generative_models to the google-genai SDK
 
 # LLM - Anthropic (Fallback)
 anthropic>=0.39.0
