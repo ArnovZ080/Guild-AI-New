@@ -43,8 +43,8 @@ steps:
       - '--min-instances=0'
       - '--max-instances=10'
       - '--allow-unauthenticated'
-      - '--set-env-vars=EMAIL_FROM=hello@mail.guildof1.com,EMAIL_FROM_NAME=Guild AI,META_APP_ID=1026735089921809,META_REDIRECT_URI=https://api.guildof1.com/api/v1/oauth/callback/meta,GEMINI_FLASH_MODEL=gemini-2.5-flash,GEMINI_PRO_MODEL=gemini-2.5-pro'
-      - '--set-secrets=DATABASE_URL=guild-database-url:latest,REDIS_URL=guild-redis-url:latest,SECRET_KEY=guild-secret-key:latest,PAYSTACK_SECRET_KEY=guild-paystack-secret:latest,QDRANT_API_KEY=guild-qdrant-api-key:latest,SENDGRID_API_KEY=guild-sendgrid-api-key:latest,META_APP_SECRET=guild-meta-app-secret:latest'
+      - '--set-env-vars=EMAIL_FROM=hello@mail.guildof1.com,EMAIL_FROM_NAME=Guild AI,META_APP_ID=1026735089921809,META_REDIRECT_URI=https://api.guildof1.com/api/v1/oauth/callback/meta,GEMINI_FLASH_MODEL=gemini-2.5-flash,GEMINI_PRO_MODEL=gemini-2.5-pro,IMAGE_MODEL=gemini-2.5-flash-image,VIDEO_MODEL=veo-3.1-generate-001,VIDEO_MODEL_FAST=veo-3.1-fast-generate-001,STORAGE_BACKEND=supabase'
+      - '--set-secrets=DATABASE_URL=guild-database-url:latest,REDIS_URL=guild-redis-url:latest,SECRET_KEY=guild-secret-key:latest,PAYSTACK_SECRET_KEY=guild-paystack-secret:latest,QDRANT_API_KEY=guild-qdrant-api-key:latest,SENDGRID_API_KEY=guild-sendgrid-api-key:latest,META_APP_SECRET=guild-meta-app-secret:latest,SUPABASE_SERVICE_KEY=guild-supabase-service-key:latest'
 
   # Deploy to frontend Cloud Run service (guild-ai)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -55,7 +55,9 @@ steps:
       - 'guild-ai'
       - '--image=gcr.io/$PROJECT_ID/guild-api:$COMMIT_SHA'
       - '--region=us-central1'
-      - '--set-env-vars=GEMINI_FLASH_MODEL=gemini-2.5-flash,GEMINI_PRO_MODEL=gemini-2.5-pro'
+      - '--set-env-vars=GEMINI_FLASH_MODEL=gemini-2.5-flash,GEMINI_PRO_MODEL=gemini-2.5-pro,IMAGE_MODEL=gemini-2.5-flash-image,VIDEO_MODEL=veo-3.1-generate-001,VIDEO_MODEL_FAST=veo-3.1-fast-generate-001,STORAGE_BACKEND=supabase'
+      - '--set-secrets=SUPABASE_SERVICE_KEY=guild-supabase-service-key:latest'
+
 availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/guild-database-url/versions/latest
