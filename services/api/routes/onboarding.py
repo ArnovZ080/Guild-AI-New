@@ -140,11 +140,17 @@ async def onboarding_chat(
     )
 
     # Generate response
-    response_text = await default_llm.chat_completion(
-        messages=messages,
-        temperature=0.7,
-        tier=ModelTier.FLASH,
-    )
+    try:
+        response_text = await default_llm.chat_completion(
+            messages=messages, temperature=0.7, tier=ModelTier.FLASH)
+    except Exception as e:
+        logger.error("Onboarding LLM call failed: %s", e)
+        return OnboardingResponse(
+            reply="Give me a second — I'm having a little trouble thinking right now. Could you try that again?",
+            completion_percentage=identity.completion_percentage if identity else 0.0,
+            conversation_id=request.conversation_id,
+            fields_updated=[],
+        )
 
     # Parse extracted data and conversational reply
     extracted, ledger_updates, coach_mode, onboarding_complete, reply = _parse_response(response_text)

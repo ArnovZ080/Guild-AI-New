@@ -245,8 +245,8 @@ export default function ChatInterface() {
       let rawContent = response.response || response.result?.data?.response || response.result?.response || response.reply || response.message || response.summary;
       
       // If it failed and we have an error string, use that instead of dumping raw JSON
-      if (response.result?.status === 'failed' && response.result?.data?.error) {
-        rawContent = `Error: ${response.result.data.error}`;
+      if (response.result?.status === 'failed') {
+        rawContent = `Error: ${response.result.error || response.result.data?.error || 'unknown'}`;
       }
 
       // Never stringify to the user; provide a polite fallback if we can't extract a string message
