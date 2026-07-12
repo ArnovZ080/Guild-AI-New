@@ -73,7 +73,7 @@ class LLMClient:
             import anthropic
             if settings.ANTHROPIC_API_KEY:
                 self._anthropic_client = anthropic.AsyncAnthropic(
-                    api_key=settings.ANTHROPIC_API_KEY,
+                    api_key=settings.ANTHROPIC_API_KEY.strip(),
                 )
                 logger.info("Anthropic Claude fallback initialized.")
             else:
@@ -174,7 +174,7 @@ class LLMClient:
                 "Vertex AI failed and no Anthropic fallback configured."
             )
 
-        logger.info("Using Anthropic Claude fallback.")
+        logger.error("FALLBACK ENGAGED: serving via Anthropic — investigate Vertex.")
 
         system_msg = None
         api_messages = []
