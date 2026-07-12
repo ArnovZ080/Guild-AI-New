@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     GEMINI_FLASH_MODEL: str = "gemini-2.5-flash"
     GEMINI_PRO_MODEL: str = "gemini-2.5-pro"
 
+    # Media generation models (env-overridable — model IDs expire, see docs/superpowers/plans/2026-09-model-migration-note.md)
+    IMAGE_MODEL: str = "gemini-2.5-flash-image"
+    VIDEO_MODEL: str = "veo-3.1-generate-001"
+    VIDEO_MODEL_FAST: str = "veo-3.1-fast-generate-001"
+
     # Anthropic (fallback only)
     ANTHROPIC_API_KEY: Optional[str] = None
 

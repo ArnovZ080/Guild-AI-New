@@ -51,3 +51,4 @@ stripe>=7.0.0
 markitdown>=0.0.1a2
 
 cryptography>=42.0.0
+google-genai>=1.0.0

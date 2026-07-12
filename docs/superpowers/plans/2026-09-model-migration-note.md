@@ -1,1 +1,3 @@
 Before Oct 16, 2026: migrate llm.py from vertexai.generative_models to google-genai SDK, and move GEMINI_FLASH/PRO_MODEL off the 2.5 line (verify regional availability of the 3.x target in us-central1 first — test with one API call before switching env vars).
+Also migrate branding/extractor.py off vertexai.generative_models / vertexai.vision_models imports to google-genai in the same September pass.
+Media generation (media.py) has already been migrated to google-genai and GA models (veo-3.1-generate-001 / gemini-2.5-flash-image). Note: preview models die by removal, GA models die by deprecation table — pin neither in code, keep both in env, and never trust an ID you haven't called.
