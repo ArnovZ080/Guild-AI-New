@@ -49,4 +49,4 @@ USER guild
 EXPOSE 8001
 
 # Default: run the API server (serves frontend via StaticFiles mount)
-CMD ["uvicorn", "services.api.main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD uvicorn services.api.main:app --host 0.0.0.0 --port ${PORT:-8001}
